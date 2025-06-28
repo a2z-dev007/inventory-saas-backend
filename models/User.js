@@ -43,6 +43,11 @@ const userSchema = new mongoose.Schema(
     lastLogin: {
       type: Date,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: false, // Not required for initial users
+    },
   },
   {
     timestamps: true,
@@ -53,6 +58,7 @@ const userSchema = new mongoose.Schema(
 userSchema.index({ username: 1 })
 userSchema.index({ email: 1 })
 userSchema.index({ role: 1 })
+userSchema.index({ createdBy: 1 })
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {

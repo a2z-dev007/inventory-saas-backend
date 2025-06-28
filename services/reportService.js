@@ -108,7 +108,7 @@ class ReportService {
       .sort({ currentStock: 1 })
       .lean()
 
-    const totalValue = products.reduce((sum, product) => sum + (product.currentStock * product.price), 0)
+    const totalValue = products.reduce((sum, product) => sum + (product.currentStock * product.purchaseRate), 0)
 
     return {
       products,
@@ -290,7 +290,7 @@ class ReportService {
     // Get product details
     const productIds = topProducts.map(p => p._id)
     const products = await Product.find({ _id: { $in: productIds } })
-      .select("name category currentStock price")
+      .select("name category currentStock purchaseRate salesRate")
       .lean()
 
     const productMap = products.reduce((map, product) => {
@@ -302,7 +302,8 @@ class ReportService {
       ...product,
       category: productMap[product._id]?.category,
       currentStock: productMap[product._id]?.currentStock,
-      price: productMap[product._id]?.price,
+      purchaseRate: productMap[product._id]?.purchaseRate,
+      salesRate: productMap[product._id]?.salesRate,
     }))
 
     return {

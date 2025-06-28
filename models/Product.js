@@ -58,6 +58,11 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -70,6 +75,7 @@ productSchema.index({ name: "text", category: "text" })
 productSchema.index({ category: 1 })
 productSchema.index({ vendor: 1 })
 productSchema.index({ currentStock: 1 })
+productSchema.index({ createdBy: 1 })
 
 // Virtual for profit margin
 productSchema.virtual("profitMargin").get(function () {

@@ -5,6 +5,55 @@ const { validationResult } = require("express-validator")
 
 class AuthController {
   /**
+   * User registration
+   * @route POST /api/auth/register
+   * @access Public
+   */
+  async register(req, res, next) {
+    try {
+      // Check validation errors
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: "Validation failed",
+          errors: errors.array(),
+        })
+      }
+
+      const { username, password, name, email, role } = req.body
+      const clientIP = req.ip || req.connection.remoteAddress
+
+      const result = await authService.register({
+        username,
+        password,
+        name,
+        email,
+        role,
+      })
+
+      logger.info(`New user registered: ${username} from IP: ${clientIP}`)
+
+      res.status(201).json({
+        success: true,
+        message: "User registered successfully",
+        data: result,
+      })
+    } catch (error) {
+      logger.error("Registration error:", error)
+
+      if (error.message === "Username already exists" || error.message === "Email already exists") {
+        return res.status(409).json({
+          success: false,
+          message: error.message,
+        })
+      }
+
+      next(error)
+    }
+  }
+
+  /**
    * User login
    * @route POST /api/auth/login
    * @access Public

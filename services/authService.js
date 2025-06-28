@@ -4,6 +4,55 @@ const bcrypt = require("bcryptjs")
 
 class AuthService {
   /**
+   * User registration service
+   * @param {Object} userData - User registration data
+   * @returns {Object} User data and token
+   */
+  async register(userData) {
+    const { username, password, name, email, role = "staff" } = userData
+
+    // Check if username already exists
+    const existingUsername = await User.findOne({ username })
+    if (existingUsername) {
+      throw new Error("Username already exists")
+    }
+
+    // Check if email already exists
+    const existingEmail = await User.findOne({ email })
+    if (existingEmail) {
+      throw new Error("Email already exists")
+    }
+
+    // Create new user
+    const user = new User({
+      username,
+      password,
+      name,
+      email,
+      role,
+      isActive: true,
+    })
+
+    await user.save()
+
+    // Generate token
+    const token = generateToken(user._id, "7d")
+
+    return {
+      user: {
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+      },
+      token,
+      expiresIn: "7d",
+    }
+  }
+
+  /**
    * User login service
    * @param {string} username
    * @param {string} password

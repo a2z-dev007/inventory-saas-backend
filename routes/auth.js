@@ -1,9 +1,56 @@
 const express = require("express")
 const authController = require("../controllers/authController")
 const { protect } = require("../middleware/auth")
-const { validateLogin, validateChangePassword } = require("../middleware/validation")
+const { validateLogin, validateChangePassword, validateRegister } = require("../middleware/validation")
 
 const router = express.Router()
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: User registration
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *               - name
+ *               - email
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 minLength: 3
+ *                 maxLength: 30
+ *                 pattern: '^[a-zA-Z0-9_]+$'
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)'
+ *               name:
+ *                 type: string
+ *                 maxLength: 100
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               role:
+ *                 type: string
+ *                 enum: [admin, manager, staff]
+ *                 default: staff
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *       400:
+ *         description: Validation failed
+ *       409:
+ *         description: Username or email already exists
+ */
+router.post("/register", validateRegister, authController.register)
 
 /**
  * @swagger

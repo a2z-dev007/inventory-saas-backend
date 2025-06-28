@@ -5,6 +5,25 @@ const USER_ROLES = {
   STAFF: "staff",
 }
 
+// Currency configuration
+const CURRENCY_CONFIG = {
+  SYMBOL: "₹",
+  CODE: "INR",
+  NAME: "Indian Rupee",
+  LOCALE: "en-IN",
+  DECIMAL_PLACES: 2,
+}
+
+// Currency formatting utility
+const formatCurrency = (amount) => {
+  if (typeof amount !== 'number') return CURRENCY_CONFIG.SYMBOL + '0.00';
+  
+  return CURRENCY_CONFIG.SYMBOL + amount.toLocaleString(CURRENCY_CONFIG.LOCALE, {
+    minimumFractionDigits: CURRENCY_CONFIG.DECIMAL_PLACES,
+    maximumFractionDigits: CURRENCY_CONFIG.DECIMAL_PLACES
+  });
+}
+
 // Purchase order statuses
 const PO_STATUSES = {
   DRAFT: "draft",
@@ -127,6 +146,8 @@ const DATE_FORMATS = {
 
 module.exports = {
   USER_ROLES,
+  CURRENCY_CONFIG,
+  formatCurrency,
   PO_STATUSES,
   SALE_STATUSES,
   PAYMENT_METHODS,
