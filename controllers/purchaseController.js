@@ -83,6 +83,8 @@ class PurchaseController {
    * @access Private (Admin/Manager)
    */
   async createPurchase(req, res, next) {
+    console.log('BODY:', req.body);
+console.log('FILES:', req.file, req.files);
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
@@ -93,9 +95,26 @@ class PurchaseController {
         })
       }
 
+      // Parse items if sent as a JSON string (for multipart/form-data)
+      if (req.body.items && typeof req.body.items === "string") {
+        try {
+          req.body.items = JSON.parse(req.body.items)
+        } catch (e) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid items format. Must be a valid JSON array.",
+          })
+        }
+      }
+
       const purchaseData = {
         ...req.body,
         createdBy: req.user.id,
+      }
+
+      // If a file was uploaded, store its path
+      if (req.file) {
+        purchaseData.invoiceFile = `/uploads/${req.file.filename}`
       }
 
       const purchase = await purchaseService.createPurchase(purchaseData)
@@ -135,6 +154,18 @@ class PurchaseController {
           message: "Validation failed",
           errors: errors.array(),
         })
+      }
+
+      // Parse items if sent as a JSON string (for multipart/form-data)
+      if (req.body.items && typeof req.body.items === "string") {
+        try {
+          req.body.items = JSON.parse(req.body.items)
+        } catch (e) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid items format. Must be a valid JSON array.",
+          })
+        }
       }
 
       const updateData = {
