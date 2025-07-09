@@ -144,23 +144,14 @@ class PurchaseOrderService {
   }
 
   /**
-   * Delete purchase order (soft delete)
+   * Delete purchase order (hard delete)
    * @param {string} purchaseOrderId
    * @param {string} deletedBy
    * @returns {Object} Deleted purchase order
    */
   async deletePurchaseOrder(purchaseOrderId, deletedBy) {
-    const purchaseOrder = await PurchaseOrder.findByIdAndUpdate(
-      purchaseOrderId,
-      {
-        isDeleted: true,
-        deletedBy,
-        deletedAt: new Date(),
-      },
-      { new: true }
-    )
-
-    return purchaseOrder
+    const purchaseOrder = await PurchaseOrder.findByIdAndDelete(purchaseOrderId);
+    return purchaseOrder;
   }
 
   /**

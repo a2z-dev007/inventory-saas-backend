@@ -81,6 +81,18 @@ const purchaseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "PurchaseOrder",
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    deletedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

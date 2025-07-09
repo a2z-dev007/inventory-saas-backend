@@ -139,23 +139,14 @@ class PurchaseService {
   }
 
   /**
-   * Delete purchase (soft delete)
+   * Delete purchase (hard delete)
    * @param {string} purchaseId
    * @param {string} deletedBy
    * @returns {Object} Deleted purchase
    */
   async deletePurchase(purchaseId, deletedBy) {
-    const purchase = await Purchase.findByIdAndUpdate(
-      purchaseId,
-      {
-        isDeleted: true,
-        deletedBy,
-        deletedAt: new Date(),
-      },
-      { new: true }
-    )
-
-    return purchase
+    const purchase = await Purchase.findByIdAndDelete(purchaseId);
+    return purchase;
   }
 
   /**

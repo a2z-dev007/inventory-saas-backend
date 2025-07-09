@@ -281,3 +281,83 @@
 {"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-02 21:58:39"}
 {"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-02 21:58:39"}
 {"level":"info","message":"SIGINT received. Shutting down gracefully...","service":"inventory-management","timestamp":"2025-07-03 09:24:12"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-03 18:19:55"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-03 18:19:55"}
+{"level":"info","message":"SIGINT received. Shutting down gracefully...","service":"inventory-management","timestamp":"2025-07-03 18:20:38"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-03 18:20:50"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-03 18:20:50"}
+{"level":"info","message":"User admin logged in successfully from IP: ::1","service":"inventory-management","timestamp":"2025-07-03 18:28:44"}
+{"_message":"Purchase validation failed","errors":{"receiptNumber":{"kind":"required","message":"Receipt number is required","name":"ValidatorError","path":"receiptNumber","properties":{"message":"Receipt number is required","path":"receiptNumber","type":"required"}}},"level":"error","message":"Create purchase error: Purchase validation failed: receiptNumber: Receipt number is required","service":"inventory-management","stack":"ValidationError: Purchase validation failed: receiptNumber: Receipt number is required\n    at Document.invalidate (D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\document.js:3219:32)\n    at D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\document.js:3012:17\n    at D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\schematype.js:1368:9\n    at process.processTicksAndRejections (node:internal/process/task_queues:77:11)","timestamp":"2025-07-03 18:37:54"}
+{"_message":"Purchase validation failed","errors":{"receiptNumber":{"kind":"required","message":"Receipt number is required","name":"ValidatorError","path":"receiptNumber","properties":{"message":"Receipt number is required","path":"receiptNumber","type":"required"}}},"level":"error","message":"Purchase validation failed: receiptNumber: Receipt number is required","service":"inventory-management","stack":"ValidationError: Purchase validation failed: receiptNumber: Receipt number is required\n    at Document.invalidate (D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\document.js:3219:32)\n    at D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\document.js:3012:17\n    at D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\schematype.js:1368:9\n    at process.processTicksAndRejections (node:internal/process/task_queues:77:11)","timestamp":"2025-07-03 18:37:54"}
+{"level":"info","message":"Purchase created: PUR-20250703-184340 by user admin","service":"inventory-management","timestamp":"2025-07-03 18:43:40"}
+{"level":"info","message":"Sale created: INV-1751549459295 by user admin","service":"inventory-management","timestamp":"2025-07-03 19:00:59"}
+{"level":"info","message":"Sale updated: INV-1751549459295 by user admin","service":"inventory-management","timestamp":"2025-07-04 11:57:17"}
+{"level":"info","message":"Sale created: INV-1751623805783 by user admin","service":"inventory-management","timestamp":"2025-07-04 15:40:05"}
+{"level":"info","message":"Sale updated: INV-1751623805783 by user admin","service":"inventory-management","timestamp":"2025-07-04 15:45:19"}
+{"level":"info","message":"Sale updated: INV-1751623805783 by user admin","service":"inventory-management","timestamp":"2025-07-04 15:45:28"}
+{"_message":"Validation failed","errors":{"status":{"kind":"enum","message":"`overdue` is not a valid enum value for path `status`.","name":"ValidatorError","path":"status","properties":{"enumValues":["pending","paid","cancelled","refunded"],"fullPath":"status","message":"`overdue` is not a valid enum value for path `status`.","path":"status","type":"enum","value":"overdue"},"value":"overdue"}},"level":"error","message":"Update sale error: Validation failed: status: `overdue` is not a valid enum value for path `status`.","service":"inventory-management","stack":"ValidationError: Validation failed: status: `overdue` is not a valid enum value for path `status`.\n    at _done (D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\helpers\\updateValidators.js:228:19)\n    at D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\helpers\\updateValidators.js:204:11\n    at schemaPath.doValidate.updateValidator (D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\helpers\\updateValidators.js:140:20)\n    at D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\schema\\SubdocumentPath.js:273:33\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","timestamp":"2025-07-04 15:47:56"}
+{"_message":"Validation failed","errors":{"status":{"kind":"enum","message":"`overdue` is not a valid enum value for path `status`.","name":"ValidatorError","path":"status","properties":{"enumValues":["pending","paid","cancelled","refunded"],"fullPath":"status","message":"`overdue` is not a valid enum value for path `status`.","path":"status","type":"enum","value":"overdue"},"value":"overdue"}},"level":"error","message":"Validation failed: status: `overdue` is not a valid enum value for path `status`.","service":"inventory-management","stack":"ValidationError: Validation failed: status: `overdue` is not a valid enum value for path `status`.\n    at _done (D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\helpers\\updateValidators.js:228:19)\n    at D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\helpers\\updateValidators.js:204:11\n    at schemaPath.doValidate.updateValidator (D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\helpers\\updateValidators.js:140:20)\n    at D:\\personal projects\\inventory-saas-backend\\node_modules\\mongoose\\lib\\schema\\SubdocumentPath.js:273:33\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)","timestamp":"2025-07-04 15:47:56"}
+{"level":"info","message":"Sale updated: INV-1751623805783 by user admin","service":"inventory-management","timestamp":"2025-07-04 15:48:04"}
+{"level":"info","message":"Sale updated: INV-1751623805783 by user admin","service":"inventory-management","timestamp":"2025-07-04 15:48:11"}
+{"level":"info","message":"Sale updated: INV-1751623805783 by user admin","service":"inventory-management","timestamp":"2025-07-04 15:50:32"}
+{"level":"info","message":"Sale updated: INV-1751623805783 by user admin","service":"inventory-management","timestamp":"2025-07-04 15:53:54"}
+{"level":"info","message":"Sale updated: INV-1751623805783 by user admin","service":"inventory-management","timestamp":"2025-07-04 15:57:20"}
+{"level":"info","message":"Sale updated: INV-1751623805783 by user admin","service":"inventory-management","timestamp":"2025-07-04 15:57:26"}
+{"level":"info","message":"Purchase order created: PO-1751625028385 by user admin","service":"inventory-management","timestamp":"2025-07-04 16:00:28"}
+{"level":"info","message":"Purchase order updated: PO-1751625028385 by user admin","service":"inventory-management","timestamp":"2025-07-04 16:03:34"}
+{"level":"info","message":"Purchase order updated: PO-1751625028385 by user admin","service":"inventory-management","timestamp":"2025-07-04 16:03:58"}
+{"level":"info","message":"Purchase order created: PO-1751625288102 by user admin","service":"inventory-management","timestamp":"2025-07-04 16:04:48"}
+{"level":"info","message":"Product created: mobile by user admin","service":"inventory-management","timestamp":"2025-07-04 16:43:29"}
+{"level":"info","message":"Purchase order updated: PO-1751625288102 by user admin","service":"inventory-management","timestamp":"2025-07-04 16:44:13"}
+{"level":"info","message":"Purchase order created: PO-1751627666031 by user admin","service":"inventory-management","timestamp":"2025-07-04 16:44:26"}
+{"level":"info","message":"Purchase order updated: PO-1751627666031 by user admin","service":"inventory-management","timestamp":"2025-07-04 16:45:17"}
+{"level":"info","message":"Purchase order updated: PO-1751627666031 by user admin","service":"inventory-management","timestamp":"2025-07-04 16:45:47"}
+{"level":"info","message":"Purchase order updated: PO-1751627666031 by user admin","service":"inventory-management","timestamp":"2025-07-04 16:45:52"}
+{"level":"info","message":"Product updated: mobile by user admin","service":"inventory-management","timestamp":"2025-07-04 17:32:22"}
+{"level":"info","message":"Product updated: mobile by user admin","service":"inventory-management","timestamp":"2025-07-04 17:32:42"}
+{"level":"info","message":"Product updated: mobile by user admin","service":"inventory-management","timestamp":"2025-07-04 17:33:35"}
+{"level":"info","message":"Product updated: mobile by user admin","service":"inventory-management","timestamp":"2025-07-04 17:39:48"}
+{"level":"info","message":"Product updated: mobile by user admin","service":"inventory-management","timestamp":"2025-07-04 17:42:07"}
+{"level":"info","message":"Product updated: mobile by user admin","service":"inventory-management","timestamp":"2025-07-04 17:44:58"}
+{"level":"info","message":"Product updated: mobile by user admin","service":"inventory-management","timestamp":"2025-07-04 17:47:41"}
+{"level":"info","message":"SIGINT received. Shutting down gracefully...","service":"inventory-management","timestamp":"2025-07-05 10:04:50"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-06 15:13:27"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-06 15:13:27"}
+{"level":"info","message":"User admin logged in successfully from IP: ::1","service":"inventory-management","timestamp":"2025-07-06 15:20:27"}
+{"level":"info","message":"Purchase order created: PO-1751796587669 by user admin","service":"inventory-management","timestamp":"2025-07-06 15:39:47"}
+{"level":"info","message":"Purchase order updated: PO-1751796587669 by user admin","service":"inventory-management","timestamp":"2025-07-06 15:39:56"}
+{"level":"info","message":"Sale created: INV-1751796620838 by user admin","service":"inventory-management","timestamp":"2025-07-06 15:40:20"}
+{"level":"info","message":"Sale updated: INV-1751796620838 by user admin","service":"inventory-management","timestamp":"2025-07-06 15:40:33"}
+{"level":"info","message":"Sale updated: INV-1751796620838 by user admin","service":"inventory-management","timestamp":"2025-07-06 15:40:44"}
+{"level":"info","message":"Purchase created: PUR-20250706-154115 by user admin","service":"inventory-management","timestamp":"2025-07-06 15:41:15"}
+{"level":"info","message":"Product created: Abhishek tiwari by user admin","service":"inventory-management","timestamp":"2025-07-06 15:56:00"}
+{"level":"info","message":"Product updated: Abhishek tiwariiii by user admin","service":"inventory-management","timestamp":"2025-07-06 15:56:17"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-07 09:47:07"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-07 09:47:08"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-09 21:44:37"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-09 21:44:37"}
+{"level":"info","message":"User admin logged in successfully from IP: ::1","service":"inventory-management","timestamp":"2025-07-09 21:47:21"}
+{"level":"info","message":"Product deleted: Abhishek tiwariiii by user admin","service":"inventory-management","timestamp":"2025-07-09 21:47:52"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 21:53:39"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 21:54:40"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 21:57:06"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:00:05"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:05:19"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-09 22:10:52"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-09 22:10:52"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-09 22:11:21"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-09 22:11:22"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:12:04"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-09 22:17:41"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-09 22:17:42"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:18:47"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-09 22:20:48"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-09 22:20:48"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:22:35"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-09 22:25:29"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-09 22:25:29"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:26:05"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-09 22:27:45"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-09 22:27:45"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:28:14"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:29:27"}

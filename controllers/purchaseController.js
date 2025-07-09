@@ -211,7 +211,9 @@ console.log('FILES:', req.file, req.files);
         })
       }
 
+      console.log('Attempting to delete purchase with ID:', req.params.id);
       const purchase = await purchaseService.deletePurchase(req.params.id, req.user.id)
+      console.log('Result of findByIdAndDelete:', purchase);
 
       if (!purchase) {
         return res.status(404).json({
