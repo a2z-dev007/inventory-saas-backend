@@ -361,3 +361,6 @@
 {"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-09 22:27:45"}
 {"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:28:14"}
 {"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:29:27"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-09 22:30:25"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-09 22:30:25"}
+{"level":"info","message":"Purchase order deleted: PO-1751796587669 by admin admin","service":"inventory-management","timestamp":"2025-07-09 22:30:52"}
