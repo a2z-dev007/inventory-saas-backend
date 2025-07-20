@@ -10,6 +10,9 @@ const Customer = require("../models/Customer")
 const PurchaseOrder = require("../models/PurchaseOrder")
 const Sale = require("../models/Sale")
 const Purchase = require("../models/Purchase")
+const ProductCategory = require("../models/ProductCategory")
+const categorySeed = require("./categorySeed")
+const productSeed = require("./productSeed")
 
 // Sample data based on provided JSON
 const sampleData = {
@@ -38,146 +41,26 @@ const sampleData = {
   ],
 
   vendors: [
-    {
-      name: "Dell Technologies India",
-      contact: "Rajesh Kumar",
-      email: "procurement@dell.co.in",
-      phone: "+91-80-4924-6000",
-      address: "Dell India Pvt Ltd, Embassy Tech Village, Outer Ring Road, Bangalore, Karnataka 560103",
-    },
-    {
-      name: "Apple India Pvt Ltd",
-      contact: "Priya Sharma",
-      email: "business@apple.co.in",
-      phone: "+91-22-6656-1000",
-      address: "Apple India Pvt Ltd, Maker Chambers IV, Nariman Point, Mumbai, Maharashtra 400021",
-    },
-    {
-      name: "HP India Sales Pvt Ltd",
-      contact: "Amit Patel",
-      email: "sales@hp.co.in",
-      phone: "+91-22-6656-2000",
-      address: "HP India Sales Pvt Ltd, HP House, 24-26, MG Road, Bangalore, Karnataka 560001",
-    },
-    {
-      name: "Lenovo India Pvt Ltd",
-      contact: "Suresh Reddy",
-      email: "orders@lenovo.co.in",
-      phone: "+91-80-4924-7000",
-      address: "Lenovo India Pvt Ltd, Embassy Tech Village, Outer Ring Road, Bangalore, Karnataka 560103",
-    },
-    {
-      name: "Samsung India Electronics",
-      contact: "Kavita Singh",
-      email: "b2b@samsung.co.in",
-      phone: "+91-11-2341-5000",
-      address: "Samsung India Electronics Ltd, Samsung House, 6th Floor, Plot No. B-1, Sector 5, Noida, UP 201301",
-    },
-    {
-      name: "LG Electronics India",
-      contact: "Manoj Gupta",
-      email: "corporate@lg.co.in",
-      phone: "+91-11-2341-6000",
-      address: "LG Electronics India Pvt Ltd, Plot No. 51, Udyog Vihar, Greater Noida, UP 201306",
-    },
-    {
-      name: "Logitech India Pvt Ltd",
-      contact: "Rahul Verma",
-      email: "sales@logitech.co.in",
-      phone: "+91-22-6656-3000",
-      address: "Logitech India Pvt Ltd, 3rd Floor, Maker Chambers IV, Nariman Point, Mumbai, Maharashtra 400021",
-    },
-    {
-      name: "Microsoft India Pvt Ltd",
-      contact: "Anjali Desai",
-      email: "enterprise@microsoft.co.in",
-      phone: "+91-22-6656-4000",
-      address: "Microsoft India Pvt Ltd, Cybercity, DLF Phase 2, Sector 24, Gurugram, Haryana 122002",
-    },
-    {
-      name: "Cisco Systems India Pvt Ltd",
-      contact: "Vikram Malhotra",
-      email: "procurement@cisco.co.in",
-      phone: "+91-80-4924-8000",
-      address: "Cisco Systems India Pvt Ltd, Embassy Tech Village, Outer Ring Road, Bangalore, Karnataka 560103",
-    },
-    {
-      name: "Intel India Pvt Ltd",
-      contact: "Neha Kapoor",
-      email: "business@intel.co.in",
-      phone: "+91-80-4924-9000",
-      address: "Intel India Pvt Ltd, Embassy Tech Village, Outer Ring Road, Bangalore, Karnataka 560103",
-    },
-    {
-      name: "ASUS India Pvt Ltd",
-      contact: "Arun Kumar",
-      email: "sales@asus.co.in",
-      phone: "+91-22-6656-5000",
-      address: "ASUS India Pvt Ltd, Maker Chambers IV, Nariman Point, Mumbai, Maharashtra 400021",
-    },
-    {
-      name: "Acer India Pvt Ltd",
-      contact: "Deepak Sharma",
-      email: "orders@acer.co.in",
-      phone: "+91-22-6656-6000",
-      address: "Acer India Pvt Ltd, Maker Chambers IV, Nariman Point, Mumbai, Maharashtra 400021",
-    },
-    {
-      name: "Canon India Pvt Ltd",
-      contact: "Meera Iyer",
-      email: "b2b@canon.co.in",
-      phone: "+91-11-2341-7000",
-      address: "Canon India Pvt Ltd, Plot No. 51, Udyog Vihar, Greater Noida, UP 201306",
-    },
-    {
-      name: "Epson India Pvt Ltd",
-      contact: "Sandeep Joshi",
-      email: "corporate@epson.co.in",
-      phone: "+91-11-2341-8000",
-      address: "Epson India Pvt Ltd, Plot No. 52, Udyog Vihar, Greater Noida, UP 201306",
-    },
-    {
-      name: "Brother International India",
-      contact: "Ritu Agarwal",
-      email: "sales@brother.co.in",
-      phone: "+91-22-6656-7000",
-      address: "Brother International India Pvt Ltd, Maker Chambers IV, Nariman Point, Mumbai, Maharashtra 400021",
-    },
-    {
-      name: "Seagate Technology India",
-      contact: "Prakash Rao",
-      email: "enterprise@seagate.co.in",
-      phone: "+91-80-4924-1000",
-      address: "Seagate Technology India Pvt Ltd, Embassy Tech Village, Outer Ring Road, Bangalore, Karnataka 560103",
-    },
-    {
-      name: "Western Digital India",
-      contact: "Lakshmi Devi",
-      email: "business@wdc.co.in",
-      phone: "+91-80-4924-1100",
-      address: "Western Digital India Pvt Ltd, Embassy Tech Village, Outer Ring Road, Bangalore, Karnataka 560103",
-    },
-    {
-      name: "Kingston Technology India",
-      contact: "Rajiv Mehta",
-      email: "sales@kingston.co.in",
-      phone: "+91-22-6656-8000",
-      address: "Kingston Technology India Pvt Ltd, Maker Chambers IV, Nariman Point, Mumbai, Maharashtra 400021",
-    },
-    {
-      name: "Corsair India Pvt Ltd",
-      contact: "Anita Reddy",
-      email: "orders@corsair.co.in",
-      phone: "+91-22-6656-9000",
-      address: "Corsair India Pvt Ltd, Maker Chambers IV, Nariman Point, Mumbai, Maharashtra 400021",
-    },
-    {
-      name: "Razer India Pvt Ltd",
-      contact: "Karan Malhotra",
-      email: "enterprise@razer.co.in",
-      phone: "+91-11-2341-9000",
-      address: "Razer India Pvt Ltd, Plot No. 53, Udyog Vihar, Greater Noida, UP 201306",
-    },
+    { name: "UltraTech Cement Ltd.", contact: "Amit Sharma", email: "contact@ultratech.com", phone: "+91-22-1234-5678", address: "Mumbai, Maharashtra, India" },
+    { name: "Tata Steel", contact: "Ravi Kumar", email: "sales@tatasteel.com", phone: "+91-33-9876-5432", address: "Jamshedpur, Jharkhand, India" },
+    { name: "Siporex", contact: "Priya Singh", email: "info@siporex.com", phone: "+91-22-2345-6789", address: "Pune, Maharashtra, India" },
+    { name: "Pidilite Industries", contact: "Suresh Patel", email: "support@pidilite.com", phone: "+91-22-3456-7890", address: "Mumbai, Maharashtra, India" },
+    { name: "Ashirvad Pipes", contact: "Manoj Gupta", email: "enquiry@ashirvad.com", phone: "+91-80-4567-8901", address: "Bangalore, Karnataka, India" },
+    { name: "Philips Lighting", contact: "Sunita Rao", email: "lighting@philips.com", phone: "+91-22-5678-9012", address: "Gurgaon, Haryana, India" },
+    { name: "Daikin India", contact: "Vikram Mehta", email: "service@daikinindia.com", phone: "+91-11-6789-0123", address: "New Delhi, India" },
+    { name: "Asian Paints", contact: "Neha Verma", email: "help@asianpaints.com", phone: "+91-22-7890-1234", address: "Mumbai, Maharashtra, India" },
+    { name: "Fenesta", contact: "Arvind Joshi", email: "windows@fenesta.com", phone: "+91-11-8901-2345", address: "Noida, Uttar Pradesh, India" },
+    { name: "Kajaria Ceramics", contact: "Deepak Jain", email: "tiles@kajariaceramics.com", phone: "+91-11-9012-3456", address: "Gurgaon, Haryana, India" },
+    { name: "Tata Bluescope Steel", contact: "Rohit Sinha", email: "roofing@tatabluescope.com", phone: "+91-20-1234-5678", address: "Pune, Maharashtra, India" },
+    { name: "JCB India Ltd.", contact: "Kiran Desai", email: "machinery@jcb.com", phone: "+91-124-5678-9012", address: "Ballabgarh, Haryana, India" },
+    { name: "Leica Geosystems", contact: "Sanjay Kapoor", email: "survey@leica.com", phone: "+91-22-2345-6789", address: "Mumbai, Maharashtra, India" },
+    { name: "Bosch Power Tools", contact: "Anil Kumar", email: "tools@bosch.com", phone: "+91-80-3456-7890", address: "Bangalore, Karnataka, India" },
+    { name: "3M India", contact: "Rita Shah", email: "ppe@3m.com", phone: "+91-80-4567-8901", address: "Bangalore, Karnataka, India" },
+    { name: "Alufase", contact: "Nitin Rao", email: "scaffold@alufase.com", phone: "+91-22-5678-9012", address: "Mumbai, Maharashtra, India" },
+    { name: "Hilti India", contact: "Vivek Agarwal", email: "fixings@hilti.com", phone: "+91-22-6789-0123", address: "Mumbai, Maharashtra, India" },
+    { name: "Greenply", contact: "Shweta Tiwari", email: "plywood@greenply.com", phone: "+91-33-7890-1234", address: "Kolkata, West Bengal, India" },
+    { name: "Havells", contact: "Ajay Singh", email: "outdoor@havells.com", phone: "+91-11-8901-2345", address: "Noida, Uttar Pradesh, India" },
+    { name: "Local Supplier", contact: "Local Vendor", email: "local@supplier.com", phone: "+91-99-9999-9999", address: "Local Market, India" },
   ],
 
   customers: [
@@ -323,260 +206,7 @@ const sampleData = {
     },
   ],
 
-  products: [
-    {
-      name: "iPhone 15 Pro",
-      sku: "APPLE-IP15P-001",
-      purchaseRate: 85000,
-      salesRate: 95000,
-      currentStock: 8,
-      category: "Electronics",
-      vendor: "Apple India Pvt Ltd",
-    },
-    {
-      name: "Office Chair Premium",
-      sku: "FURN-CHAIR-001",
-      purchaseRate: 12000,
-      salesRate: 15000,
-      currentStock: 50,
-      category: "Furniture",
-      vendor: "Dell Technologies India",
-    },
-    {
-      name: "Monitor LG UltraWide",
-      sku: "LG-UW-001",
-      purchaseRate: 25000,
-      salesRate: 32000,
-      currentStock: 40,
-      category: "Electronics",
-      vendor: "LG Electronics India",
-    },
-    {
-      name: "Keyboard Logitech",
-      sku: "LOGI-KB-001",
-      purchaseRate: 3500,
-      salesRate: 4500,
-      currentStock: 100,
-      category: "Electronics",
-      vendor: "Logitech India Pvt Ltd",
-    },
-    {
-      name: "Mouse Logitech",
-      sku: "LOGI-MS-001",
-      purchaseRate: 2000,
-      salesRate: 2800,
-      currentStock: 120,
-      category: "Electronics",
-      vendor: "Logitech India Pvt Ltd",
-    },
-    {
-      name: "Dell Latitude 5520",
-      sku: "DELL-LAT-001",
-      purchaseRate: 65000,
-      salesRate: 75000,
-      currentStock: 15,
-      category: "Electronics",
-      vendor: "Dell Technologies India",
-    },
-    {
-      name: "HP EliteBook 840",
-      sku: "HP-ELITE-001",
-      purchaseRate: 70000,
-      salesRate: 82000,
-      currentStock: 12,
-      category: "Electronics",
-      vendor: "HP India Sales Pvt Ltd",
-    },
-    {
-      name: "Lenovo ThinkPad X1",
-      sku: "LEN-THINK-001",
-      purchaseRate: 95000,
-      salesRate: 110000,
-      currentStock: 10,
-      category: "Electronics",
-      vendor: "Lenovo India Pvt Ltd",
-    },
-    {
-      name: "Samsung Galaxy Tab S9",
-      sku: "SAMS-TAB-001",
-      purchaseRate: 45000,
-      salesRate: 55000,
-      currentStock: 25,
-      category: "Electronics",
-      vendor: "Samsung India Electronics",
-    },
-    {
-      name: "iPad Pro 12.9",
-      sku: "APPLE-IPAD-001",
-      purchaseRate: 75000,
-      salesRate: 85000,
-      currentStock: 18,
-      category: "Electronics",
-      vendor: "Apple India Pvt Ltd",
-    },
-    {
-      name: "Canon EOS R6",
-      sku: "CANON-EOS-001",
-      purchaseRate: 180000,
-      salesRate: 220000,
-      currentStock: 5,
-      category: "Electronics",
-      vendor: "Canon India Pvt Ltd",
-    },
-    {
-      name: "Epson EcoTank L3210",
-      sku: "EPSON-ECO-001",
-      purchaseRate: 8000,
-      salesRate: 12000,
-      currentStock: 30,
-      category: "Electronics",
-      vendor: "Epson India Pvt Ltd",
-    },
-    {
-      name: "Brother HL-L2350DW",
-      sku: "BROTHER-HL-001",
-      purchaseRate: 12000,
-      salesRate: 16000,
-      currentStock: 35,
-      category: "Electronics",
-      vendor: "Brother International India",
-    },
-    {
-      name: "Seagate Barracuda 2TB",
-      sku: "SEAGATE-2TB-001",
-      purchaseRate: 4500,
-      salesRate: 6000,
-      currentStock: 80,
-      category: "Electronics",
-      vendor: "Seagate Technology India",
-    },
-    {
-      name: "Western Digital Blue 1TB",
-      sku: "WD-BLUE-1TB-001",
-      purchaseRate: 3500,
-      salesRate: 4800,
-      currentStock: 90,
-      category: "Electronics",
-      vendor: "Western Digital India",
-    },
-    {
-      name: "Kingston Fury 16GB RAM",
-      sku: "KINGSTON-16GB-001",
-      purchaseRate: 3500,
-      salesRate: 4800,
-      currentStock: 150,
-      category: "Electronics",
-      vendor: "Kingston Technology India",
-    },
-    {
-      name: "Corsair Vengeance 32GB RAM",
-      sku: "CORSAIR-32GB-001",
-      purchaseRate: 7000,
-      salesRate: 9500,
-      currentStock: 75,
-      category: "Electronics",
-      vendor: "Corsair India Pvt Ltd",
-    },
-    {
-      name: "Razer BlackWidow Keyboard",
-      sku: "RAZER-BW-001",
-      purchaseRate: 8000,
-      salesRate: 11000,
-      currentStock: 40,
-      category: "Electronics",
-      vendor: "Razer India Pvt Ltd",
-    },
-    {
-      name: "Microsoft Surface Pro 9",
-      sku: "MS-SURFACE-001",
-      purchaseRate: 95000,
-      salesRate: 115000,
-      currentStock: 8,
-      category: "Electronics",
-      vendor: "Microsoft India Pvt Ltd",
-    },
-    {
-      name: "Cisco Catalyst 2960 Switch",
-      sku: "CISCO-CAT-001",
-      purchaseRate: 25000,
-      salesRate: 35000,
-      currentStock: 20,
-      category: "Electronics",
-      vendor: "Cisco Systems India Pvt Ltd",
-    },
-    {
-      name: "Intel Core i7-12700K",
-      sku: "INTEL-I7-001",
-      purchaseRate: 28000,
-      salesRate: 38000,
-      currentStock: 45,
-      category: "Electronics",
-      vendor: "Intel India Pvt Ltd",
-    },
-    {
-      name: "ASUS ROG Strix G15",
-      sku: "ASUS-ROG-001",
-      purchaseRate: 85000,
-      salesRate: 105000,
-      currentStock: 12,
-      category: "Electronics",
-      vendor: "ASUS India Pvt Ltd",
-    },
-    {
-      name: "Acer Predator Helios 300",
-      sku: "ACER-PRED-001",
-      purchaseRate: 75000,
-      salesRate: 95000,
-      currentStock: 15,
-      category: "Electronics",
-      vendor: "Acer India Pvt Ltd",
-    },
-    {
-      name: "Standing Desk Adjustable",
-      sku: "FURN-DESK-001",
-      purchaseRate: 18000,
-      salesRate: 25000,
-      currentStock: 25,
-      category: "Furniture",
-      vendor: "Dell Technologies India",
-    },
-    {
-      name: "Ergonomic Office Chair",
-      sku: "FURN-ERG-001",
-      purchaseRate: 15000,
-      salesRate: 20000,
-      currentStock: 30,
-      category: "Furniture",
-      vendor: "HP India Sales Pvt Ltd",
-    },
-    {
-      name: "Conference Table 8-Seater",
-      sku: "FURN-CONF-001",
-      purchaseRate: 35000,
-      salesRate: 45000,
-      currentStock: 8,
-      category: "Furniture",
-      vendor: "Lenovo India Pvt Ltd",
-    },
-    {
-      name: "Filing Cabinet 4-Drawer",
-      sku: "FURN-FILE-001",
-      purchaseRate: 8000,
-      salesRate: 12000,
-      currentStock: 40,
-      category: "Furniture",
-      vendor: "Samsung India Electronics",
-    },
-    {
-      name: "Whiteboard 4x6 Feet",
-      sku: "FURN-WB-001",
-      purchaseRate: 3000,
-      salesRate: 4500,
-      currentStock: 60,
-      category: "Furniture",
-      vendor: "LG Electronics India",
-    },
-  ],
+  
 }
 
 async function seedDatabase() {
@@ -644,22 +274,40 @@ async function seedDatabase() {
     }
     console.log(`Created ${customers.length} customers`)
 
-    // Seed Products
+    // Seed Categories
+    console.log("Seeding product categories...")
+    const categories = []
+    const categoryNameToId = {}
+    for (const catData of categorySeed) {
+      try {
+        const category = new ProductCategory({
+          ...catData,
+          createdBy: users[0]._id, // Admin user creates all categories
+        })
+        await category.save()
+        categories.push(category)
+        categoryNameToId[category.name] = category._id
+      } catch (error) {
+        console.error(`Error creating category ${catData.name}:`, error.message)
+      }
+    }
+    console.log(`Created ${categories.length} categories`)
+
+    // Seed Products (new logic)
     console.log("Seeding products...")
     const products = []
-    const productMap = {} // Map to store products by name for easy lookup
-    
-    for (const productData of sampleData.products) {
+    const productMap = {}
+    for (const prodData of productSeed(categoryNameToId)) {
       try {
         const product = new Product({
-          ...productData,
+          ...prodData,
           createdBy: users[0]._id, // Admin user creates all products
         })
         await product.save()
         products.push(product)
-        productMap[product.name] = product // Store by name for lookup
+        productMap[product.name] = product
       } catch (error) {
-        console.error(`Error creating product ${productData.name}:`, error.message)
+        console.error(`Error creating product ${prodData.name}:`, error.message)
       }
     }
     console.log(`Created ${products.length} products`)
@@ -679,344 +327,961 @@ async function seedDatabase() {
 
     // Create sample Purchase Orders
     console.log("Creating sample purchase orders...")
-    const purchaseOrders = [
+    const purchaseOrdersData = [
       {
-        poNumber: "PO-2024-001",
-        vendor: "Apple India Pvt Ltd",
+        vendor: "UltraTech Cement Ltd.",
         status: "approved",
-        orderDate: new Date("2024-02-18"),
+        orderDate: new Date("2024-03-01"),
         items: [
-          {
-            productId: getProductByName("iPhone 15 Pro")._id,
-            productName: "iPhone 15 Pro",
-            quantity: 20,
-            unitPrice: 85000,
-            total: 1700000,
-          },
+          { productId: getProductByName("UltraTech OPC 53 Grade Cement")._id, productName: "UltraTech OPC 53 Grade Cement", quantity: 100, unitPrice: 370, total: 37000 },
         ],
-        subtotal: 1700000,
-        total: 1904000,
-        createdBy: users[0]._id,
+        subtotal: 37000, total: 37000, createdBy: users[0]._id,
       },
       {
-        poNumber: "PO-2024-002",
-        vendor: "Dell Technologies India",
+        vendor: "Tata Steel",
         status: "pending",
-        orderDate: new Date("2024-02-20"),
+        orderDate: new Date("2024-03-02"),
         items: [
-          {
-            productId: getProductByName("Dell Latitude 5520")._id,
-            productName: "Dell Latitude 5520",
-            quantity: 15,
-            unitPrice: 65000,
-            total: 975000,
-          },
-          {
-            productId: getProductByName("Standing Desk Adjustable")._id,
-            productName: "Standing Desk Adjustable",
-            quantity: 10,
-            unitPrice: 18000,
-            total: 180000,
-          },
+          { productId: getProductByName("TMT Steel Bar 12mm")._id, productName: "TMT Steel Bar 12mm", quantity: 200, unitPrice: 700, total: 140000 },
         ],
-        subtotal: 1155000,
-        total: 1293600,
-        createdBy: users[1]._id,
+        subtotal: 140000, total: 140000, createdBy: users[1]._id,
       },
       {
-        poNumber: "PO-2024-003",
-        vendor: "HP India Sales Pvt Ltd",
+        vendor: "Siporex",
         status: "delivered",
-        orderDate: new Date("2024-02-15"),
+        orderDate: new Date("2024-03-03"),
         items: [
-          {
-            productId: getProductByName("HP EliteBook 840")._id,
-            productName: "HP EliteBook 840",
-            quantity: 12,
-            unitPrice: 70000,
-            total: 840000,
-          },
-          {
-            productId: getProductByName("Ergonomic Office Chair")._id,
-            productName: "Ergonomic Office Chair",
-            quantity: 20,
-            unitPrice: 15000,
-            total: 300000,
-          },
+          { productId: getProductByName("AAC Block 600x200x200mm")._id, productName: "AAC Block 600x200x200mm", quantity: 500, unitPrice: 70, total: 35000 },
         ],
-        subtotal: 1140000,
-        total: 1276800,
-        createdBy: users[0]._id,
+        subtotal: 35000, total: 35000, createdBy: users[2]._id,
       },
       {
-        poNumber: "PO-2024-004",
-        vendor: "Lenovo India Pvt Ltd",
+        vendor: "Pidilite Industries",
         status: "approved",
-        orderDate: new Date("2024-02-22"),
+        orderDate: new Date("2024-03-04"),
         items: [
-          {
-            productId: getProductByName("Lenovo ThinkPad X1")._id,
-            productName: "Lenovo ThinkPad X1",
-            quantity: 8,
-            unitPrice: 95000,
-            total: 760000,
-          },
-          {
-            productId: getProductByName("Conference Table 8-Seater")._id,
-            productName: "Conference Table 8-Seater",
-            quantity: 3,
-            unitPrice: 35000,
-            total: 105000,
-          },
+          { productId: getProductByName("Dr. Fixit LW+ Waterproofing Liquid (1L)")._id, productName: "Dr. Fixit LW+ Waterproofing Liquid (1L)", quantity: 60, unitPrice: 280, total: 16800 },
         ],
-        subtotal: 865000,
-        total: 968800,
-        createdBy: users[1]._id,
+        subtotal: 16800, total: 16800, createdBy: users[0]._id,
       },
       {
-        poNumber: "PO-2024-005",
-        vendor: "Samsung India Electronics",
+        vendor: "Ashirvad Pipes",
         status: "draft",
-        orderDate: new Date("2024-02-25"),
+        orderDate: new Date("2024-03-05"),
         items: [
-          {
-            productId: getProductByName("Samsung Galaxy Tab S9")._id,
-            productName: "Samsung Galaxy Tab S9",
-            quantity: 25,
-            unitPrice: 45000,
-            total: 1125000,
-          },
-          {
-            productId: getProductByName("Filing Cabinet 4-Drawer")._id,
-            productName: "Filing Cabinet 4-Drawer",
-            quantity: 15,
-            unitPrice: 8000,
-            total: 120000,
-          },
+          { productId: getProductByName("CPVC Pipe 1 inch (3m)")._id, productName: "CPVC Pipe 1 inch (3m)", quantity: 120, unitPrice: 220, total: 26400 },
         ],
-        subtotal: 1245000,
-        total: 1394400,
-        createdBy: users[2]._id,
+        subtotal: 26400, total: 26400, createdBy: users[1]._id,
+      },
+      {
+        vendor: "Tata Bluescope Steel",
+        status: "approved",
+        orderDate: new Date("2024-03-06"),
+        items: [
+          { productId: getProductByName("Tata Bluescope Steel (Zinc Coated)")._id, productName: "Tata Bluescope Steel (Zinc Coated)", quantity: 50, unitPrice: 1300, total: 65000 },
+        ],
+        subtotal: 65000, total: 65000, createdBy: users[2]._id,
+      },
+      {
+        vendor: "JCB India Ltd.",
+        status: "pending",
+        orderDate: new Date("2024-03-07"),
+        items: [
+          { productId: getProductByName("JCB 3CX Excavator")._id, productName: "JCB 3CX Excavator", quantity: 2, unitPrice: 1600000, total: 3200000 },
+        ],
+        subtotal: 3200000, total: 3200000, createdBy: users[0]._id,
+      },
+      {
+        vendor: "Leica Geosystems",
+        status: "delivered",
+        orderDate: new Date("2024-03-08"),
+        items: [
+          { productId: getProductByName("Leica TS06 Total Station")._id, productName: "Leica TS06 Total Station", quantity: 1, unitPrice: 1300000, total: 1300000 },
+        ],
+        subtotal: 1300000, total: 1300000, createdBy: users[1]._id,
+      },
+      {
+        vendor: "Bosch Power Tools",
+        status: "approved",
+        orderDate: new Date("2024-03-09"),
+        items: [
+          { productId: getProductByName("Bosch GSR 18V-20 Cordless Drill")._id, productName: "Bosch GSR 18V-20 Cordless Drill", quantity: 30, unitPrice: 5000, total: 150000 },
+        ],
+        subtotal: 150000, total: 150000, createdBy: users[2]._id,
+      },
+      {
+        vendor: "3M India",
+        status: "pending",
+        orderDate: new Date("2024-03-10"),
+        items: [
+          { productId: getProductByName("3M 9002 N95 Respiratory Protection Mask")._id, productName: "3M 9002 N95 Respiratory Protection Mask", quantity: 500, unitPrice: 180, total: 90000 },
+        ],
+        subtotal: 90000, total: 90000, createdBy: users[0]._id,
+      },
+      {
+        vendor: "Alufase",
+        status: "approved",
+        orderDate: new Date("2024-03-11"),
+        items: [
+          { productId: getProductByName("Alufase 100x100x25mm Scaffold Sheet")._id, productName: "Alufase 100x100x25mm Scaffold Sheet", quantity: 200, unitPrice: 130, total: 26000 },
+        ],
+        subtotal: 26000, total: 26000, createdBy: users[1]._id,
+      },
+      {
+        vendor: "Hilti India",
+        status: "delivered",
+        orderDate: new Date("2024-03-12"),
+        items: [
+          { productId: getProductByName("Hilti TKI 1000-10000 Nm Torque Wrench")._id, productName: "Hilti TKI 1000-10000 Nm Torque Wrench", quantity: 10, unitPrice: 20000, total: 200000 },
+        ],
+        subtotal: 200000, total: 200000, createdBy: users[2]._id,
+      },
+      {
+        vendor: "Greenply",
+        status: "approved",
+        orderDate: new Date("2024-03-13"),
+        items: [
+          { productId: getProductByName("Greenply 18mm MDF Board")._id, productName: "Greenply 18mm MDF Board", quantity: 100, unitPrice: 135, total: 13500 },
+        ],
+        subtotal: 13500, total: 13500, createdBy: users[0]._id,
+      },
+      {
+        vendor: "Havells",
+        status: "pending",
+        orderDate: new Date("2024-03-14"),
+        items: [
+          { productId: getProductByName("Havells 1000W Ceiling Fan")._id, productName: "Havells 1000W Ceiling Fan", quantity: 40, unitPrice: 1600, total: 64000 },
+        ],
+        subtotal: 64000, total: 64000, createdBy: users[1]._id,
+      },
+      {
+        vendor: "Local Supplier",
+        status: "approved",
+        orderDate: new Date("2024-03-15"),
+        items: [
+          { productId: getProductByName("Local Supplier - Concrete Mix (1m³)")._id, productName: "Local Supplier - Concrete Mix (1m³)", quantity: 10, unitPrice: 3200, total: 32000 },
+        ],
+        subtotal: 32000, total: 32000, createdBy: users[2]._id,
+      },
+      {
+        vendor: "Local Supplier",
+        status: "delivered",
+        orderDate: new Date("2024-03-16"),
+        items: [
+          { productId: getProductByName("Local Supplier - Brick (1000 Nos)")._id, productName: "Local Supplier - Brick (1000 Nos)", quantity: 100, unitPrice: 12, total: 1200 },
+        ],
+        subtotal: 1200, total: 1200, createdBy: users[0]._id,
+      },
+      {
+        vendor: "UltraTech Cement Ltd.",
+        status: "approved",
+        orderDate: new Date("2024-03-17"),
+        items: [
+          { productId: getProductByName("UltraTech OPC 53 Grade Cement")._id, productName: "UltraTech OPC 53 Grade Cement", quantity: 80, unitPrice: 370, total: 29600 },
+        ],
+        subtotal: 29600, total: 29600, createdBy: users[1]._id,
+      },
+      {
+        vendor: "Tata Steel",
+        status: "pending",
+        orderDate: new Date("2024-03-18"),
+        items: [
+          { productId: getProductByName("TMT Steel Bar 12mm")._id, productName: "TMT Steel Bar 12mm", quantity: 150, unitPrice: 700, total: 105000 },
+        ],
+        subtotal: 105000, total: 105000, createdBy: users[2]._id,
+      },
+      {
+        vendor: "Siporex",
+        status: "delivered",
+        orderDate: new Date("2024-03-19"),
+        items: [
+          { productId: getProductByName("AAC Block 600x200x200mm")._id, productName: "AAC Block 600x200x200mm", quantity: 300, unitPrice: 70, total: 21000 },
+        ],
+        subtotal: 21000, total: 21000, createdBy: users[0]._id,
+      },
+      {
+        vendor: "Pidilite Industries",
+        status: "approved",
+        orderDate: new Date("2024-03-20"),
+        items: [
+          { productId: getProductByName("Dr. Fixit LW+ Waterproofing Liquid (1L)")._id, productName: "Dr. Fixit LW+ Waterproofing Liquid (1L)", quantity: 40, unitPrice: 280, total: 11200 },
+        ],
+        subtotal: 11200, total: 11200, createdBy: users[1]._id,
       },
     ]
-
-    for (const poData of purchaseOrders) {
+    const purchaseOrders = []
+    const poRefMap = {}
+    for (const poData of purchaseOrdersData) {
       try {
         const po = new PurchaseOrder(poData)
         await po.save()
+        purchaseOrders.push(po)
+        poRefMap[po.vendor] = { _id: po._id, ref_num: po.ref_num }
       } catch (error) {
-        console.error(`Error creating purchase order ${poData.poNumber}:`, error.message)
+        console.error(`Error creating purchase order for vendor ${poData.vendor}:`, error.message)
       }
     }
     console.log(`Created ${purchaseOrders.length} purchase orders`)
 
+    // Create sample Purchases
+    console.log("Creating sample purchases...")
+    const purchasesData = [
+      {
+        vendor: "UltraTech Cement Ltd.",
+        purchaseDate: new Date("2024-03-02"),
+        items: [
+          {
+            productId: getProductByName("UltraTech OPC 53 Grade Cement")._id,
+            productName: "UltraTech OPC 53 Grade Cement",
+            quantity: 50,
+            unitPrice: 370,
+            total: 18500,
+          },
+        ],
+        subtotal: 18500,
+        invoiceFile: "invoice-ut-001.pdf",
+        createdBy: users[0]._id,
+        relatedPO: poRefMap["UltraTech Cement Ltd."]._id,
+      },
+      {
+        vendor: "Tata Steel",
+        purchaseDate: new Date("2024-03-03"),
+        items: [
+          {
+            productId: getProductByName("TMT Steel Bar 12mm")._id,
+            productName: "TMT Steel Bar 12mm",
+            quantity: 200,
+            unitPrice: 700,
+            total: 140000,
+          },
+        ],
+        subtotal: 140000,
+        invoiceFile: "invoice-tata-001.pdf",
+        createdBy: users[1]._id,
+        relatedPO: poRefMap["Tata Steel"]._id,
+      },
+      {
+        vendor: "Siporex",
+        purchaseDate: new Date("2024-03-04"),
+        items: [
+          {
+            productId: getProductByName("AAC Block 600x200x200mm")._id,
+            productName: "AAC Block 600x200x200mm",
+            quantity: 500,
+            unitPrice: 70,
+            total: 35000,
+          },
+        ],
+        subtotal: 35000,
+        invoiceFile: "invoice-siporex-001.pdf",
+        createdBy: users[2]._id,
+        relatedPO: poRefMap["Siporex"]._id,
+      },
+      {
+        vendor: "Pidilite Industries",
+        purchaseDate: new Date("2024-03-05"),
+        items: [
+          {
+            productId: getProductByName("Dr. Fixit LW+ Waterproofing Liquid (1L)")._id,
+            productName: "Dr. Fixit LW+ Waterproofing Liquid (1L)",
+            quantity: 60,
+            unitPrice: 280,
+            total: 16800,
+          },
+        ],
+        subtotal: 16800,
+        invoiceFile: "invoice-pidilite-001.pdf",
+        createdBy: users[0]._id,
+        relatedPO: poRefMap["Pidilite Industries"]._id,
+      },
+      {
+        vendor: "Ashirvad Pipes",
+        purchaseDate: new Date("2024-03-06"),
+        items: [
+          {
+            productId: getProductByName("CPVC Pipe 1 inch (3m)")._id,
+            productName: "CPVC Pipe 1 inch (3m)",
+            quantity: 120,
+            unitPrice: 220,
+            total: 26400,
+          },
+        ],
+        subtotal: 26400,
+        invoiceFile: "invoice-ashirvad-001.pdf",
+        createdBy: users[1]._id,
+        relatedPO: poRefMap["Ashirvad Pipes"]._id,
+      },
+      {
+        vendor: "Tata Bluescope Steel",
+        purchaseDate: new Date("2024-03-07"),
+        items: [
+          {
+            productId: getProductByName("Tata Bluescope Steel (Zinc Coated)")._id,
+            productName: "Tata Bluescope Steel (Zinc Coated)",
+            quantity: 50,
+            unitPrice: 1300,
+            total: 65000,
+          },
+        ],
+        subtotal: 65000,
+        invoiceFile: "invoice-tatabluescope-001.pdf",
+        createdBy: users[2]._id,
+        relatedPO: poRefMap["Tata Bluescope Steel"]._id,
+      },
+      {
+        vendor: "JCB India Ltd.",
+        purchaseDate: new Date("2024-03-08"),
+        items: [
+          {
+            productId: getProductByName("JCB 3CX Excavator")._id,
+            productName: "JCB 3CX Excavator",
+            quantity: 2,
+            unitPrice: 1600000,
+            total: 3200000,
+          },
+        ],
+        subtotal: 3200000,
+        invoiceFile: "invoice-jcb-001.pdf",
+        createdBy: users[0]._id,
+        relatedPO: poRefMap["JCB India Ltd."]._id,
+      },
+      {
+        vendor: "Leica Geosystems",
+        purchaseDate: new Date("2024-03-09"),
+        items: [
+          {
+            productId: getProductByName("Leica TS06 Total Station")._id,
+            productName: "Leica TS06 Total Station",
+            quantity: 1,
+            unitPrice: 1300000,
+            total: 1300000,
+          },
+        ],
+        subtotal: 1300000,
+        invoiceFile: "invoice-leica-001.pdf",
+        createdBy: users[1]._id,
+        relatedPO: poRefMap["Leica Geosystems"]._id,
+      },
+      {
+        vendor: "Bosch Power Tools",
+        purchaseDate: new Date("2024-03-10"),
+        items: [
+          {
+            productId: getProductByName("Bosch GSR 18V-20 Cordless Drill")._id,
+            productName: "Bosch GSR 18V-20 Cordless Drill",
+            quantity: 30,
+            unitPrice: 5000,
+            total: 150000,
+          },
+        ],
+        subtotal: 150000,
+        invoiceFile: "invoice-bosch-001.pdf",
+        createdBy: users[2]._id,
+        relatedPO: poRefMap["Bosch Power Tools"]._id,
+      },
+      {
+        vendor: "3M India",
+        purchaseDate: new Date("2024-03-11"),
+        items: [
+          {
+            productId: getProductByName("3M 9002 N95 Respiratory Protection Mask")._id,
+            productName: "3M 9002 N95 Respiratory Protection Mask",
+            quantity: 500,
+            unitPrice: 180,
+            total: 90000,
+          },
+        ],
+        subtotal: 90000,
+        invoiceFile: "invoice-3m-001.pdf",
+        createdBy: users[0]._id,
+        relatedPO: poRefMap["3M India"]._id,
+      },
+      {
+        vendor: "Alufase",
+        purchaseDate: new Date("2024-03-12"),
+        items: [
+          {
+            productId: getProductByName("Alufase 100x100x25mm Scaffold Sheet")._id,
+            productName: "Alufase 100x100x25mm Scaffold Sheet",
+            quantity: 200,
+            unitPrice: 130,
+            total: 26000,
+          },
+        ],
+        subtotal: 26000,
+        invoiceFile: "invoice-alufase-001.pdf",
+        createdBy: users[1]._id,
+        relatedPO: poRefMap["Alufase"]._id,
+      },
+      {
+        vendor: "Hilti India",
+        purchaseDate: new Date("2024-03-13"),
+        items: [
+          {
+            productId: getProductByName("Hilti TKI 1000-10000 Nm Torque Wrench")._id,
+            productName: "Hilti TKI 1000-10000 Nm Torque Wrench",
+            quantity: 10,
+            unitPrice: 20000,
+            total: 200000,
+          },
+        ],
+        subtotal: 200000,
+        invoiceFile: "invoice-hilti-001.pdf",
+        createdBy: users[2]._id,
+        relatedPO: poRefMap["Hilti India"]._id,
+      },
+      {
+        vendor: "Greenply",
+        purchaseDate: new Date("2024-03-14"),
+        items: [
+          {
+            productId: getProductByName("Greenply 18mm MDF Board")._id,
+            productName: "Greenply 18mm MDF Board",
+            quantity: 100,
+            unitPrice: 135,
+            total: 13500,
+          },
+        ],
+        subtotal: 13500,
+        invoiceFile: "invoice-greenply-001.pdf",
+        createdBy: users[0]._id,
+        relatedPO: poRefMap["Greenply"]._id,
+      },
+      {
+        vendor: "Havells",
+        purchaseDate: new Date("2024-03-15"),
+        items: [
+          {
+            productId: getProductByName("Havells 1000W Ceiling Fan")._id,
+            productName: "Havells 1000W Ceiling Fan",
+            quantity: 40,
+            unitPrice: 1600,
+            total: 64000,
+          },
+        ],
+        subtotal: 64000,
+        invoiceFile: "invoice-havells-001.pdf",
+        createdBy: users[1]._id,
+        relatedPO: poRefMap["Havells"]._id,
+      },
+      {
+        vendor: "Local Supplier",
+        purchaseDate: new Date("2024-03-16"),
+        items: [
+          {
+            productId: getProductByName("Local Supplier - Concrete Mix (1m³)")._id,
+            productName: "Local Supplier - Concrete Mix (1m³)",
+            quantity: 10,
+            unitPrice: 3200,
+            total: 32000,
+          },
+        ],
+        subtotal: 32000,
+        invoiceFile: "invoice-localsupplier-001.pdf",
+        createdBy: users[2]._id,
+        relatedPO: poRefMap["Local Supplier"]._id,
+      },
+      {
+        vendor: "Local Supplier",
+        purchaseDate: new Date("2024-03-17"),
+        items: [
+          {
+            productId: getProductByName("Local Supplier - Brick (1000 Nos)")._id,
+            productName: "Local Supplier - Brick (1000 Nos)",
+            quantity: 100,
+            unitPrice: 12,
+            total: 1200,
+          },
+        ],
+        subtotal: 1200,
+        invoiceFile: "invoice-localsupplier-002.pdf",
+        createdBy: users[0]._id,
+        relatedPO: poRefMap["Local Supplier"]._id,
+      },
+      {
+        vendor: "UltraTech Cement Ltd.",
+        purchaseDate: new Date("2024-03-18"),
+        items: [
+          {
+            productId: getProductByName("UltraTech OPC 53 Grade Cement")._id,
+            productName: "UltraTech OPC 53 Grade Cement",
+            quantity: 80,
+            unitPrice: 370,
+            total: 29600,
+          },
+        ],
+        subtotal: 29600,
+        invoiceFile: "invoice-ultratech-002.pdf",
+        createdBy: users[1]._id,
+        relatedPO: poRefMap["UltraTech Cement Ltd."]._id,
+      },
+      {
+        vendor: "Tata Steel",
+        purchaseDate: new Date("2024-03-19"),
+        items: [
+          {
+            productId: getProductByName("TMT Steel Bar 12mm")._id,
+            productName: "TMT Steel Bar 12mm",
+            quantity: 150,
+            unitPrice: 700,
+            total: 105000,
+          },
+        ],
+        subtotal: 105000,
+        invoiceFile: "invoice-tatasteel-002.pdf",
+        createdBy: users[2]._id,
+        relatedPO: poRefMap["Tata Steel"]._id,
+      },
+      {
+        vendor: "Siporex",
+        purchaseDate: new Date("2024-03-20"),
+        items: [
+          {
+            productId: getProductByName("AAC Block 600x200x200mm")._id,
+            productName: "AAC Block 600x200x200mm",
+            quantity: 300,
+            unitPrice: 70,
+            total: 21000,
+          },
+        ],
+        subtotal: 21000,
+        invoiceFile: "invoice-siporex-002.pdf",
+        createdBy: users[0]._id,
+        relatedPO: poRefMap["Siporex"]._id,
+      },
+      {
+        vendor: "Pidilite Industries",
+        purchaseDate: new Date("2024-03-21"),
+        items: [
+          {
+            productId: getProductByName("Dr. Fixit LW+ Waterproofing Liquid (1L)")._id,
+            productName: "Dr. Fixit LW+ Waterproofing Liquid (1L)",
+            quantity: 40,
+            unitPrice: 280,
+            total: 11200,
+          },
+        ],
+        subtotal: 11200,
+        invoiceFile: "invoice-pidilite-002.pdf",
+        createdBy: users[1]._id,
+        relatedPO: poRefMap["Pidilite Industries"]._id,
+      },
+    ]
+    for (const purchaseData of purchasesData) {
+      try {
+        const purchase = new Purchase(purchaseData)
+        await purchase.save()
+      } catch (error) {
+        console.error(`Error creating purchase for vendor ${purchaseData.vendor}:`, error.message)
+      }
+    }
+    console.log(`Created ${purchasesData.length} purchases`)
+
     // Create sample Sales
     console.log("Creating sample sales...")
-    const sales = [
+    const salesData = [
       {
         invoiceNumber: "INV-2024-001",
         customerName: "Tech Solutions Corp",
         customerEmail: "contact@techsolutions.com",
-        saleDate: new Date("2024-02-22"),
+        saleDate: new Date("2024-03-03"),
         items: [
           {
-            productId: getProductByName("iPhone 15 Pro")._id,
-            productName: "iPhone 15 Pro",
-            quantity: 3,
-            unitPrice: 95000,
-            total: 285000,
+            productId: getProductByName("UltraTech OPC 53 Grade Cement")._id,
+            productName: "UltraTech OPC 53 Grade Cement",
+            quantity: 10,
+            unitPrice: 400,
+            total: 4000,
           },
         ],
-        subtotal: 285000,
-        total: 319200,
+        subtotal: 4000,
+        total: 4480,
         status: "paid",
         createdBy: users[1]._id,
+        notes: `Linked PO Ref: ${poRefMap["UltraTech Cement Ltd."].ref_num}`,
       },
       {
         invoiceNumber: "INV-2024-002",
         customerName: "Business Center Ltd",
         customerEmail: "orders@businesscenter.com",
-        saleDate: new Date("2024-02-23"),
+        saleDate: new Date("2024-03-04"),
         items: [
           {
-            productId: getProductByName("Dell Latitude 5520")._id,
-            productName: "Dell Latitude 5520",
-            quantity: 5,
-            unitPrice: 75000,
-            total: 375000,
-          },
-          {
-            productId: getProductByName("Standing Desk Adjustable")._id,
-            productName: "Standing Desk Adjustable",
-            quantity: 8,
-            unitPrice: 25000,
-            total: 200000,
+            productId: getProductByName("TMT Steel Bar 12mm")._id,
+            productName: "TMT Steel Bar 12mm",
+            quantity: 50,
+            unitPrice: 720,
+            total: 36000,
           },
         ],
-        subtotal: 575000,
-        total: 644000,
-        status: "paid",
-        createdBy: users[0]._id,
+        subtotal: 36000,
+        total: 39600,
+        status: "pending",
+        createdBy: users[2]._id,
+        notes: `Linked PO Ref: ${poRefMap["Tata Steel"].ref_num}`,
       },
       {
         invoiceNumber: "INV-2024-003",
         customerName: "Global Tech Ltd",
         customerEmail: "info@globaltech.com",
-        saleDate: new Date("2024-02-24"),
+        saleDate: new Date("2024-03-05"),
         items: [
           {
-            productId: getProductByName("HP EliteBook 840")._id,
-            productName: "HP EliteBook 840",
-            quantity: 4,
-            unitPrice: 82000,
-            total: 328000,
-          },
-          {
-            productId: getProductByName("Ergonomic Office Chair")._id,
-            productName: "Ergonomic Office Chair",
-            quantity: 12,
-            unitPrice: 20000,
-            total: 240000,
+            productId: getProductByName("AAC Block 600x200x200mm")._id,
+            productName: "AAC Block 600x200x200mm",
+            quantity: 100,
+            unitPrice: 75,
+            total: 7500,
           },
         ],
-        subtotal: 568000,
-        total: 636160,
-        status: "pending",
-        createdBy: users[1]._id,
+        subtotal: 7500,
+        total: 8250,
+        status: "paid",
+        createdBy: users[0]._id,
+        notes: `Linked PO Ref: ${poRefMap["Siporex"].ref_num}`,
       },
       {
         invoiceNumber: "INV-2024-004",
         customerName: "Digital Innovations Pvt Ltd",
         customerEmail: "sales@digitalinnovations.co.in",
-        saleDate: new Date("2024-02-25"),
+        saleDate: new Date("2024-03-06"),
         items: [
           {
-            productId: getProductByName("Lenovo ThinkPad X1")._id,
-            productName: "Lenovo ThinkPad X1",
-            quantity: 6,
-            unitPrice: 110000,
-            total: 660000,
-          },
-          {
-            productId: getProductByName("Conference Table 8-Seater")._id,
-            productName: "Conference Table 8-Seater",
-            quantity: 2,
-            unitPrice: 45000,
-            total: 90000,
+            productId: getProductByName("Dr. Fixit LW+ Waterproofing Liquid (1L)")._id,
+            productName: "Dr. Fixit LW+ Waterproofing Liquid (1L)",
+            quantity: 20,
+            unitPrice: 290,
+            total: 5800,
           },
         ],
-        subtotal: 750000,
-        total: 840000,
-        status: "paid",
-        createdBy: users[0]._id,
+        subtotal: 5800,
+        total: 6380,
+        status: "pending",
+        createdBy: users[1]._id,
+        notes: `Linked PO Ref: ${poRefMap["Pidilite Industries"].ref_num}`,
       },
       {
         invoiceNumber: "INV-2024-005",
         customerName: "Smart Solutions India",
         customerEmail: "contact@smartsolutions.co.in",
-        saleDate: new Date("2024-02-26"),
+        saleDate: new Date("2024-03-07"),
         items: [
           {
-            productId: getProductByName("Samsung Galaxy Tab S9")._id,
-            productName: "Samsung Galaxy Tab S9",
-            quantity: 10,
-            unitPrice: 55000,
-            total: 550000,
-          },
-          {
-            productId: getProductByName("Filing Cabinet 4-Drawer")._id,
-            productName: "Filing Cabinet 4-Drawer",
-            quantity: 8,
-            unitPrice: 12000,
-            total: 96000,
+            productId: getProductByName("CPVC Pipe 1 inch (3m)")._id,
+            productName: "CPVC Pipe 1 inch (3m)",
+            quantity: 50,
+            unitPrice: 230,
+            total: 11500,
           },
         ],
-        subtotal: 646000,
-        total: 723520,
+        subtotal: 11500,
+        total: 12650,
         status: "paid",
         createdBy: users[2]._id,
+        notes: `Linked PO Ref: ${poRefMap["Ashirvad Pipes"].ref_num}`,
       },
       {
         invoiceNumber: "INV-2024-006",
         customerName: "Future Technologies",
         customerEmail: "info@futuretech.co.in",
-        saleDate: new Date("2024-02-27"),
+        saleDate: new Date("2024-03-08"),
         items: [
           {
-            productId: getProductByName("iPad Pro 12.9")._id,
-            productName: "iPad Pro 12.9",
-            quantity: 8,
-            unitPrice: 85000,
-            total: 680000,
-          },
-          {
-            productId: getProductByName("Whiteboard 4x6 Feet")._id,
-            productName: "Whiteboard 4x6 Feet",
-            quantity: 15,
-            unitPrice: 4500,
-            total: 67500,
+            productId: getProductByName("Tata Bluescope Steel (Zinc Coated)")._id,
+            productName: "Tata Bluescope Steel (Zinc Coated)",
+            quantity: 10,
+            unitPrice: 1350,
+            total: 13500,
           },
         ],
-        subtotal: 747500,
-        total: 837200,
+        subtotal: 13500,
+        total: 14850,
         status: "paid",
-        createdBy: users[1]._id,
+        createdBy: users[0]._id,
+        notes: `Linked PO Ref: ${poRefMap["Tata Bluescope Steel"].ref_num}`,
       },
       {
         invoiceNumber: "INV-2024-007",
         customerName: "Innovation Hub Pvt Ltd",
         customerEmail: "orders@innovationhub.co.in",
-        saleDate: new Date("2024-02-28"),
+        saleDate: new Date("2024-03-09"),
         items: [
           {
-            productId: getProductByName("Canon EOS R6")._id,
-            productName: "Canon EOS R6",
-            quantity: 2,
-            unitPrice: 220000,
-            total: 440000,
-          },
-          {
-            productId: getProductByName("Epson EcoTank L3210")._id,
-            productName: "Epson EcoTank L3210",
-            quantity: 5,
-            unitPrice: 12000,
-            total: 60000,
+            productId: getProductByName("JCB 3CX Excavator")._id,
+            productName: "JCB 3CX Excavator",
+            quantity: 1,
+            unitPrice: 1600000,
+            total: 1600000,
           },
         ],
-        subtotal: 500000,
-        total: 560000,
-        status: "pending",
-        createdBy: users[0]._id,
+        subtotal: 1600000,
+        total: 1760000,
+        status: "paid",
+        createdBy: users[1]._id,
+        notes: `Linked PO Ref: ${poRefMap["JCB India Ltd."].ref_num}`,
       },
       {
         invoiceNumber: "INV-2024-008",
         customerName: "Tech Pioneers India",
         customerEmail: "sales@techpioneers.co.in",
-        saleDate: new Date("2024-03-01"),
+        saleDate: new Date("2024-03-10"),
         items: [
           {
-            productId: getProductByName("Brother HL-L2350DW")._id,
-            productName: "Brother HL-L2350DW",
-            quantity: 6,
-            unitPrice: 16000,
-            total: 96000,
-          },
-          {
-            productId: getProductByName("Seagate Barracuda 2TB")._id,
-            productName: "Seagate Barracuda 2TB",
-            quantity: 20,
-            unitPrice: 6000,
-            total: 120000,
+            productId: getProductByName("Leica TS06 Total Station")._id,
+            productName: "Leica TS06 Total Station",
+            quantity: 1,
+            unitPrice: 1300000,
+            total: 1300000,
           },
         ],
-        subtotal: 216000,
-        total: 241920,
+        subtotal: 1300000,
+        total: 1430000,
+        status: "paid",
+        createdBy: users[2]._id,
+        notes: `Linked PO Ref: ${poRefMap["Leica Geosystems"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-009",
+        customerName: "Digital Dynamics",
+        customerEmail: "contact@digitaldynamics.co.in",
+        saleDate: new Date("2024-03-11"),
+        items: [
+          {
+            productId: getProductByName("Bosch GSR 18V-20 Cordless Drill")._id,
+            productName: "Bosch GSR 18V-20 Cordless Drill",
+            quantity: 15,
+            unitPrice: 5200,
+            total: 78000,
+          },
+        ],
+        subtotal: 78000,
+        total: 85800,
+        status: "paid",
+        createdBy: users[0]._id,
+        notes: `Linked PO Ref: ${poRefMap["Bosch Power Tools"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-010",
+        customerName: "Smart Systems Ltd",
+        customerEmail: "info@smartsystems.co.in",
+        saleDate: new Date("2024-03-12"),
+        items: [
+          {
+            productId: getProductByName("3M 9002 N95 Respiratory Protection Mask")._id,
+            productName: "3M 9002 N95 Respiratory Protection Mask",
+            quantity: 200,
+            unitPrice: 190,
+            total: 38000,
+          },
+        ],
+        subtotal: 38000,
+        total: 41800,
         status: "paid",
         createdBy: users[1]._id,
+        notes: `Linked PO Ref: ${poRefMap["3M India"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-011",
+        customerName: "Tech Vision India",
+        customerEmail: "orders@techvision.co.in",
+        saleDate: new Date("2024-03-13"),
+        items: [
+          {
+            productId: getProductByName("Alufase 100x100x25mm Scaffold Sheet")._id,
+            productName: "Alufase 100x100x25mm Scaffold Sheet",
+            quantity: 50,
+            unitPrice: 140,
+            total: 7000,
+          },
+        ],
+        subtotal: 7000,
+        total: 7700,
+        status: "paid",
+        createdBy: users[2]._id,
+        notes: `Linked PO Ref: ${poRefMap["Alufase"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-012",
+        customerName: "Innovation Labs Pvt Ltd",
+        customerEmail: "sales@innovationlabs.co.in",
+        saleDate: new Date("2024-03-14"),
+        items: [
+          {
+            productId: getProductByName("Hilti TKI 1000-10000 Nm Torque Wrench")._id,
+            productName: "Hilti TKI 1000-10000 Nm Torque Wrench",
+            quantity: 5,
+            unitPrice: 21000,
+            total: 105000,
+          },
+        ],
+        subtotal: 105000,
+        total: 115500,
+        status: "paid",
+        createdBy: users[0]._id,
+        notes: `Linked PO Ref: ${poRefMap["Hilti India"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-013",
+        customerName: "Digital Solutions Corp",
+        customerEmail: "contact@digitalsolutions.co.in",
+        saleDate: new Date("2024-03-15"),
+        items: [
+          {
+            productId: getProductByName("Greenply 18mm MDF Board")._id,
+            productName: "Greenply 18mm MDF Board",
+            quantity: 20,
+            unitPrice: 145,
+            total: 2900,
+          },
+        ],
+        subtotal: 2900,
+        total: 3190,
+        status: "paid",
+        createdBy: users[1]._id,
+        notes: `Linked PO Ref: ${poRefMap["Greenply"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-014",
+        customerName: "Tech Excellence India",
+        customerEmail: "info@techexcellence.co.in",
+        saleDate: new Date("2024-03-16"),
+        items: [
+          {
+            productId: getProductByName("Havells 1000W Ceiling Fan")._id,
+            productName: "Havells 1000W Ceiling Fan",
+            quantity: 10,
+            unitPrice: 1700,
+            total: 17000,
+          },
+        ],
+        subtotal: 17000,
+        total: 18700,
+        status: "paid",
+        createdBy: users[2]._id,
+        notes: `Linked PO Ref: ${poRefMap["Havells"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-015",
+        customerName: "Smart Innovations Ltd",
+        customerEmail: "orders@smartinnovations.co.in",
+        saleDate: new Date("2024-03-17"),
+        items: [
+          {
+            productId: getProductByName("Local Supplier - Concrete Mix (1m³)")._id,
+            productName: "Local Supplier - Concrete Mix (1m³)",
+            quantity: 5,
+            unitPrice: 3300,
+            total: 16500,
+          },
+        ],
+        subtotal: 16500,
+        total: 18150,
+        status: "paid",
+        createdBy: users[0]._id,
+        notes: `Linked PO Ref: ${poRefMap["Local Supplier"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-016",
+        customerName: "Digital Pioneers Pvt Ltd",
+        customerEmail: "sales@digitalpioneers.co.in",
+        saleDate: new Date("2024-03-18"),
+        items: [
+          {
+            productId: getProductByName("Local Supplier - Brick (1000 Nos)")._id,
+            productName: "Local Supplier - Brick (1000 Nos)",
+            quantity: 50,
+            unitPrice: 13,
+            total: 650,
+          },
+        ],
+        subtotal: 650,
+        total: 715,
+        status: "paid",
+        createdBy: users[1]._id,
+        notes: `Linked PO Ref: ${poRefMap["Local Supplier"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-017",
+        customerName: "Tech Solutions Hub",
+        customerEmail: "contact@techsolutionshub.co.in",
+        saleDate: new Date("2024-03-19"),
+        items: [
+          {
+            productId: getProductByName("UltraTech OPC 53 Grade Cement")._id,
+            productName: "UltraTech OPC 53 Grade Cement",
+            quantity: 10,
+            unitPrice: 380,
+            total: 3800,
+          },
+        ],
+        subtotal: 3800,
+        total: 4180,
+        status: "paid",
+        createdBy: users[2]._id,
+        notes: `Linked PO Ref: ${poRefMap["UltraTech Cement Ltd."].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-018",
+        customerName: "Innovation Systems India",
+        customerEmail: "info@innovationsystems.co.in",
+        saleDate: new Date("2024-03-20"),
+        items: [
+          {
+            productId: getProductByName("TMT Steel Bar 12mm")._id,
+            productName: "TMT Steel Bar 12mm",
+            quantity: 20,
+            unitPrice: 710,
+            total: 14200,
+          },
+        ],
+        subtotal: 14200,
+        total: 15620,
+        status: "paid",
+        createdBy: users[0]._id,
+        notes: `Linked PO Ref: ${poRefMap["Tata Steel"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-019",
+        customerName: "Digital Excellence Corp",
+        customerEmail: "orders@digitalexcellence.co.in",
+        saleDate: new Date("2024-03-21"),
+        items: [
+          {
+            productId: getProductByName("AAC Block 600x200x200mm")._id,
+            productName: "AAC Block 600x200x200mm",
+            quantity: 10,
+            unitPrice: 75,
+            total: 750,
+          },
+        ],
+        subtotal: 750,
+        total: 825,
+        status: "paid",
+        createdBy: users[1]._id,
+        notes: `Linked PO Ref: ${poRefMap["Siporex"].ref_num}`,
+      },
+      {
+        invoiceNumber: "INV-2024-020",
+        customerName: "Tech Vision Systems",
+        customerEmail: "sales@techvisionsystems.co.in",
+        saleDate: new Date("2024-03-22"),
+        items: [
+          {
+            productId: getProductByName("Dr. Fixit LW+ Waterproofing Liquid (1L)")._id,
+            productName: "Dr. Fixit LW+ Waterproofing Liquid (1L)",
+            quantity: 5,
+            unitPrice: 290,
+            total: 1450,
+          },
+        ],
+        subtotal: 1450,
+        total: 1595,
+        status: "paid",
+        createdBy: users[2]._id,
+        notes: `Linked PO Ref: ${poRefMap["Pidilite Industries"].ref_num}`,
       },
     ]
-
-    for (const saleData of sales) {
+    for (const saleData of salesData) {
       try {
         const sale = new Sale(saleData)
         await sale.save()
@@ -1024,193 +1289,208 @@ async function seedDatabase() {
         console.error(`Error creating sale ${saleData.invoiceNumber}:`, error.message)
       }
     }
-    console.log(`Created ${sales.length} sales`)
+    console.log(`Created ${salesData.length} sales`)
 
-    // Create sample Purchases
-    console.log("Creating sample purchases...")
-    const purchases = [
+    // Create sample Stock Movements
+    console.log("Creating sample stock movements...");
+    const StockMovement = require("../models/StockMovement");
+    const stockMovementsData = [
+      // Purchases (stock in)
       {
-        receiptNumber: "REC-2024-001",
-        vendor: "Apple India Pvt Ltd",
-        purchaseDate: new Date("2024-02-21"),
-        items: [
-          {
-            productId: getProductByName("iPhone 15 Pro")._id,
-            productName: "iPhone 15 Pro",
-            quantity: 8,
-            unitPrice: 85000,
-            total: 680000,
-          },
-        ],
-        subtotal: 680000,
-        invoiceFile: "invoice-apple-002.pdf",
+        product: getProductByName("UltraTech OPC 53 Grade Cement")._id,
+        movementType: "purchase",
+        quantity: 100,
+        relatedModel: "Purchase",
+        movementDate: new Date("2024-03-02"),
+        notes: "Initial stock from purchase",
         createdBy: users[0]._id,
       },
       {
-        receiptNumber: "REC-2024-002",
-        vendor: "Dell Technologies India",
-        purchaseDate: new Date("2024-02-22"),
-        items: [
-          {
-            productId: getProductByName("Dell Latitude 5520")._id,
-            productName: "Dell Latitude 5520",
-            quantity: 10,
-            unitPrice: 65000,
-            total: 650000,
-          },
-          {
-            productId: getProductByName("Standing Desk Adjustable")._id,
-            productName: "Standing Desk Adjustable",
-            quantity: 15,
-            unitPrice: 18000,
-            total: 270000,
-          },
-        ],
-        subtotal: 920000,
-        invoiceFile: "invoice-dell-003.pdf",
+        product: getProductByName("TMT Steel Bar 12mm")._id,
+        movementType: "purchase",
+        quantity: 200,
+        relatedModel: "Purchase",
+        movementDate: new Date("2024-03-03"),
+        notes: "Stock in from Tata Steel",
+        createdBy: users[1]._id,
+      },
+      // Sales (stock out)
+      {
+        product: getProductByName("UltraTech OPC 53 Grade Cement")._id,
+        movementType: "sale",
+        quantity: 10,
+        relatedModel: "Sale",
+        movementDate: new Date("2024-03-03"),
+        notes: "Sold to Tech Solutions Corp",
         createdBy: users[1]._id,
       },
       {
-        receiptNumber: "REC-2024-003",
-        vendor: "HP India Sales Pvt Ltd",
-        purchaseDate: new Date("2024-02-23"),
-        items: [
-          {
-            productId: getProductByName("HP EliteBook 840")._id,
-            productName: "HP EliteBook 840",
-            quantity: 8,
-            unitPrice: 70000,
-            total: 560000,
-          },
-          {
-            productId: getProductByName("Ergonomic Office Chair")._id,
-            productName: "Ergonomic Office Chair",
-            quantity: 25,
-            unitPrice: 15000,
-            total: 375000,
-          },
-        ],
-        subtotal: 935000,
-        invoiceFile: "invoice-hp-004.pdf",
-        createdBy: users[0]._id,
-      },
-      {
-        receiptNumber: "REC-2024-004",
-        vendor: "Lenovo India Pvt Ltd",
-        purchaseDate: new Date("2024-02-24"),
-        items: [
-          {
-            productId: getProductByName("Lenovo ThinkPad X1")._id,
-            productName: "Lenovo ThinkPad X1",
-            quantity: 6,
-            unitPrice: 95000,
-            total: 570000,
-          },
-          {
-            productId: getProductByName("Conference Table 8-Seater")._id,
-            productName: "Conference Table 8-Seater",
-            quantity: 4,
-            unitPrice: 35000,
-            total: 140000,
-          },
-        ],
-        subtotal: 710000,
-        invoiceFile: "invoice-lenovo-005.pdf",
-        createdBy: users[1]._id,
-      },
-      {
-        receiptNumber: "REC-2024-005",
-        vendor: "Samsung India Electronics",
-        purchaseDate: new Date("2024-02-25"),
-        items: [
-          {
-            productId: getProductByName("Samsung Galaxy Tab S9")._id,
-            productName: "Samsung Galaxy Tab S9",
-            quantity: 20,
-            unitPrice: 45000,
-            total: 900000,
-          },
-          {
-            productId: getProductByName("Filing Cabinet 4-Drawer")._id,
-            productName: "Filing Cabinet 4-Drawer",
-            quantity: 20,
-            unitPrice: 8000,
-            total: 160000,
-          },
-        ],
-        subtotal: 1060000,
-        invoiceFile: "invoice-samsung-006.pdf",
+        product: getProductByName("TMT Steel Bar 12mm")._id,
+        movementType: "sale",
+        quantity: 50,
+        relatedModel: "Sale",
+        movementDate: new Date("2024-03-04"),
+        notes: "Sold to Business Center Ltd",
         createdBy: users[2]._id,
       },
+      // Adjustments
       {
-        receiptNumber: "REC-2024-006",
-        vendor: "Logitech India Pvt Ltd",
-        purchaseDate: new Date("2024-02-26"),
-        items: [
-          {
-            productId: getProductByName("Keyboard Logitech")._id,
-            productName: "Keyboard Logitech",
-            quantity: 50,
-            unitPrice: 3500,
-            total: 175000,
-          },
-          {
-            productId: getProductByName("Mouse Logitech")._id,
-            productName: "Mouse Logitech",
-            quantity: 60,
-            unitPrice: 2000,
-            total: 120000,
-          },
-        ],
-        subtotal: 295000,
-        invoiceFile: "invoice-logitech-007.pdf",
+        product: getProductByName("AAC Block 600x200x200mm")._id,
+        movementType: "adjustment",
+        quantity: -5,
+        relatedModel: "PurchaseOrder",
+        movementDate: new Date("2024-03-05"),
+        notes: "Damaged blocks removed from stock",
         createdBy: users[0]._id,
       },
-      {
-        receiptNumber: "REC-2024-007",
-        vendor: "Canon India Pvt Ltd",
-        purchaseDate: new Date("2024-02-27"),
-        items: [
-          {
-            productId: getProductByName("Canon EOS R6")._id,
-            productName: "Canon EOS R6",
-            quantity: 3,
-            unitPrice: 180000,
-            total: 540000,
-          },
-        ],
-        subtotal: 540000,
-        invoiceFile: "invoice-canon-008.pdf",
-        createdBy: users[1]._id,
-      },
-      {
-        receiptNumber: "REC-2024-008",
-        vendor: "Epson India Pvt Ltd",
-        purchaseDate: new Date("2024-02-28"),
-        items: [
-          {
-            productId: getProductByName("Epson EcoTank L3210")._id,
-            productName: "Epson EcoTank L3210",
-            quantity: 25,
-            unitPrice: 8000,
-            total: 200000,
-          },
-        ],
-        subtotal: 200000,
-        invoiceFile: "invoice-epson-009.pdf",
-        createdBy: users[2]._id,
-      },
-    ]
-
-    for (const purchaseData of purchases) {
-      try {
-        const purchase = new Purchase(purchaseData)
-        await purchase.save()
-      } catch (error) {
-        console.error(`Error creating purchase ${purchaseData.receiptNumber}:`, error.message)
-      }
+      // ... (add more entries for a total of 20, covering all movement types and products)
+    ];
+    for (let i = stockMovementsData.length; i < 20; i++) {
+      stockMovementsData.push({
+        product: getProductByName("UltraTech OPC 53 Grade Cement")._id,
+        movementType: i % 2 === 0 ? "purchase" : "sale",
+        quantity: 10 + i,
+        relatedModel: i % 2 === 0 ? "Purchase" : "Sale",
+        movementDate: new Date(2024, 2, 2 + i),
+        notes: `Auto-generated stock movement #${i + 1}`,
+        createdBy: users[i % users.length]._id,
+      });
     }
-    console.log(`Created ${purchases.length} purchases`)
+    await StockMovement.insertMany(stockMovementsData);
+    console.log(`Created ${stockMovementsData.length} stock movements`);
+
+    // Create sample Returns
+    console.log("Creating sample returns...");
+    const Return = require("../models/Return");
+    const returnsData = [
+      // Purchase returns
+      {
+        returnType: "purchase",
+        product: getProductByName("UltraTech OPC 53 Grade Cement")._id,
+        quantity: 5,
+        reason: "Damaged bags",
+        returnDate: new Date("2024-03-06"),
+        processedBy: users[0]._id,
+        notes: "Returned to UltraTech Cement Ltd.",
+      },
+      {
+        returnType: "purchase",
+        product: getProductByName("TMT Steel Bar 12mm")._id,
+        quantity: 10,
+        reason: "Rust detected",
+        returnDate: new Date("2024-03-07"),
+        processedBy: users[1]._id,
+        notes: "Returned to Tata Steel",
+      },
+      // Sales returns
+      {
+        returnType: "sale",
+        product: getProductByName("UltraTech OPC 53 Grade Cement")._id,
+        quantity: 2,
+        reason: "Customer complaint",
+        returnDate: new Date("2024-03-08"),
+        processedBy: users[2]._id,
+        notes: "Returned by Tech Solutions Corp",
+      },
+      {
+        returnType: "sale",
+        product: getProductByName("TMT Steel Bar 12mm")._id,
+        quantity: 3,
+        reason: "Wrong size delivered",
+        returnDate: new Date("2024-03-09"),
+        processedBy: users[0]._id,
+        notes: "Returned by Business Center Ltd",
+      },
+      // ... (add more entries for a total of 20, alternating purchase and sale returns)
+    ];
+    for (let i = returnsData.length; i < 20; i++) {
+      returnsData.push({
+        returnType: i % 2 === 0 ? "purchase" : "sale",
+        product: getProductByName("AAC Block 600x200x200mm")._id,
+        quantity: 1 + (i % 5),
+        reason: i % 2 === 0 ? "Supplier issue" : "Customer return",
+        returnDate: new Date(2024, 2, 10 + i),
+        processedBy: users[i % users.length]._id,
+        notes: `Auto-generated return #${i + 1}`,
+      });
+    }
+    await Return.insertMany(returnsData);
+    console.log(`Created ${returnsData.length} returns`);
+
+    // Create sample Notifications
+    console.log("Creating sample notifications...");
+    const Notification = require("../models/Notification");
+    const notificationsData = [];
+    // 10 low stock notifications
+    for (let i = 0; i < 10; i++) {
+      notificationsData.push({
+        type: "low_stock",
+        message: `Low stock alert for ${products[i % products.length].name}`,
+        user: users[i % users.length]._id,
+        relatedDoc: products[i % products.length]._id,
+        relatedModel: "Product",
+        isRead: false,
+      });
+    }
+    // 10 order status notifications
+    for (let i = 0; i < 10; i++) {
+      notificationsData.push({
+        type: "order_status",
+        message: `Order status updated for PO #${i + 1}`,
+        user: users[i % users.length]._id,
+        isRead: false,
+      });
+    }
+    await Notification.insertMany(notificationsData);
+    console.log(`Created ${notificationsData.length} notifications`);
+
+    // Create sample Audit Logs
+    console.log("Creating sample audit logs...");
+    const AuditLog = require("../models/AuditLog");
+    const auditLogsData = [];
+    const actions = ["create", "update", "delete", "login", "logout"];
+    const targetModels = ["Product", "PurchaseOrder", "Sale", "User", "Vendor"];
+    for (let i = 0; i < 10; i++) {
+      auditLogsData.push({
+        action: actions[i % actions.length],
+        user: users[i % users.length]._id,
+        targetModel: targetModels[i % targetModels.length],
+        targetId: products[i % products.length]._id,
+        details: { info: `Auto-generated audit log #${i + 1}` },
+        timestamp: new Date(2024, 2, 1 + i),
+      });
+    }
+    await AuditLog.insertMany(auditLogsData);
+    console.log(`Created ${auditLogsData.length} audit logs`);
+
+    // Example Report Queries (for reference)
+    /*
+    // 1. Daily Sales Report (total sales per day)
+    Sale.aggregate([
+      { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$saleDate" } }, totalSales: { $sum: "$total" }, count: { $sum: 1 } } },
+      { $sort: { _id: 1 } }
+    ])
+
+    // 2. Monthly Profit Report
+    Sale.aggregate([
+      { $group: { _id: { $dateToString: { format: "%Y-%m", date: "$saleDate" } }, totalSales: { $sum: "$total" } } }
+    ])
+    Purchase.aggregate([
+      { $group: { _id: { $dateToString: { format: "%Y-%m", date: "$purchaseDate" } }, totalPurchases: { $sum: "$subtotal" } } }
+    ])
+    // Combine results in your service to calculate profit
+
+    // 3. Category-wise Stock Report
+    Product.aggregate([
+      { $group: { _id: "$category", totalStock: { $sum: "$currentStock" } } }
+    ])
+
+    // 4. Vendor Performance Report
+    Purchase.aggregate([
+      { $group: { _id: "$vendor", totalPurchased: { $sum: "$subtotal" }, count: { $sum: 1 } } },
+      { $sort: { totalPurchased: -1 } }
+    ])
+    */
 
     console.log("Database seeding completed successfully!")
     console.log("\nDefault login credentials:")

@@ -118,7 +118,7 @@ router.get("/", authorize("admin", "manager"), validatePagination, validateDateR
  * @swagger
  * /api/purchase-orders/{id}:
  *   get:
- *     summary: Get purchase order by ID
+ *     summary: Get purchase order by ID or ref_num
  *     tags: [Purchase Orders]
  *     security:
  *       - bearerAuth: []
@@ -128,7 +128,7 @@ router.get("/", authorize("admin", "manager"), validatePagination, validateDateR
  *         required: true
  *         schema:
  *           type: string
- *         description: Purchase order ID
+ *         description: Purchase order ID or ref_num
  *     responses:
  *       200:
  *         description: Purchase order details
@@ -167,7 +167,7 @@ router.post("/", authorize("admin", "manager"), validatePurchaseOrder, purchaseO
  * @swagger
  * /api/purchase-orders/{id}:
  *   put:
- *     summary: Update purchase order
+ *     summary: Update purchase order by ID or ref_num
  *     tags: [Purchase Orders]
  *     security:
  *       - bearerAuth: []
@@ -177,7 +177,7 @@ router.post("/", authorize("admin", "manager"), validatePurchaseOrder, purchaseO
  *         required: true
  *         schema:
  *           type: string
- *         description: Purchase order ID
+ *         description: Purchase order ID or ref_num
  *     requestBody:
  *       required: true
  *       content:
@@ -241,7 +241,7 @@ router.put("/:id/status", authorize("admin", "manager"), validateId, validateSta
  * @swagger
  * /api/purchase-orders/{id}:
  *   delete:
- *     summary: Delete purchase order
+ *     summary: Delete purchase order by ID or ref_num
  *     tags: [Purchase Orders]
  *     security:
  *       - bearerAuth: []
@@ -251,7 +251,7 @@ router.put("/:id/status", authorize("admin", "manager"), validateId, validateSta
  *         required: true
  *         schema:
  *           type: string
- *         description: Purchase order ID
+ *         description: Purchase order ID or ref_num
  *     responses:
  *       200:
  *         description: Purchase order deleted successfully

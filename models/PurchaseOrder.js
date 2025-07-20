@@ -29,6 +29,13 @@ const purchaseOrderItemSchema = new mongoose.Schema({
 
 const purchaseOrderSchema = new mongoose.Schema(
   {
+    ref_num: {
+      type: String,
+      required: [true, "Reference number is required"],
+      unique: true,
+      trim: true,
+      index: true,
+    },
     poNumber: {
       type: String,
       required: [true, "PO Number is required"],
@@ -93,20 +100,21 @@ const purchaseOrderSchema = new mongoose.Schema(
 )
 
 // Indexes
+purchaseOrderSchema.index({ ref_num: 1 })
 purchaseOrderSchema.index({ poNumber: 1 })
 purchaseOrderSchema.index({ vendor: 1 })
 purchaseOrderSchema.index({ status: 1 })
 purchaseOrderSchema.index({ orderDate: -1 })
 purchaseOrderSchema.index({ createdBy: 1 })
 
-// Auto-generate PO number
+// Auto-generate ref_num
 purchaseOrderSchema.pre("save", async function (next) {
-  if (!this.poNumber) {
-    const year = new Date().getFullYear()
-    const count = await this.constructor.countDocuments({
-      poNumber: { $regex: `^PO-${year}-` },
-    })
-    this.poNumber = `PO-${year}-${String(count + 1).padStart(3, "0")}`
+  if (!this.ref_num) {
+    const now = new Date()
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`
+    const regex = new RegExp(`^PO-${dateStr}-\\d{4}$`)
+    const count = await this.constructor.countDocuments({ ref_num: { $regex: regex } })
+    this.ref_num = `PO-${dateStr}-${String(count + 1).padStart(4, "0")}`
   }
   next()
 })

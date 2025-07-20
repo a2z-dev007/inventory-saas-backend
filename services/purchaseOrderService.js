@@ -39,6 +39,7 @@ class PurchaseOrderService {
     // Search functionality
     if (search) {
       query.$or = [
+        { ref_num: { $regex: search, $options: "i" } },
         { poNumber: { $regex: search, $options: "i" } },
         { vendor: { $regex: search, $options: "i" } },
         { "items.productName": { $regex: search, $options: "i" } },
@@ -76,11 +77,22 @@ class PurchaseOrderService {
    * @param {string} purchaseOrderId
    * @returns {Object} Purchase order data
    */
-  async getPurchaseOrderById(purchaseOrderId) {
-    return await PurchaseOrder.findById(purchaseOrderId)
-      .populate("createdBy", "name username")
-      .populate("approvedBy", "name username")
-      .lean()
+  async getPurchaseOrderByIdOrRefNum(identifier) {
+    // Try to find by MongoDB ObjectId or by ref_num
+    let purchaseOrder = null
+    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+      purchaseOrder = await PurchaseOrder.findById(identifier)
+        .populate("createdBy", "name username")
+        .populate("approvedBy", "name username")
+        .lean()
+    }
+    if (!purchaseOrder) {
+      purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier })
+        .populate("createdBy", "name username")
+        .populate("approvedBy", "name username")
+        .lean()
+    }
+    return purchaseOrder
   }
 
   /**
@@ -112,30 +124,21 @@ class PurchaseOrderService {
    * @param {Object} updateData
    * @returns {Object} Updated purchase order
    */
-  async updatePurchaseOrder(purchaseOrderId, updateData) {
-    const { items, ...otherData } = updateData
-
-    let processedItems = []
-    let subtotal = 0
-    let total = 0
-
-    // If items are being updated, process them
-    if (items) {
-      processedItems = await this.processItems(items)
-      subtotal = processedItems.reduce((sum, item) => sum + item.total, 0)
-      total = subtotal
+  async updatePurchaseOrderByIdOrRefNum(identifier, updateData) {
+    // Try to update by MongoDB ObjectId or by ref_num
+    let purchaseOrder = null
+    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+      purchaseOrder = await PurchaseOrder.findByIdAndUpdate(identifier, updateData, {
+        new: true,
+        runValidators: true,
+      }).populate("createdBy", "name username").populate("approvedBy", "name username")
     }
-
-    const updatePayload = {
-      ...otherData,
-      ...(items && { items: processedItems, subtotal, total }),
+    if (!purchaseOrder) {
+      purchaseOrder = await PurchaseOrder.findOneAndUpdate({ ref_num: identifier }, updateData, {
+        new: true,
+        runValidators: true,
+      }).populate("createdBy", "name username").populate("approvedBy", "name username")
     }
-
-    const purchaseOrder = await PurchaseOrder.findByIdAndUpdate(purchaseOrderId, updatePayload, {
-      new: true,
-      runValidators: true,
-    }).populate("createdBy", "name username").populate("approvedBy", "name username")
-
     return purchaseOrder
   }
 
@@ -145,9 +148,16 @@ class PurchaseOrderService {
    * @param {string} deletedBy
    * @returns {Object} Deleted purchase order
    */
-  async deletePurchaseOrder(purchaseOrderId, deletedBy) {
-    const purchaseOrder = await PurchaseOrder.findByIdAndDelete(purchaseOrderId);
-    return purchaseOrder;
+  async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
+    // Try to delete by MongoDB ObjectId or by ref_num
+    let purchaseOrder = null
+    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+      purchaseOrder = await PurchaseOrder.findByIdAndDelete(identifier)
+    }
+    if (!purchaseOrder) {
+      purchaseOrder = await PurchaseOrder.findOneAndDelete({ ref_num: identifier })
+    }
+    return purchaseOrder
   }
 
   /**
@@ -159,12 +169,13 @@ class PurchaseOrderService {
   async searchPurchaseOrders(searchTerm, limit = 10) {
     return await PurchaseOrder.find({
       $or: [
+        { ref_num: { $regex: searchTerm, $options: "i" } },
         { poNumber: { $regex: searchTerm, $options: "i" } },
         { vendor: { $regex: searchTerm, $options: "i" } },
         { "items.productName": { $regex: searchTerm, $options: "i" } },
       ],
     })
-      .select("poNumber vendor status orderDate total")
+      .select("ref_num poNumber vendor status orderDate total")
       .sort({ orderDate: -1 })
       .limit(limit)
       .lean()

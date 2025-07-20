@@ -8,6 +8,10 @@ const productSchema = new mongoose.Schema(
       trim: true,
       maxlength: [200, "Product name cannot exceed 200 characters"],
     },
+    image: {
+      type: String, // URL or base64
+      default: null,
+    },
     sku: {
       type: String,
       required: [true, "SKU is required"],

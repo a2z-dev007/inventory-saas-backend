@@ -234,6 +234,20 @@ class UserService {
     const user = await User.findOne(query)
     return !!user
   }
+
+  /**
+   * Change password by email (for forgot password, no login required)
+   * @param {string} email
+   * @param {string} newPassword
+   * @returns {Object|null} Updated user or null if not found
+   */
+  async changePasswordByEmail(email, newPassword) {
+    const user = await User.findOne({ email: email.toLowerCase() })
+    if (!user) return null
+    user.password = newPassword // Will be hashed by pre-save hook
+    await user.save()
+    return user.toJSON()
+  }
 }
 
 module.exports = new UserService()

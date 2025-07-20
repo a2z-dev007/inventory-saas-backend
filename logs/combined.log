@@ -404,3 +404,114 @@
 {"level":"error","message":"Change password error: Current password is incorrect","service":"inventory-management","stack":"Error: Current password is incorrect\n    at AuthService.changePassword (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:156:13)\n    at async changePassword (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:177:7)","timestamp":"2025-07-20 13:45:38"}
 {"level":"error","message":"Change password error: Current password is incorrect","service":"inventory-management","stack":"Error: Current password is incorrect\n    at AuthService.changePassword (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:156:13)\n    at async changePassword (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:177:7)","timestamp":"2025-07-20 13:46:07"}
 {"level":"info","message":"Password changed for user admin","service":"inventory-management","timestamp":"2025-07-20 13:46:29"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:15:10"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:15:10"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:15:42"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:15:42"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:16:13"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:16:13"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:16:15"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:16:15"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:17:02"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:17:02"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:17:25"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:17:25"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:19:09"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:19:09"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:19:22"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:19:22"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:19:36"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:19:36"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:20:21"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:20:21"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:22:49"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:22:49"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:23:07"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:23:07"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:32:35"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:32:35"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:32:38"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:32:38"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:32:42"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:32:42"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:35:04"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:35:04"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:35:08"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:35:08"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:35:13"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:35:13"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:39:01"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:39:01"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:41:59"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:41:59"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:44:18"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:44:18"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:49:05"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:49:06"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:55:35"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:55:35"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 17:56:31"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 17:56:31"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:01:23"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:01:23"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:04:10"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:04:10"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:04:12"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:04:12"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:06:28"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:06:28"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:06:29"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:06:29"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:06:31"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:06:31"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:06:33"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:06:33"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:06:35"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:06:35"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:06:37"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:06:37"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:06:39"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:06:39"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:06:41"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:06:41"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:10:13"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:10:13"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:16:37"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:16:37"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:17:36"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:17:36"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:19:01"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:19:08"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:19:17"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:19:25"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:19:33"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:19:41"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:20:12"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:20:30"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:20:30"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:20:31"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:20:31"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:20:33"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:20:33"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:20:34"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:20:34"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:23:24"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:23:26"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:23:28"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:23:30"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:23:31"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:24:41"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:24:42"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:25:05"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:25:06"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:80:13)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:25:06"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-20 18:25:34"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-20 18:25:34"}
+{"level":"info","message":"User manager logged in successfully from IP: ::1","service":"inventory-management","timestamp":"2025-07-20 18:25:46"}
+{"level":"info","message":"User admin logged in successfully from IP: ::1","service":"inventory-management","timestamp":"2025-07-20 18:31:35"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:68:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:50:58"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:68:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:51:04"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:68:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:51:13"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:68:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:51:32"}
+{"level":"error","message":"Login error: Invalid credentials","service":"inventory-management","stack":"Error: Invalid credentials\n    at AuthService.login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/authService.js:68:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async login (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/authController.js:76:22)","timestamp":"2025-07-20 18:51:37"}
+{"level":"info","message":"User admin logged in successfully from IP: ::1","service":"inventory-management","timestamp":"2025-07-20 18:51:43"}

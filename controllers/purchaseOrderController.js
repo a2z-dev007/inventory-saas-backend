@@ -59,7 +59,7 @@ class PurchaseOrderController {
         })
       }
 
-      const purchaseOrder = await purchaseOrderService.getPurchaseOrderById(req.params.id)
+      const purchaseOrder = await purchaseOrderService.getPurchaseOrderByIdOrRefNum(req.params.id)
 
       if (!purchaseOrder) {
         return res.status(404).json({
@@ -143,7 +143,7 @@ class PurchaseOrderController {
         updatedBy: req.user.id,
       }
 
-      const purchaseOrder = await purchaseOrderService.updatePurchaseOrder(req.params.id, updateData)
+      const purchaseOrder = await purchaseOrderService.updatePurchaseOrderByIdOrRefNum(req.params.id, updateData)
 
       if (!purchaseOrder) {
         return res.status(404).json({
@@ -152,7 +152,7 @@ class PurchaseOrderController {
         })
       }
 
-      logger.info(`Purchase order updated: ${purchaseOrder.poNumber} by user ${req.user.username}`)
+      logger.info(`Purchase order updated: ${purchaseOrder.ref_num} by user ${req.user.username}`)
 
       res.json({
         success: true,
@@ -194,7 +194,7 @@ class PurchaseOrderController {
         updateData.approvedAt = new Date()
       }
 
-      const purchaseOrder = await purchaseOrderService.updatePurchaseOrder(req.params.id, updateData)
+      const purchaseOrder = await purchaseOrderService.updatePurchaseOrderByIdOrRefNum(req.params.id, updateData)
 
       if (!purchaseOrder) {
         return res.status(404).json({
@@ -203,7 +203,7 @@ class PurchaseOrderController {
         })
       }
 
-      logger.info(`Purchase order status updated: ${purchaseOrder.poNumber} to ${status} by user ${req.user.username}`)
+      logger.info(`Purchase order status updated: ${purchaseOrder.ref_num} to ${status} by user ${req.user.username}`)
 
       res.json({
         success: true,
@@ -232,7 +232,7 @@ class PurchaseOrderController {
         })
       }
 
-      const purchaseOrder = await purchaseOrderService.deletePurchaseOrder(req.params.id, req.user.id)
+      const purchaseOrder = await purchaseOrderService.deletePurchaseOrderByIdOrRefNum(req.params.id, req.user.id)
 
       if (!purchaseOrder) {
         return res.status(404).json({
@@ -241,7 +241,7 @@ class PurchaseOrderController {
         })
       }
 
-      logger.info(`Purchase order deleted: ${purchaseOrder.poNumber} by admin ${req.user.username}`)
+      logger.info(`Purchase order deleted: ${purchaseOrder.ref_num} by admin ${req.user.username}`)
 
       res.json({
         success: true,

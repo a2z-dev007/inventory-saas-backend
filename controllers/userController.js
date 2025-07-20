@@ -264,6 +264,43 @@ class UserController {
       next(error)
     }
   }
+
+  /**
+   * Change password by email (forgot password, no login required)
+   * @route POST /api/users/change-password
+   * @access Public
+   */
+  async changePasswordByEmail(req, res, next) {
+    try {
+      const { email, newPassword } = req.body
+      if (!email || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Email and new password are required",
+        })
+      }
+      if (newPassword.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: "Password must be at least 6 characters long",
+        })
+      }
+      const user = await userService.changePasswordByEmail(email, newPassword)
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User with this email not found",
+        })
+      }
+      res.json({
+        success: true,
+        message: "Password changed successfully",
+      })
+    } catch (error) {
+      logger.error("Change password by email error:", error)
+      next(error)
+    }
+  }
 }
 
 module.exports = new UserController()

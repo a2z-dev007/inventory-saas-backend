@@ -5,6 +5,39 @@ const { validateUser, validateId, validatePagination, validateUserUpdate } = req
 
 const router = express.Router()
 
+// Add this route BEFORE router.use(protect) if you want it public
+/**
+ * @swagger
+ * /api/users/change-password:
+ *   post:
+ *     summary: Change password by email (forgot password, no login required)
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - newPassword
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 6
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Validation error
+ *       404:
+ *         description: User with this email not found
+ */
+router.post("/change-password", userController.changePasswordByEmail)
+
 // Apply authentication to all routes
 router.use(protect)
 
