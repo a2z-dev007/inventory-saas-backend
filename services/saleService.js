@@ -92,14 +92,12 @@ class SaleService {
     // Process items to include product names and calculate totals
     const processedItems = await this.processItems(items)
     const subtotal = processedItems.reduce((sum, item) => sum + item.total, 0)
-    const tax = 0 // You can add tax calculation logic here
-    const total = subtotal + tax - discount
+    const total = subtotal - discount
 
     const sale = new Sale({
       ...otherData,
       items: processedItems,
       subtotal,
-      tax,
       discount,
       total,
     })
@@ -118,20 +116,18 @@ class SaleService {
 
     let processedItems = []
     let subtotal = 0
-    let tax = 0
     let total = 0
 
     // If items are being updated, process them
     if (items) {
       processedItems = await this.processItems(items)
       subtotal = processedItems.reduce((sum, item) => sum + item.total, 0)
-      tax = 0 // You can add tax calculation logic here
-      total = subtotal + tax - discount
+      total = subtotal - discount
     }
 
     const updatePayload = {
       ...otherData,
-      ...(items && { items: processedItems, subtotal, tax, discount, total }),
+      ...(items && { items: processedItems, subtotal, discount, total }),
     }
 
     const sale = await Sale.findByIdAndUpdate(saleId, updatePayload, {

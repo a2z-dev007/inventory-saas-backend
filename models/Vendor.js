@@ -36,10 +36,6 @@ const vendorSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    taxId: {
-      type: String,
-      trim: true,
-    },
     paymentTerms: {
       type: String,
       trim: true,

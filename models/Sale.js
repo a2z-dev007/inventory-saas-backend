@@ -62,12 +62,6 @@ const saleSchema = new mongoose.Schema(
       required: true,
       min: [0, "Subtotal cannot be negative"],
     },
-    tax: {
-      type: Number,
-      required: true,
-      min: [0, "Tax cannot be negative"],
-      default: 0,
-    },
     discount: {
       type: Number,
       min: [0, "Discount cannot be negative"],

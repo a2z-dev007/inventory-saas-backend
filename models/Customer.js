@@ -37,10 +37,6 @@ const customerSchema = new mongoose.Schema(
       trim: true,
       maxlength: [200, "Company name cannot exceed 200 characters"],
     },
-    taxId: {
-      type: String,
-      trim: true,
-    },
     creditLimit: {
       type: Number,
       min: [0, "Credit limit cannot be negative"],

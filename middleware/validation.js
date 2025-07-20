@@ -258,8 +258,6 @@ const validateVendor = [
 
   body("website").optional().isString().isURL().withMessage("Please provide a valid website URL"),
 
-  body("taxId").optional().isString().trim().isLength({ max: 50 }).withMessage("Tax ID cannot exceed 50 characters"),
-
   body("paymentTerms")
     .optional()
     .isString()
@@ -294,8 +292,6 @@ const validateCustomer = [
     .withMessage("Address is required and cannot exceed 500 characters"),
 
   body("company").optional().isString().trim().isLength({ max: 200 }).withMessage("Company name cannot exceed 200 characters"),
-
-  body("taxId").optional().isString().trim().isLength({ max: 50 }).withMessage("Tax ID cannot exceed 50 characters"),
 
   body("creditLimit").optional().isFloat({ min: 0 }).withMessage("Credit limit must be a positive number"),
 

@@ -161,8 +161,6 @@ router.get("/:id", validateId, async (req, res) => {
  *                 type: string
  *               website:
  *                 type: string
- *               taxId:
- *                 type: string
  *               paymentTerms:
  *                 type: string
  *               notes:
@@ -227,8 +225,6 @@ router.post("/", authorize("admin", "manager"), validateVendor, async (req, res)
  *               address:
  *                 type: string
  *               website:
- *                 type: string
- *               taxId:
  *                 type: string
  *               paymentTerms:
  *                 type: string
