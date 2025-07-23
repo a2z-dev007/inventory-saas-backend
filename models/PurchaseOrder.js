@@ -31,7 +31,6 @@ const purchaseOrderSchema = new mongoose.Schema(
   {
     ref_num: {
       type: String,
-      required: [true, "Reference number is required"],
       unique: true,
       trim: true,
       index: true,

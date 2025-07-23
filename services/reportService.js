@@ -12,8 +12,8 @@ class ReportService {
   async getDashboardStats() {
     const [
       totalProducts,
-      lowStockProducts,
-      outOfStockProducts,
+      lowStockProductsCount,
+      outOfStockProductsCount,
       totalSales,
       totalRevenue,
       totalPurchases,
@@ -30,6 +30,12 @@ class ReportService {
       Purchase.aggregate([{ $group: { _id: null, total: { $sum: "$total" } } }]),
       Customer.countDocuments(),
       Vendor.countDocuments(),
+    ])
+
+    // Fetch actual low stock and out of stock products
+    const [lowStockProducts, outOfStockProducts] = await Promise.all([
+      Product.find({ currentStock: { $lte: 10 } }).lean(),
+      Product.find({ currentStock: 0 }).lean(),
     ])
 
     // Get recent sales
@@ -63,8 +69,8 @@ class ReportService {
     return {
       overview: {
         totalProducts,
-        lowStockProducts,
-        outOfStockProducts,
+        lowStockProducts: lowStockProductsCount,
+        outOfStockProducts: outOfStockProductsCount,
         totalSales,
         totalRevenue: totalRevenue[0]?.total || 0,
         totalPurchases,
@@ -72,6 +78,8 @@ class ReportService {
         totalCustomers,
         totalVendors,
       },
+      lowStockProducts,
+      outOfStockProducts,
       recentSales,
       topProducts,
     }
@@ -110,13 +118,19 @@ class ReportService {
 
     const totalValue = products.reduce((sum, product) => sum + (product.currentStock * product.purchaseRate), 0)
 
+    // Get low stock and out of stock products
+    const lowStockProducts = products.filter(p => p.currentStock <= 10)
+    const outOfStockProducts = products.filter(p => p.currentStock === 0)
+
     return {
       products,
+      lowStockProducts,
+      outOfStockProducts,
       summary: {
         totalProducts: products.length,
         totalValue,
-        lowStockCount: products.filter(p => p.currentStock <= 10).length,
-        outOfStockCount: products.filter(p => p.currentStock === 0).length,
+        lowStockCount: lowStockProducts.length,
+        outOfStockCount: outOfStockProducts.length,
       },
     }
   }

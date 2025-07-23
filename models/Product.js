@@ -36,6 +36,7 @@ const productSchema = new mongoose.Schema(
       min: [0, "Stock cannot be negative"],
       default: 0,
     },
+
     category: {
       type: String,
       required: [true, "Category is required"],
@@ -57,6 +58,32 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 10,
       min: [0, "Minimum stock level cannot be negative"],
+    },
+    unitType: {
+      type: String,
+      // required: [true, "Unit type is required"],
+      enum: {
+        values: [
+          "Nos",
+          "kg",
+          "MT",
+          "m²",
+          "m³",
+          "Bag",
+          "Sheet",
+          "Roll",
+          "Set",
+          "Unit",
+          "Box",
+          "Packet",
+          "Can",
+          "Litre",
+          "Piece",
+          "Pair",
+          "Machine Hour",
+        ],
+        message: "Invalid unit type",
+      },
     },
     isActive: {
       type: Boolean,

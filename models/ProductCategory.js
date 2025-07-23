@@ -19,6 +19,32 @@ const productCategorySchema = new mongoose.Schema(
       type: String, // URL or base64 string
       default: null,
     },
+    unitType: {
+      type: String,
+      // required: [true, "Unit type is required"],
+      enum: {
+        values: [
+          "Nos",
+          "kg",
+          "MT",
+          "m²",
+          "m³",
+          "Bag",
+          "Sheet",
+          "Roll",
+          "Set",
+          "Unit",
+          "Box",
+          "Packet",
+          "Can",
+          "Litre",
+          "Piece",
+          "Pair",
+          "Machine Hour",
+        ],
+        message: "Invalid unit type",
+      },
+    },
     isActive: {
       type: Boolean,
       default: true,

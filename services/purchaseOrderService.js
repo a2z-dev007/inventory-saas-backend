@@ -125,6 +125,13 @@ class PurchaseOrderService {
    * @returns {Object} Updated purchase order
    */
   async updatePurchaseOrderByIdOrRefNum(identifier, updateData) {
+    // If items are being updated, process them
+    if (updateData.items) {
+      const processedItems = await this.processItems(updateData.items);
+      updateData.items = processedItems;
+      updateData.subtotal = processedItems.reduce((sum, item) => sum + item.total, 0);
+      updateData.total = updateData.subtotal;
+    }
     // Try to update by MongoDB ObjectId or by ref_num
     let purchaseOrder = null
     if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
