@@ -53,12 +53,25 @@ class ProductService {
     sort[sortBy] = sortOrder === "desc" ? -1 : 1
 
     // Execute query
-    const products = await Product.find(query).sort(sort).skip(skip).limit(limit).lean()
+    const products = await Product.find(query).sort(sort).skip(skip).limit(limit).populate({
+      path: "category",
+      select: "name unitType", // select only what you need
+    }).lean()
 
+    // Restructure each product to flatten the category fields
+const formattedProducts = products.map((product) => {
+  const { category, ...rest } = product
+  return {
+    ...rest,
+    category: category?._id || null,
+    categoryName: category?.name || null,
+    unitType: category?.unitType || null,
+  }
+})
     const total = await Product.countDocuments(query)
 
     return {
-      products,
+      products:formattedProducts,
       pagination: {
         page,
         limit,
@@ -182,7 +195,7 @@ class ProductService {
    * @returns {Array} Categories
    */
   async getCategories() {
-    return await Product.distinct("category", { isActive: true })
+    return await Product.find();
   }
 
   /**

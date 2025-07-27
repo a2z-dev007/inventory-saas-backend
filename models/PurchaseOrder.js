@@ -20,6 +20,10 @@ const purchaseOrderItemSchema = new mongoose.Schema({
     required: true,
     min: [0, "Unit price cannot be negative"],
   },
+  unitType:{
+    type:String,
+    required:true
+  },
   total: {
     type: Number,
     required: true,

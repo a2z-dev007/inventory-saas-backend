@@ -242,6 +242,7 @@ return {
         productName: product.name,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
+        unitType: item.unitType,
         total,
       })
     }

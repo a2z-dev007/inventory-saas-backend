@@ -38,10 +38,9 @@ const productSchema = new mongoose.Schema(
     },
 
     category: {
-      type: String,
-      required: [true, "Category is required"],
-      trim: true,
-      maxlength: [100, "Category cannot exceed 100 characters"],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
     },
     vendor: {
       type: String,
@@ -54,6 +53,7 @@ const productSchema = new mongoose.Schema(
       trim: true,
       maxlength: [1000, "Description cannot exceed 1000 characters"],
     },
+    
     minStockLevel: {
       type: Number,
       default: 10,

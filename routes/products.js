@@ -1,18 +1,18 @@
-const express = require("express")
-const productController = require("../controllers/productController")
-const { protect, authorize } = require("../middleware/auth")
+const express = require("express");
+const productController = require("../controllers/productController");
+const { protect, authorize } = require("../middleware/auth");
 const {
   validateProduct,
   validateId,
   validatePagination,
   validateStockUpdate,
   validateBulkUpdate,
-} = require("../middleware/validation")
+} = require("../middleware/validation");
 
-const router = express.Router()
+const router = express.Router();
 
 // Apply authentication to all routes
-router.use(protect)
+router.use(protect);
 
 /**
  * @swagger
@@ -60,7 +60,7 @@ router.use(protect)
  *       200:
  *         description: List of products
  */
-router.get("/", validatePagination, productController.getProducts)
+router.get("/", validatePagination, productController.getProducts);
 
 /**
  * @swagger
@@ -74,7 +74,7 @@ router.get("/", validatePagination, productController.getProducts)
  *       200:
  *         description: List of categories
  */
-router.get("/categories", productController.getCategories)
+// router.get("/categories", productController.getCategories)
 
 /**
  * @swagger
@@ -88,7 +88,7 @@ router.get("/categories", productController.getCategories)
  *       200:
  *         description: List of low stock products
  */
-router.get("/low-stock", productController.getLowStockProducts)
+router.get("/low-stock", productController.getLowStockProducts);
 
 /**
  * @swagger
@@ -118,7 +118,12 @@ router.get("/low-stock", productController.getLowStockProducts)
  *       200:
  *         description: Products updated successfully
  */
-router.patch("/bulk-update", authorize("admin", "manager"), validateBulkUpdate, productController.bulkUpdateProducts)
+router.patch(
+  "/bulk-update",
+  authorize("admin", "manager"),
+  validateBulkUpdate,
+  productController.bulkUpdateProducts
+);
 
 /**
  * @swagger
@@ -141,7 +146,7 @@ router.patch("/bulk-update", authorize("admin", "manager"), validateBulkUpdate, 
  *       404:
  *         description: Product not found
  */
-router.get("/:id", validateId, productController.getProductById)
+router.get("/:id", validateId, productController.getProductById);
 
 /**
  * @swagger
@@ -189,7 +194,12 @@ router.get("/:id", validateId, productController.getProductById)
  *       400:
  *         description: Validation error
  */
-router.post("/", authorize("admin", "manager"), validateProduct, productController.createProduct)
+router.post(
+  "/",
+  authorize("admin", "manager"),
+  validateProduct,
+  productController.createProduct
+);
 
 /**
  * @swagger
@@ -237,7 +247,12 @@ router.post("/", authorize("admin", "manager"), validateProduct, productControll
  *       404:
  *         description: Product not found
  */
-router.put("/:id", authorize("admin", "manager"), validateId, productController.updateProduct)
+router.put(
+  "/:id",
+  authorize("admin", "manager"),
+  validateId,
+  productController.updateProduct
+);
 
 /**
  * @swagger
@@ -260,7 +275,12 @@ router.put("/:id", authorize("admin", "manager"), validateId, productController.
  *       404:
  *         description: Product not found
  */
-router.delete("/:id", authorize("admin"), validateId, productController.deleteProduct)
+router.delete(
+  "/:id",
+  authorize("admin"),
+  validateId,
+  productController.deleteProduct
+);
 
 /**
  * @swagger
@@ -303,7 +323,7 @@ router.patch(
   authorize("admin", "manager"),
   validateId,
   validateStockUpdate,
-  productController.updateStock,
-)
+  productController.updateStock
+);
 
-module.exports = router
+module.exports = router;

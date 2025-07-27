@@ -115,6 +115,36 @@ const validateUserUpdate = [
   handleValidationErrors,
 ];
 
+
+
+const validateCreateCategory = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Category name is required")
+    .isLength({ max: 100 })
+    .withMessage("Name can't exceed 100 characters"),
+
+  body("description")
+    .optional()
+    .isLength({ max: 500 })
+    .withMessage("Description can't exceed 500 characters"),
+
+  body("image")
+    .optional()
+    .isString()
+    .withMessage("Image must be a string"),
+
+  body("unitType")
+    .optional()
+    .isIn([
+      "Nos", "kg", "MT", "m²", "m³", "Bag", "Sheet", "Roll", "Set", "Unit",
+      "Box", "Packet", "Can", "Litre", "Piece", "Pair", "Machine Hour",
+    ])
+    .withMessage("Invalid unit type"),
+];
+
+
 // Product validation rules
 const validateProduct = [
   body("name")
@@ -543,4 +573,5 @@ module.exports = {
   validateStatusUpdate,
   validateDateRange,
   handleValidationErrors,
+  validateCreateCategory,
 };

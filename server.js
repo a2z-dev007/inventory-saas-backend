@@ -21,6 +21,8 @@ const purchaseRoutes = require("./routes/purchases");
 const vendorRoutes = require("./routes/vendors");
 const customerRoutes = require("./routes/customers");
 const reportRoutes = require("./routes/reports");
+const categoryRoutes = require("./routes/categoryRoutes");
+
 
 const app = express();
 
@@ -101,6 +103,8 @@ app.use("/api/purchase-orders", purchaseOrderRoutes);
 app.use("/api/sales", salesRoutes);
 app.use("/api/purchases", purchaseRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/categories", categoryRoutes);
+
 
 // Swagger documentation
 swaggerSetup(app);
