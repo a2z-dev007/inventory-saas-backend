@@ -1,17 +1,19 @@
-const express = require("express")
-const router = express.Router()
-const purchaseOrderController = require("../controllers/purchaseOrderController")
-const { protect, authorize } = require("../middleware/auth")
+const express = require("express");
+const createImageUploader = require("../utils/imageUploader");
+
+const router = express.Router();
+const purchaseOrderController = require("../controllers/purchaseOrderController");
+const { protect, authorize } = require("../middleware/auth");
 const {
   validatePurchaseOrder,
   validateId,
   validatePagination,
   validateStatusUpdate,
   validateDateRange,
-} = require("../middleware/validation")
+} = require("../middleware/validation");
 
 // Apply authentication to all routes
-router.use(protect)
+router.use(protect);
 
 /**
  * @swagger
@@ -112,7 +114,13 @@ router.use(protect)
  *       401:
  *         description: Unauthorized
  */
-router.get("/", authorize("admin", "manager"), validatePagination, validateDateRange, purchaseOrderController.getPurchaseOrders)
+router.get(
+  "/",
+  authorize("admin", "manager"),
+  validatePagination,
+  validateDateRange,
+  purchaseOrderController.getPurchaseOrders
+);
 
 /**
  * @swagger
@@ -137,7 +145,12 @@ router.get("/", authorize("admin", "manager"), validatePagination, validateDateR
  *       401:
  *         description: Unauthorized
  */
-router.get("/:id", authorize("admin", "manager"), validateId, purchaseOrderController.getPurchaseOrderById)
+router.get(
+  "/:id",
+  authorize("admin", "manager"),
+  validateId,
+  purchaseOrderController.getPurchaseOrderById
+);
 
 /**
  * @swagger
@@ -161,7 +174,34 @@ router.get("/:id", authorize("admin", "manager"), validateId, purchaseOrderContr
  *       401:
  *         description: Unauthorized
  */
-router.post("/", authorize("admin", "manager"), validatePurchaseOrder, purchaseOrderController.createPurchaseOrder)
+
+const parseItemsMiddleware = (req, res, next) => {
+  if (typeof req.body.items === "string") {
+    try {
+      req.body.items = JSON.parse(req.body.items);
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid JSON format for items",
+      });
+    }
+  }
+  next();
+};
+
+
+const uploadImage = createImageUploader({
+  folder: "uploads/purchase-orders", // custom folder if needed
+  fieldName: "attachment", // match your frontend FormData
+});
+router.post(
+  "/",
+  authorize("admin", "manager"),
+  uploadImage,               // 1. multer handles form-data
+  parseItemsMiddleware,      // 2. convert string to array
+  validatePurchaseOrder,     // 3. validate now that items is real array
+  purchaseOrderController.createPurchaseOrder
+);
 
 /**
  * @swagger
@@ -194,7 +234,14 @@ router.post("/", authorize("admin", "manager"), validatePurchaseOrder, purchaseO
  *       401:
  *         description: Unauthorized
  */
-router.put("/:id", authorize("admin", "manager"), validateId, validatePurchaseOrder, purchaseOrderController.updatePurchaseOrder)
+router.put(
+  "/:id",
+  authorize("admin", "manager"),
+  uploadImage,               // 1. multer handles form-data
+  parseItemsMiddleware,      // 2. convert string to array
+  validatePurchaseOrder,     // 3. validate now that items is real array
+  purchaseOrderController.updatePurchaseOrder
+);
 
 /**
  * @swagger
@@ -235,7 +282,13 @@ router.put("/:id", authorize("admin", "manager"), validateId, validatePurchaseOr
  *       401:
  *         description: Unauthorized
  */
-router.put("/:id/status", authorize("admin", "manager"), validateId, validateStatusUpdate, purchaseOrderController.updatePurchaseOrderStatus)
+router.put(
+  "/:id/status",
+  authorize("admin", "manager"),
+  validateId,
+  validateStatusUpdate,
+  purchaseOrderController.updatePurchaseOrderStatus
+);
 
 /**
  * @swagger
@@ -260,7 +313,12 @@ router.put("/:id/status", authorize("admin", "manager"), validateId, validateSta
  *       401:
  *         description: Unauthorized
  */
-router.delete("/:id", authorize("admin"), validateId, purchaseOrderController.deletePurchaseOrder)
+router.delete(
+  "/:id",
+  authorize("admin"),
+  validateId,
+  purchaseOrderController.deletePurchaseOrder
+);
 
 /**
  * @swagger
@@ -288,6 +346,10 @@ router.delete("/:id", authorize("admin"), validateId, purchaseOrderController.de
  *       401:
  *         description: Unauthorized
  */
-router.get("/search", authorize("admin", "manager"), purchaseOrderController.searchPurchaseOrders)
+router.get(
+  "/search",
+  authorize("admin", "manager"),
+  purchaseOrderController.searchPurchaseOrders
+);
 
-module.exports = router 
+module.exports = router;

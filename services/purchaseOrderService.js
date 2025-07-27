@@ -1,5 +1,6 @@
 const PurchaseOrder = require("../models/PurchaseOrder")
 const Product = require("../models/Product")
+const { getAttachmentUrl } = require("../utils/constants")
 
 class PurchaseOrderService {
   /**
@@ -61,15 +62,21 @@ class PurchaseOrderService {
 
     const total = await PurchaseOrder.countDocuments(query)
 
-    return {
-      purchaseOrders,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit),
-      },
-    }
+   // At the end of getPurchaseOrders function
+const updatedPurchaseOrders = purchaseOrders.map((po) => ({
+  ...po,
+  attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+}));
+
+return {
+  purchaseOrders: updatedPurchaseOrders,
+  pagination: {
+    page,
+    limit,
+    total,
+    pages: Math.ceil(total / limit),
+  },
+};
   }
 
   /**
@@ -156,8 +163,34 @@ class PurchaseOrderService {
    * @returns {Object} Deleted purchase order
    */
   async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
-    // Try to delete by MongoDB ObjectId or by ref_num
+    // First find the purchase order to get attachment info
     let purchaseOrder = null
+    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+      purchaseOrder = await PurchaseOrder.findById(identifier)
+    }
+    if (!purchaseOrder) {
+      purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier })
+    }
+    
+    // If purchase order has an attachment, delete the files
+    if (purchaseOrder && purchaseOrder.attachment) {
+      const fs = require('fs');
+      const path = require('path');
+      
+      // Delete from public directory
+      const publicPath = path.join(__dirname, "../../public", purchaseOrder.attachment);
+      fs.unlink(publicPath, (err) => {
+        if (err) console.error("Error deleting attachment from public:", err.message);
+      });
+      
+      // Delete from uploads directory
+      const uploadsPath = path.join(__dirname, "../..", purchaseOrder.attachment);
+      fs.unlink(uploadsPath, (err) => {
+        if (err) console.error("Error deleting attachment from uploads:", err.message);
+      });
+    }
+    
+    // Now delete the purchase order
     if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
       purchaseOrder = await PurchaseOrder.findByIdAndDelete(identifier)
     }
@@ -285,4 +318,4 @@ class PurchaseOrderService {
   }
 }
 
-module.exports = new PurchaseOrderService() 
+module.exports = new PurchaseOrderService()

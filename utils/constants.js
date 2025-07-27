@@ -136,6 +136,28 @@ const REPORT_TYPES = {
   STOCK_MOVEMENT: "stock_movement",
 }
 
+function getAttachmentUrl(relativePath) {
+  if (!relativePath) return null;
+
+  // If already a full URL, return as-is
+  if (relativePath.startsWith("http://") || relativePath.startsWith("https://")) {
+    return relativePath;
+  }
+
+  // Use the API_URL from environment or default to localhost
+  const baseApiUrl = process.env.API_URL || "http://localhost:8080/api";
+  // Remove /api from the end to get the base URL
+  const baseStaticUrl = baseApiUrl.replace(/\/api$/, "");
+
+  // Ensure relativePath starts with a slash
+  const normalizedPath = relativePath.startsWith("/") ? relativePath : `/${relativePath}`;
+  
+  // For debugging
+  console.log(`Generating attachment URL: Base=${baseStaticUrl}, Path=${normalizedPath}`);
+  
+  return `${baseStaticUrl}${normalizedPath}`;
+}
+
 // Date formats
 const DATE_FORMATS = {
   ISO: "YYYY-MM-DDTHH:mm:ss.SSSZ",
@@ -162,4 +184,7 @@ module.exports = {
   EMAIL_TEMPLATES,
   REPORT_TYPES,
   DATE_FORMATS,
+  getAttachmentUrl,
 }
+
+

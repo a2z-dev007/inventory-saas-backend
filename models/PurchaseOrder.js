@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const purchaseOrderItemSchema = new mongoose.Schema({
   productId: {
@@ -25,7 +25,7 @@ const purchaseOrderItemSchema = new mongoose.Schema({
     required: true,
     min: [0, "Total cannot be negative"],
   },
-})
+});
 
 const purchaseOrderSchema = new mongoose.Schema(
   {
@@ -34,6 +34,11 @@ const purchaseOrderSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       index: true,
+    },
+    attachment: {
+      type: String,
+      trim: true,
+      default: "",
     },
     poNumber: {
       type: String,
@@ -95,27 +100,32 @@ const purchaseOrderSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
-)
+  }
+);
 
 // Indexes
-purchaseOrderSchema.index({ ref_num: 1 })
-purchaseOrderSchema.index({ poNumber: 1 })
-purchaseOrderSchema.index({ vendor: 1 })
-purchaseOrderSchema.index({ status: 1 })
-purchaseOrderSchema.index({ orderDate: -1 })
-purchaseOrderSchema.index({ createdBy: 1 })
+purchaseOrderSchema.index({ ref_num: 1 });
+purchaseOrderSchema.index({ poNumber: 1 });
+purchaseOrderSchema.index({ vendor: 1 });
+purchaseOrderSchema.index({ status: 1 });
+purchaseOrderSchema.index({ orderDate: -1 });
+purchaseOrderSchema.index({ createdBy: 1 });
 
 // Auto-generate ref_num
 purchaseOrderSchema.pre("save", async function (next) {
   if (!this.ref_num) {
-    const now = new Date()
-    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}`
-    const regex = new RegExp(`^PO-${dateStr}-\\d{4}$`)
-    const count = await this.constructor.countDocuments({ ref_num: { $regex: regex } })
-    this.ref_num = `PO-${dateStr}-${String(count + 1).padStart(4, "0")}`
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}${String(now.getDate()).padStart(2, "0")}`;
+    const regex = new RegExp(`^PO-${dateStr}-\\d{4}$`);
+    const count = await this.constructor.countDocuments({
+      ref_num: { $regex: regex },
+    });
+    this.ref_num = `PO-${dateStr}-${String(count + 1).padStart(4, "0")}`;
   }
-  next()
-})
+  next();
+});
 
-module.exports = mongoose.model("PurchaseOrder", purchaseOrderSchema)
+module.exports = mongoose.model("PurchaseOrder", purchaseOrderSchema);
