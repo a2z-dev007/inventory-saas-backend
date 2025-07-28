@@ -152,18 +152,18 @@ const validateProduct = [
     .isLength({ min: 1, max: 200 })
     .withMessage("Product name is required and cannot exceed 200 characters"),
 
-  body("sku")
-    .trim()
-    .isLength({ min: 1, max: 50 })
-    .withMessage("SKU is required and cannot exceed 50 characters"),
+  // body("sku")
+  //   .trim()
+  //   .isLength({ min: 1, max: 50 })
+  //   .withMessage("SKU is required and cannot exceed 50 characters"),
 
   body("purchaseRate")
     .isFloat({ min: 0 })
     .withMessage("Purchase rate must be a positive number"),
 
-  body("salesRate")
-    .isFloat({ min: 0 })
-    .withMessage("Sales rate must be a positive number"),
+  // body("salesRate")
+  //   .isFloat({ min: 0 })
+  //   .withMessage("Sales rate must be a positive number"),
 
   body("currentStock")
     .optional()
@@ -176,6 +176,7 @@ const validateProduct = [
     .withMessage("Category is required and cannot exceed 100 characters"),
 
   body("vendor")
+    .optional()
     .trim()
     .isLength({ min: 1, max: 200 })
     .withMessage("Vendor is required and cannot exceed 200 characters"),
@@ -259,19 +260,18 @@ const validateBulkUpdate = [
 const validatePurchaseOrder = [
   body("vendor").trim().notEmpty().withMessage("Vendor is required"),
   body("ref_num").trim().notEmpty().withMessage("DB number is required"),
-  check("attachment").custom((value, { req }) => {
-    if (!req.file) {
-      throw new Error("Attachment is required");
-    }
-  
-    // Optional: validate MIME type
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
-    if (!allowedMimeTypes.includes(req.file.mimetype)) {
-      throw new Error("Invalid file type for attachment");
-    }
-  
-    return true;
-  }),
+  body("attachment")
+    .optional()
+    .custom((value, { req }) => {
+      if (req.file) {
+        const mimetype = req.file.mimetype;
+        const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+        if (!allowed.includes(mimetype)) {
+          throw new Error("Only JPG, JPEG, PNG, WEBP files are allowed");
+        }
+      }
+      return true;
+    }),
   body("items")
     .isArray({ min: 1 })
     .withMessage("At least one item is required"),
@@ -361,7 +361,7 @@ const validateSale = [
 // Purchase validation rules
 const validatePurchase = [
   body("vendor").trim().notEmpty().withMessage("Vendor is required"),
-
+  body("ref_num").trim().notEmpty().withMessage("DB number is required"),
   body("items")
     .isArray({ min: 1 })
     .withMessage("At least one item is required"),
@@ -384,17 +384,17 @@ const validatePurchase = [
     .trim()
     .withMessage("Invoice file must be a string"),
 
-  body("notes")
-    .optional()
-    .isString()
-    .trim()
-    .isLength({ max: 1000 })
-    .withMessage("Notes cannot exceed 1000 characters"),
+  // body("notes")
+  //   .optional()
+  //   .isString()
+  //   .trim()
+  //   .isLength({ max: 1000 })
+  //   .withMessage("Notes cannot exceed 1000 characters"),
 
-  body("relatedPO")
-    .optional()
-    .isMongoId()
-    .withMessage("Related PO must be a valid ID"),
+  // body("relatedPO")
+  //   .optional()
+  //   .isMongoId()
+  //   .withMessage("Related PO must be a valid ID"),
 
   handleValidationErrors,
 ];

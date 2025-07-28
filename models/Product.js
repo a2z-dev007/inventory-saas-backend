@@ -8,28 +8,28 @@ const productSchema = new mongoose.Schema(
       trim: true,
       maxlength: [200, "Product name cannot exceed 200 characters"],
     },
-    image: {
-      type: String, // URL or base64
-      default: null,
-    },
-    sku: {
-      type: String,
-      required: [true, "SKU is required"],
-      unique: true,
-      trim: true,
-      uppercase: true,
-      maxlength: [50, "SKU cannot exceed 50 characters"],
-    },
+    // image: {
+    //   type: String, // URL or base64
+    //   default: null,
+    // },
+    // sku: {
+    //   type: String,
+    //   required: [true, "SKU is required"],
+    //   unique: true,
+    //   trim: true,
+    //   uppercase: true,
+    //   maxlength: [50, "SKU cannot exceed 50 characters"],
+    // },
     purchaseRate: {
       type: Number,
-      required: [true, "Purchase rate is required"],
-      min: [0, "Purchase rate cannot be negative"],
+      required: [true, " Price is required"],
+      min: [0, " Price cannot be negative"],
     },
-    salesRate: {
-      type: Number,
-      required: [true, "Sales rate is required"],
-      min: [0, "Sales rate cannot be negative"],
-    },
+    // salesRate: {
+    //   type: Number,
+    //   required: [true, "Sales rate is required"],
+    //   min: [0, "Sales rate cannot be negative"],
+    // },
     currentStock: {
       type: Number,
       required: [true, "Current stock is required"],
@@ -44,15 +44,15 @@ const productSchema = new mongoose.Schema(
     },
     vendor: {
       type: String,
-      required: [true, "Vendor is required"],
+      required: false,
       trim: true,
       maxlength: [200, "Vendor name cannot exceed 200 characters"],
     },
-    description: {
-      type: String,
-      trim: true,
-      maxlength: [1000, "Description cannot exceed 1000 characters"],
-    },
+    // description: {
+    //   type: String,
+    //   trim: true,
+    //   maxlength: [1000, "Description cannot exceed 1000 characters"],
+    // },
     
     minStockLevel: {
       type: Number,

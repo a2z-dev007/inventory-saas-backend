@@ -1,6 +1,9 @@
 const purchaseService = require("../services/purchaseService")
 const logger = require("../utils/logger")
 const { validationResult } = require("express-validator")
+const { getAttachmentUrl } = require("../utils/constants");
+const path = require("path");
+const fs = require("fs");
 
 class PurchaseController {
   /**
@@ -32,9 +35,15 @@ class PurchaseController {
 
       const result = await purchaseService.getPurchases(options)
 
+      const purchaseData = result.purchases.map(po => ({
+        ...po,
+        invoiceFile: getAttachmentUrl(po.invoiceFile),
+      }));
+      console.log("Get purchases result:", purchaseData)
+
       res.json({
         success: true,
-        data: result,
+        data: {purchases:purchaseData},
       })
     } catch (error) {
       logger.error("Get purchases error:", error)
@@ -67,6 +76,8 @@ class PurchaseController {
         })
       }
 
+      purchase.invoiceFile = getAttachmentUrl(purchase.invoiceFile);
+
       res.json({
         success: true,
         data: { purchase },
@@ -82,63 +93,92 @@ class PurchaseController {
    * @route POST /api/purchases
    * @access Private (Admin/Manager)
    */
-  async createPurchase(req, res, next) {
-    console.log('BODY:', req.body);
-console.log('FILES:', req.file, req.files);
-    try {
-      const errors = validationResult(req)
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: "Validation failed",
-          errors: errors.array(),
-        })
-      }
-// comment
-      // Parse items if sent as a JSON string (for multipart/form-data)
-      if (req.body.items && typeof req.body.items === "string") {
-        try {
-          req.body.items = JSON.parse(req.body.items)
-        } catch (e) {
-          return res.status(400).json({
-            success: false,
-            message: "Invalid items format. Must be a valid JSON array.",
-          })
+
+async createPurchase(req, res, next) {
+  console.log("BODY:", req.body);
+  console.log("FILES:", req.file);
+
+  try {
+    // Parse items if sent as a string
+    if (req.body.items && typeof req.body.items === "string") {
+      try {
+        req.body.items = JSON.parse(req.body.items);
+      } catch (e) {
+        // Delete uploaded file if parsing fails
+        if (req.file) {
+          const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
+          fs.unlink(filePath, (err) => {
+            if (err) console.error("Error deleting file after JSON parse fail:", err.message);
+          });
         }
-      }
 
-      const purchaseData = {
-        ...req.body,
-        createdBy: req.user.id,
-      }
-
-      // If a file was uploaded, store its path
-      if (req.file) {
-        purchaseData.invoiceFile = `/uploads/${req.file.filename}`
-      }
-
-      const purchase = await purchaseService.createPurchase(purchaseData)
-
-      logger.info(`Purchase created: ${purchase.receiptNumber} by user ${req.user.username}`)
-
-      res.status(201).json({
-        success: true,
-        message: "Purchase created successfully",
-        data: { purchase },
-      })
-    } catch (error) {
-      logger.error("Create purchase error:", error)
-
-      if (error.code === 11000) {
         return res.status(400).json({
           success: false,
-          message: "Receipt number already exists",
-        })
+          message: "Invalid items format. Must be a valid JSON array.",
+        });
+      }
+    }
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // Delete uploaded file if validation fails
+      if (req.file) {
+        const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
+        fs.unlink(filePath, (err) => {
+          if (err) console.error("Error deleting file after validation fail:", err.message);
+        });
       }
 
-      next(error)
+      return res.status(400).json({
+        success: false,
+        message: errors.array()[0].msg,
+        errors: errors.array(),
+      });
     }
+
+    let invoiceFilePath = null;
+
+    if (req.file) {
+      console.log("Invoice uploaded:", req.file.filename);
+      invoiceFilePath = `/uploads/invoices/${req.file.filename}`;
+    }
+
+    const purchaseData = {
+      ...req.body,
+      createdBy: req.user.id,
+      invoiceFile: invoiceFilePath,
+    };
+
+    const purchase = await purchaseService.createPurchase(purchaseData);
+
+    logger.info(`Purchase created: ${purchase.receiptNumber} by user ${req.user.username}`);
+
+    res.status(201).json({
+      success: true,
+      message: "Purchase created successfully",
+      data: { purchase },
+    });
+  } catch (error) {
+    logger.error("Create purchase error:", error);
+  
+    // Cleanup uploaded file on error
+    if (req.file) {
+      const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
+      fs.unlink(filePath, (err) => {
+        if (err) console.error("Error deleting file after exception:", err.message);
+      });
+    }
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "something went wrong, duplicate key error",
+      });
+    }
+
+    next(error);
   }
+}
 
   /**
    * Update purchase
@@ -149,12 +189,50 @@ console.log('FILES:', req.file, req.files);
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
+        if (req.file) {
+          const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
+          fs.unlink(filePath, (err) => {
+            if (err) console.error("Error deleting file after validation fail:", err.message);
+          });
+        }
         return res.status(400).json({
           success: false,
           message: "Validation failed",
           errors: errors.array(),
         })
       }
+
+      const existingPurchase = await purchaseService.getPurchaseById(req.params.id)
+
+      if (!existingPurchase) {
+
+        if (req.file) {
+          const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
+          fs.unlink(filePath, (err) => {
+            if (err) console.error("Error deleting file after PO not found:", err.message);
+          });
+        }
+        return res.status(404).json({
+          success: false,
+          message: "Purchase not found",
+        })
+      }
+
+      let attachmentPath = existingPurchase.invoiceFile;
+  
+      if (req.file) {
+        // Delete old attachment
+        if (existingPurchase.invoiceFile) {
+          const oldPath = path.join(__dirname, "../..", existingPurchase.invoiceFile);
+          fs.unlink(oldPath, (err) => {
+            if (err) console.error("Error deleting old attachment:", err.message);
+          });
+        }
+  
+        attachmentPath = `/uploads/invoices/${req.file.filename}`;
+      }
+
+
 
       // Parse items if sent as a JSON string (for multipart/form-data)
       if (req.body.items && typeof req.body.items === "string") {
@@ -171,17 +249,12 @@ console.log('FILES:', req.file, req.files);
       const updateData = {
         ...req.body,
         updatedBy: req.user.id,
+        invoiceFile: attachmentPath
       }
 
       const purchase = await purchaseService.updatePurchase(req.params.id, updateData)
-
-      if (!purchase) {
-        return res.status(404).json({
-          success: false,
-          message: "Purchase not found",
-        })
-      }
-
+      purchase.invoiceFile = getAttachmentUrl(purchase.invoiceFile);
+      
       logger.info(`Purchase updated: ${purchase.receiptNumber} by user ${req.user.username}`)
 
       res.json({
@@ -190,6 +263,14 @@ console.log('FILES:', req.file, req.files);
         data: { purchase },
       })
     } catch (error) {
+
+      // Cleanup new file if error occurs
+      if (req.file) {
+        const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
+        fs.unlink(filePath, (err) => {
+          if (err) console.error("Error deleting file after exception:", err.message);
+        });
+      }
       logger.error("Update purchase error:", error)
       next(error)
     }

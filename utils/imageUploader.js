@@ -36,7 +36,7 @@ const createImageUploader = ({
     if (isValidType) {
       cb(null, true);
     } else {
-      cb(new Error("Only image files (jpg, jpeg, png, webp) are allowed"));
+      cb(new Error("Invalid file type. Only JPEG, PNG, and PDF are allowed."))
     }
   };
 

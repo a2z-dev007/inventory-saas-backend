@@ -11,34 +11,52 @@ const {
 } = require("../middleware/validation")
 const multer = require("multer")
 const path = require("path")
-
+// const createUploadMiddleware = require("../utils/uploadFile");
+const createImageUploader = require("../utils/imageUploader");
 // Apply authentication to all routes
 router.use(protect)
+const parseItemsMiddleware = (req, res, next) => {
+  if (typeof req.body.items === "string") {
+    try {
+      req.body.items = JSON.parse(req.body.items);
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid JSON format for items",
+      });
+    }
+  }
+  next();
+};
 
 // Multer storage config
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../uploads"))
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
-    cb(null, uniqueSuffix + "-" + file.originalname)
-  },
-})
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, path.join(__dirname, "../uploads"))
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
+//     cb(null, uniqueSuffix + "-" + file.originalname)
+//   },
+// })
 
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: function (req, file, cb) {
-    const allowedTypes = ["image/jpeg", "image/png", "application/pdf"]
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true)
-    } else {
-      cb(new Error("Invalid file type. Only JPEG, PNG, and PDF are allowed."))
-    }
-  },
-})
-
+// const upload = multer({
+//   storage: storage,
+//   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+//   fileFilter: function (req, file, cb) {
+//     const allowedTypes = ["image/jpeg", "image/png", "application/pdf"]
+//     if (allowedTypes.includes(file.mimetype)) {
+//       cb(null, true)
+//     } else {
+//       cb(new Error("Invalid file type. Only JPEG, PNG, and PDF are allowed."))
+//     }
+//   },
+// })
+// const uploadInvoice = createUploadMiddleware("invoices", "invoiceFile");
+const uploadInvoice = createImageUploader({
+  folder: "uploads/invoices", // custom folder if needed
+  fieldName: "invoiceFile", // match your frontend FormData
+});
 /**
  * @swagger
  * components:
@@ -184,7 +202,13 @@ router.get("/:id", authorize("admin", "manager"), validateId, purchaseController
  *       401:
  *         description: Unauthorized
  */
-router.post("/", authorize("admin", "manager"), upload.single("invoiceFile"), validatePurchase, purchaseController.createPurchase)
+router.post("/", 
+  authorize("admin", "manager"),
+  uploadInvoice,
+  parseItemsMiddleware,
+  validatePurchase, 
+  purchaseController.createPurchase
+);
 
 /**
  * @swagger
@@ -217,7 +241,7 @@ router.post("/", authorize("admin", "manager"), upload.single("invoiceFile"), va
  *       401:
  *         description: Unauthorized
  */
-router.put("/:id", authorize("admin", "manager"), validateId, validatePurchase, purchaseController.updatePurchase)
+router.put("/:id", authorize("admin", "manager"), uploadInvoice, validateId, validatePurchase, purchaseController.updatePurchase)
 
 /**
  * @swagger

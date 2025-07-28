@@ -20,6 +20,9 @@ const purchaseItemSchema = new mongoose.Schema({
     required: true,
     min: [0, "Unit price cannot be negative"],
   },
+  unitType: {
+    type: String,
+  },
   total: {
     type: Number,
     required: true,
@@ -29,12 +32,17 @@ const purchaseItemSchema = new mongoose.Schema({
 
 const purchaseSchema = new mongoose.Schema(
   {
-    receiptNumber: {
+    ref_num: {
       type: String,
-      required: [true, "Receipt number is required"],
       unique: true,
       trim: true,
-      uppercase: true,
+      index: true,
+      required:[true,'DB Number is required']
+    },
+    invoiceFile: {
+      type: String,
+      trim: true,
+      default: "",
     },
     vendor: {
       type: String,
@@ -57,11 +65,13 @@ const purchaseSchema = new mongoose.Schema(
       required: true,
       min: [0, "Total cannot be negative"],
     },
-    invoiceFile: {
+    receiptNumber: {
       type: String,
+      unique: true,
       trim: true,
+      index: true,
     },
-    notes: {
+    remark: {
       type: String,
       trim: true,
       maxlength: [1000, "Notes cannot exceed 1000 characters"],
@@ -71,22 +81,7 @@ const purchaseSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    relatedPO: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "PurchaseOrder",
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-      index: true,
-    },
-    deletedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    deletedAt: {
-      type: Date,
-    },
+
   },
   {
     timestamps: true,

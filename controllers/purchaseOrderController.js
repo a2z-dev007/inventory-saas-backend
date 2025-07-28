@@ -100,6 +100,7 @@ class PurchaseOrderController {
    * @route POST /api/purchase-orders
    * @access Private (Admin/Manager)
    */
+  
   async createPurchaseOrder(req, res, next) {
     try {
       // Parse items if sent as string
@@ -109,6 +110,14 @@ class PurchaseOrderController {
   
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        // Delete uploaded file if validation fails
+        if (req.file) {
+          const filePath = path.join(__dirname, "../..", `/uploads/purchase-orders/${req.file.filename}`);
+          fs.unlink(filePath, (err) => {
+            if (err) console.error("Error deleting file after validation fail:", err.message);
+          });
+        }
+  
         return res.status(400).json({
           success: false,
           message: errors.array()[0].msg,
@@ -140,6 +149,15 @@ class PurchaseOrderController {
       });
     } catch (error) {
       logger.error("Create purchase order error:", error);
+  
+      // Cleanup uploaded file on error
+      if (req.file) {
+        const filePath = path.join(__dirname, "../..", `/uploads/purchase-orders/${req.file.filename}`);
+        fs.unlink(filePath, (err) => {
+          if (err) console.error("Error deleting file after exception:", err.message);
+        });
+      }
+  
       next(error);
     }
   }
@@ -150,10 +168,19 @@ class PurchaseOrderController {
    * @route PUT /api/purchase-orders/:id
    * @access Private (Admin/Manager)
    */
+  
   async updatePurchaseOrder(req, res, next) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        // Delete uploaded file if validation fails
+        if (req.file) {
+          const filePath = path.join(__dirname, "../..", `/uploads/purchase-orders/${req.file.filename}`);
+          fs.unlink(filePath, (err) => {
+            if (err) console.error("Error deleting file after validation fail:", err.message);
+          });
+        }
+  
         return res.status(400).json({
           success: false,
           message: "Validation failed",
@@ -163,6 +190,14 @@ class PurchaseOrderController {
   
       const existingPO = await purchaseOrderService.getPurchaseOrderByIdOrRefNum(req.params.id);
       if (!existingPO) {
+        // Delete uploaded file if PO not found
+        if (req.file) {
+          const filePath = path.join(__dirname, "../..", `/uploads/purchase-orders/${req.file.filename}`);
+          fs.unlink(filePath, (err) => {
+            if (err) console.error("Error deleting file after PO not found:", err.message);
+          });
+        }
+  
         return res.status(404).json({
           success: false,
           message: "Purchase order not found",
@@ -171,9 +206,8 @@ class PurchaseOrderController {
   
       let attachmentPath = existingPO.attachment;
   
-      // ✅ If a new file is uploaded, delete old one and set new path
       if (req.file) {
-        // Delete old attachment if it exists
+        // Delete old attachment
         if (existingPO.attachment) {
           const oldPath = path.join(__dirname, "../..", existingPO.attachment);
           fs.unlink(oldPath, (err) => {
@@ -181,7 +215,6 @@ class PurchaseOrderController {
           });
         }
   
-        // Save new attachment path
         attachmentPath = `/uploads/purchase-orders/${req.file.filename}`;
       }
   
@@ -191,7 +224,6 @@ class PurchaseOrderController {
         attachment: attachmentPath,
       };
   
-      // If items are sent as string (common in FormData), parse them
       if (updateData.items && typeof updateData.items === "string") {
         updateData.items = JSON.parse(updateData.items);
       }
@@ -210,6 +242,15 @@ class PurchaseOrderController {
       });
     } catch (error) {
       logger.error("Update purchase order error:", error);
+  
+      // Cleanup new file if error occurs
+      if (req.file) {
+        const filePath = path.join(__dirname, "../..", `/uploads/purchase-orders/${req.file.filename}`);
+        fs.unlink(filePath, (err) => {
+          if (err) console.error("Error deleting file after exception:", err.message);
+        });
+      }
+  
       next(error);
     }
   }

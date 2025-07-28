@@ -47,7 +47,7 @@ class PurchaseService {
     // Execute query
     const purchases = await Purchase.find(query)
       .populate("createdBy", "name username")
-      .populate("relatedPO", "poNumber")
+      // .populate("relatedPO", "poNumber")
       .sort(sort)
       .skip(skip)
       .limit(limit)
@@ -74,7 +74,7 @@ class PurchaseService {
   async getPurchaseById(purchaseId) {
     return await Purchase.findById(purchaseId)
       .populate("createdBy", "name username")
-      .populate("relatedPO", "poNumber")
+      // .populate("relatedPO", "poNumber")
       .lean()
   }
 
@@ -186,6 +186,7 @@ class PurchaseService {
         productName: product.name,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
+        unitType: item.unitType,
         total,
       })
 
