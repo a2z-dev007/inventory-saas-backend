@@ -6,6 +6,7 @@ const path = require("path");
 const fs = require("fs");
 // const { getAttachmentUrl } = require("../utils/constants");
 const { getAttachmentUrl } = require("../utils/constants");
+const { moveFileFromRecycleBin } = require("../utils/fileMover");
 
 class PurchaseOrderController {
   /**
@@ -44,6 +45,7 @@ class PurchaseOrderController {
           ...po,
           attachment: getAttachmentUrl(po.attachment),
         }));
+        
   
         res.json({
           success: true,
@@ -136,6 +138,7 @@ class PurchaseOrderController {
         ...req.body,
         createdBy: req.user.id,
         attachment: attachmentPath,
+        remarks: req.body.remarks || null,
       };
   
       const purchaseOrder = await purchaseOrderService.createPurchaseOrder(purchaseOrderData);
@@ -222,6 +225,7 @@ class PurchaseOrderController {
         ...req.body,
         updatedBy: req.user.id,
         attachment: attachmentPath,
+        remarks: req.body.remarks || null,
       };
   
       if (updateData.items && typeof updateData.items === "string") {
@@ -307,6 +311,42 @@ class PurchaseOrderController {
    * @route DELETE /api/purchase-orders/:id
    * @access Private (Admin)
    */
+  // async deletePurchaseOrder(req, res, next) {
+  //   try {
+  //     const errors = validationResult(req);
+  //     if (!errors.isEmpty()) {
+  //       return res.status(400).json({
+  //         success: false,
+  //         message: "Validation failed",
+  //         errors: errors.array(),
+  //       });
+  //     }
+
+  //     const purchaseOrder = await purchaseOrderService.deletePurchaseOrderByIdOrRefNum(
+  //       req.params.id,
+  //       req.user.id
+  //     );
+
+  //     if (!purchaseOrder) {
+  //       return res.status(404).json({
+  //         success: false,
+  //         message: "Purchase order not found",
+  //       });
+  //     }
+
+  //     logger.info(`Purchase order deleted: ${purchaseOrder.ref_num} by admin ${req.user.username}`);
+
+  //     res.json({
+  //       success: true,
+  //       message: "Purchase order deleted successfully",
+  //     });
+  //   } catch (error) {
+  //     logger.error("Delete purchase order error:", error);
+  //     next(error);
+  //   }
+  // }
+
+  // Soft delete
   async deletePurchaseOrder(req, res, next) {
     try {
       const errors = validationResult(req);
@@ -317,27 +357,74 @@ class PurchaseOrderController {
           errors: errors.array(),
         });
       }
-
+  
       const purchaseOrder = await purchaseOrderService.deletePurchaseOrderByIdOrRefNum(
         req.params.id,
         req.user.id
       );
-
+  
       if (!purchaseOrder) {
         return res.status(404).json({
           success: false,
           message: "Purchase order not found",
         });
       }
-
-      logger.info(`Purchase order deleted: ${purchaseOrder.ref_num} by admin ${req.user.username}`);
-
+  
+      logger.info(
+        `Purchase order soft-deleted: ${purchaseOrder.ref_num} by admin ${req.user.username}`
+      );
+  
       res.json({
         success: true,
-        message: "Purchase order deleted successfully",
+        message: "Purchase order moved to recycle bin (soft deleted)",
       });
     } catch (error) {
       logger.error("Delete purchase order error:", error);
+      next(error);
+    }
+  }
+
+  // restore :
+  async restorePurchaseOrder(req, res, next) {
+    try {
+      const purchaseOrder = await PurchaseOrder.findById(req.params.id);
+  
+      if (!purchaseOrder || !purchaseOrder.isDeleted) {
+        return res.status(404).json({
+          success: false,
+          message: "Purchase order not found in recycle bin",
+        });
+      }
+  
+      // Restore attachment if needed
+      if (purchaseOrder.attachment?.includes("recyclebin/purchase-orders")) {
+        const oldPath = path.join(__dirname, "..", "..", purchaseOrder.attachment);
+  
+        if (fs.existsSync(oldPath)) {
+          try {
+            const newRelativePath = moveFileFromRecycleBin(oldPath, "uploads/purchase-orders");
+            purchaseOrder.attachment = newRelativePath;
+          } catch (err) {
+            logger.error("Failed to restore attachment:", err.message);
+          }
+        }
+      }
+  
+      // Clear deletion flags
+      purchaseOrder.isDeleted = false;
+      purchaseOrder.deletedBy = undefined;
+      purchaseOrder.deletedAt = undefined;
+  
+      await purchaseOrder.save();
+  
+      logger.info(`Purchase order restored: ${purchaseOrder.ref_num} by ${req.user.username}`);
+  
+      res.json({
+        success: true,
+        message: "Purchase order successfully restored from recycle bin",
+      });
+    } catch (error) {
+      logger.error("Restore purchase order error:", error);
       next(error);
     }
   }

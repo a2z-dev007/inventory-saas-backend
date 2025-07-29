@@ -999,3 +999,204 @@
 {"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-28 18:47:10"}
 {"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-28 18:48:03"}
 {"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-28 18:48:03"}
+{"code":11000,"index":0,"keyPattern":{"ref_num":1},"keyValue":{"ref_num":"3251353131"},"level":"error","message":"Create purchase error: E11000 duplicate key error collection: inventory_management.purchases index: ref_num_1 dup key: { ref_num: \"3251353131\" }","service":"inventory-management","stack":"MongoServerError: E11000 duplicate key error collection: inventory_management.purchases index: ref_num_1 dup key: { ref_num: \"3251353131\" }\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongodb/lib/operations/insert.js:50:33\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongodb/lib/operations/command.js:84:64\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","timestamp":"2025-07-28 18:56:45"}
+{"level":"info","message":"Purchase created: PUR-20250728-185711 by user admin","service":"inventory-management","timestamp":"2025-07-28 18:57:11"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:07:26"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:07:26"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:07:41"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:07:41"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:07:57"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:07:57"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:08:26"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:08:26"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:08:28"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:08:28"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:08:32"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:08:32"}
+{"level":"info","message":"Purchase created: PUR-20250729-190932 by user admin","service":"inventory-management","timestamp":"2025-07-29 19:09:32"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:22:15"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:22:15"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:22:18"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:22:18"}
+{"level":"error","message":"Update purchase error: Cannot populate path `relatedPO` because it is not in your schema. Set the `strictPopulate` option to false to override.","path":"relatedPO","service":"inventory-management","stack":"StrictPopulateError: Cannot populate path `relatedPO` because it is not in your schema. Set the `strictPopulate` option to false to override.\n    at getModelsMapForPopulate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/helpers/populate/getModelsMapForPopulate.js:50:12)\n    at populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4394:21)\n    at _populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4354:5)\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4326:5\n    at new Promise (<anonymous>)\n    at Function.populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4325:10)\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/query.js:2521:11\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/query.js:3164:21\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","timestamp":"2025-07-29 19:22:32"}
+{"level":"error","message":"Cannot populate path `relatedPO` because it is not in your schema. Set the `strictPopulate` option to false to override.","path":"relatedPO","service":"inventory-management","stack":"StrictPopulateError: Cannot populate path `relatedPO` because it is not in your schema. Set the `strictPopulate` option to false to override.\n    at getModelsMapForPopulate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/helpers/populate/getModelsMapForPopulate.js:50:12)\n    at populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4394:21)\n    at _populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4354:5)\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4326:5\n    at new Promise (<anonymous>)\n    at Function.populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4325:10)\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/query.js:2521:11\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/query.js:3164:21\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","timestamp":"2025-07-29 19:22:32"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:24:37"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:24:37"}
+{"level":"error","message":"Update purchase error: Cannot populate path `poNumber` because it is not in your schema. Set the `strictPopulate` option to false to override.","path":"poNumber","service":"inventory-management","stack":"StrictPopulateError: Cannot populate path `poNumber` because it is not in your schema. Set the `strictPopulate` option to false to override.\n    at getModelsMapForPopulate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/helpers/populate/getModelsMapForPopulate.js:50:12)\n    at populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4394:21)\n    at _populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4354:5)\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4326:5\n    at new Promise (<anonymous>)\n    at Function.populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4325:10)\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/query.js:2521:11\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/query.js:3164:21\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","timestamp":"2025-07-29 19:25:01"}
+{"level":"error","message":"Cannot populate path `poNumber` because it is not in your schema. Set the `strictPopulate` option to false to override.","path":"poNumber","service":"inventory-management","stack":"StrictPopulateError: Cannot populate path `poNumber` because it is not in your schema. Set the `strictPopulate` option to false to override.\n    at getModelsMapForPopulate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/helpers/populate/getModelsMapForPopulate.js:50:12)\n    at populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4394:21)\n    at _populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4354:5)\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4326:5\n    at new Promise (<anonymous>)\n    at Function.populate (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/model.js:4325:10)\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/query.js:2521:11\n    at /Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/node_modules/mongoose/lib/query.js:3164:21\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","timestamp":"2025-07-29 19:25:01"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:25:16"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:25:16"}
+{"level":"info","message":"Purchase updated: PUR-20250728-185711 by user admin","service":"inventory-management","timestamp":"2025-07-29 19:25:36"}
+{"level":"info","message":"Purchase updated: PUR-20250728-185711 by user admin","service":"inventory-management","timestamp":"2025-07-29 19:26:14"}
+{"level":"info","message":"Purchase deleted: PUR-20250728-185711 by admin admin","service":"inventory-management","timestamp":"2025-07-29 19:26:28"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:31:34"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:31:34"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:32:17"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:32:17"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:33:10"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:33:10"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:33:21"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:33:21"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:33:25"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:33:25"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:42:02"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:42:02"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:43:26"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:43:26"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:44:11"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:44:11"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:48:43"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:48:43"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:51:52"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:51:52"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:52:53"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:52:53"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:53:33"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:53:33"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:55:49"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:55:49"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:55:57"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:55:57"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:56:51"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:56:51"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:56:57"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:56:57"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:58:49"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:58:49"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 19:59:00"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 19:59:00"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:01:09"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:01:09"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:01:38"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:01:38"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:01:43"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:01:43"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:04:32"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:04:32"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:04:33"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:04:33"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:04:50"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:04:50"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:05:00"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:05:01"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:05:57"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:05:57"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:06:34"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:06:34"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:11:02"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:11:02"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:12:10"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:12:10"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:12:48"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:12:48"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:13:04"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:13:04"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:14:32"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:14:32"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:14:54"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:14:54"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:17:49"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:17:49"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:19:32"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:19:32"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:19:42"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:19:42"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:22:50"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:22:50"}
+{"level":"error","message":"Delete purchase order error: path is not defined","service":"inventory-management","stack":"ReferenceError: path is not defined\n    at PurchaseOrderService.deletePurchaseOrderByIdOrRefNum (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/purchaseOrderService.js:221:24)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async deletePurchaseOrder (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/purchaseOrderController.js:360:29)","timestamp":"2025-07-29 20:24:20"}
+{"level":"error","message":"path is not defined","service":"inventory-management","stack":"ReferenceError: path is not defined\n    at PurchaseOrderService.deletePurchaseOrderByIdOrRefNum (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/services/purchaseOrderService.js:221:24)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async deletePurchaseOrder (/Volumes/My DATA/workspace/Inventory Management System/inventory-saas-backend/controllers/purchaseOrderController.js:360:29)","timestamp":"2025-07-29 20:24:20"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 20:25:51"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 20:25:51"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:21:58"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:21:58"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:22:04"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:22:04"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:22:28"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:22:28"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:24:56"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:24:56"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:24:59"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:24:59"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:25:02"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:25:02"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:25:56"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:25:56"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:26:00"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:26:00"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:26:50"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:26:50"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:28:43"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:28:43"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:29:06"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:29:06"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:29:16"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:29:16"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:30:11"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:30:11"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:30:48"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:30:48"}
+{"level":"info","message":"Purchase order soft-deleted: 10003 by admin admin","service":"inventory-management","timestamp":"2025-07-29 21:35:23"}
+{"level":"info","message":"Purchase soft-deleted: PUR-20250728-102608 by admin","service":"inventory-management","timestamp":"2025-07-29 21:36:34"}
+{"level":"info","message":"Purchase soft-deleted: PUR-20250728-102608 by admin","service":"inventory-management","timestamp":"2025-07-29 21:36:42"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:37:18"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:37:18"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:37:57"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:37:57"}
+{"level":"info","message":"Purchase created: PUR-20250729-213830 by user admin","service":"inventory-management","timestamp":"2025-07-29 21:38:30"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:48:39"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:48:39"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:48:43"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:48:43"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:49:07"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:49:07"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:49:46"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:49:46"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:50:48"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:50:48"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:50:52"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:50:53"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:51:27"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:51:27"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:51:52"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:51:52"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:51:57"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:51:57"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:54:02"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:54:02"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:54:46"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:54:46"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:55:05"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:55:05"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:55:22"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:55:22"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:55:25"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:55:25"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:55:58"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:55:58"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:56:04"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:56:04"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:56:08"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:56:08"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:56:18"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:56:18"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 21:57:25"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 21:57:25"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:00:22"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:00:22"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:03:46"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:03:47"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:04:54"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:04:54"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:05:23"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:05:23"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:08:39"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:08:39"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:09:00"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:09:00"}
+{"level":"info","message":"SIGINT received. Shutting down gracefully...","service":"inventory-management","timestamp":"2025-07-29 22:11:30"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:11:33"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:11:33"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:12:25"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:12:25"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:15:47"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:15:47"}

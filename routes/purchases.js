@@ -1,20 +1,20 @@
-const express = require("express")
-const router = express.Router()
-const purchaseController = require("../controllers/purchaseController")
-const { protect, authorize } = require("../middleware/auth")
+const express = require("express");
+const router = express.Router();
+const purchaseController = require("../controllers/purchaseController");
+const { protect, authorize } = require("../middleware/auth");
 const {
   validatePurchase,
   validateId,
   validatePagination,
   validateStatusUpdate,
   validateDateRange,
-} = require("../middleware/validation")
-const multer = require("multer")
-const path = require("path")
+} = require("../middleware/validation");
+const multer = require("multer");
+const path = require("path");
 // const createUploadMiddleware = require("../utils/uploadFile");
-const createImageUploader = require("../utils/imageUploader");
+const createFileUploader = require("../utils/createFileUploader");
 // Apply authentication to all routes
-router.use(protect)
+router.use(protect);
 const parseItemsMiddleware = (req, res, next) => {
   if (typeof req.body.items === "string") {
     try {
@@ -29,33 +29,10 @@ const parseItemsMiddleware = (req, res, next) => {
   next();
 };
 
-// Multer storage config
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, path.join(__dirname, "../uploads"))
-//   },
-//   filename: function (req, file, cb) {
-//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9)
-//     cb(null, uniqueSuffix + "-" + file.originalname)
-//   },
-// })
-
-// const upload = multer({
-//   storage: storage,
-//   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-//   fileFilter: function (req, file, cb) {
-//     const allowedTypes = ["image/jpeg", "image/png", "application/pdf"]
-//     if (allowedTypes.includes(file.mimetype)) {
-//       cb(null, true)
-//     } else {
-//       cb(new Error("Invalid file type. Only JPEG, PNG, and PDF are allowed."))
-//     }
-//   },
-// })
-// const uploadInvoice = createUploadMiddleware("invoices", "invoiceFile");
-const uploadInvoice = createImageUploader({
+const uploadInvoice = createFileUploader({
   folder: "uploads/invoices", // custom folder if needed
   fieldName: "invoiceFile", // match your frontend FormData
+  maxSize: 10 * 1024 * 1024, // 10MB
 });
 /**
  * @swagger
@@ -153,7 +130,13 @@ const uploadInvoice = createImageUploader({
  *       401:
  *         description: Unauthorized
  */
-router.get("/", authorize("admin", "manager"), validatePagination, validateDateRange, purchaseController.getPurchases)
+router.get(
+  "/",
+  authorize("admin", "manager"),
+  validatePagination,
+  validateDateRange,
+  purchaseController.getPurchases
+);
 
 /**
  * @swagger
@@ -178,7 +161,12 @@ router.get("/", authorize("admin", "manager"), validatePagination, validateDateR
  *       401:
  *         description: Unauthorized
  */
-router.get("/:id", authorize("admin", "manager"), validateId, purchaseController.getPurchaseById)
+router.get(
+  "/:id",
+  authorize("admin", "manager"),
+  validateId,
+  purchaseController.getPurchaseById
+);
 
 /**
  * @swagger
@@ -202,11 +190,12 @@ router.get("/:id", authorize("admin", "manager"), validateId, purchaseController
  *       401:
  *         description: Unauthorized
  */
-router.post("/", 
+router.post(
+  "/",
   authorize("admin", "manager"),
   uploadInvoice,
   parseItemsMiddleware,
-  validatePurchase, 
+  validatePurchase,
   purchaseController.createPurchase
 );
 
@@ -241,7 +230,15 @@ router.post("/",
  *       401:
  *         description: Unauthorized
  */
-router.put("/:id", authorize("admin", "manager"), uploadInvoice, validateId, validatePurchase, purchaseController.updatePurchase)
+router.put(
+  "/:id",
+  authorize("admin", "manager"),
+  uploadInvoice,
+  parseItemsMiddleware,
+  validateId,
+  validatePurchase,
+  purchaseController.updatePurchase
+);
 
 /**
  * @swagger
@@ -266,7 +263,12 @@ router.put("/:id", authorize("admin", "manager"), uploadInvoice, validateId, val
  *       401:
  *         description: Unauthorized
  */
-router.delete("/:id", authorize("admin"), validateId, purchaseController.deletePurchase)
+router.delete(
+  "/:id",
+  authorize("admin"),
+  validateId,
+  purchaseController.deletePurchase
+);
 
 /**
  * @swagger
@@ -294,6 +296,18 @@ router.delete("/:id", authorize("admin"), validateId, purchaseController.deleteP
  *       401:
  *         description: Unauthorized
  */
-router.get("/search", authorize("admin", "manager"), purchaseController.searchPurchases)
+router.get(
+  "/search",
+  authorize("admin", "manager"),
+  purchaseController.searchPurchases
+);
 
-module.exports = router 
+
+// undo purchase
+router.put(
+  "/:id/restore",
+  authorize("admin"),
+  validateId,
+  purchaseController.restorePurchase
+);
+module.exports = router;

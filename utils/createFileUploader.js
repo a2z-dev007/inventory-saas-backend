@@ -10,11 +10,11 @@ const ensureDirectoryExists = (uploadPath) => {
 };
 
 // Reusable uploader
-const createImageUploader = ({
+const createFileUploader = ({
   folder = "uploads", // default folder
-  fieldName = "image", // default field name
-  maxSize = 5 * 1024 * 1024, // 5MB
-  allowedTypes = /jpeg|jpg|png|webp/,
+  fieldName = "file", // default field name
+  maxSize = 10 * 1024 * 1024, // 10MB
+  allowedTypes = /\.(jpeg|jpg|png|webp|pdf|doc|docx|xls|xlsx)$/i,
 } = {}) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -31,12 +31,10 @@ const createImageUploader = ({
 
   const fileFilter = (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
-    const isValidType =
-      allowedTypes.test(ext) && allowedTypes.test(file.mimetype);
-    if (isValidType) {
+    if (allowedTypes.test(ext)) {
       cb(null, true);
     } else {
-      cb(new Error("Invalid file type. Only JPEG, PNG, and PDF are allowed."))
+      cb(new Error("Invalid file type. Allowed: JPG, PNG, PDF, DOC, DOCX, XLS, XLSX."));
     }
   };
 
@@ -47,4 +45,4 @@ const createImageUploader = ({
   }).single(fieldName); // returns middleware for a single file
 };
 
-module.exports = createImageUploader;
+module.exports = createFileUploader;

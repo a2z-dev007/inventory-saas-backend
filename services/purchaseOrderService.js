@@ -1,7 +1,9 @@
 const PurchaseOrder = require("../models/PurchaseOrder")
 const Product = require("../models/Product")
 const { getAttachmentUrl } = require("../utils/constants")
-
+const {moveFileToRecycleBin} = require("../utils/fileMover")
+const path = require("path")
+const fs = require("fs")
 class PurchaseOrderService {
   /**
    * Get purchase orders with pagination and filters
@@ -67,9 +69,12 @@ const updatedPurchaseOrders = purchaseOrders.map((po) => ({
   ...po,
   attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
 }));
+  // console.log("updatedPurchaseOrders",updatedPurchaseOrders)
+const filteredPurchaseOrders = updatedPurchaseOrders.filter((po) => po.isDeleted === false);
+// console.log("filteredPurchaseOrders",filteredPurchaseOrders)
 
 return {
-  purchaseOrders: updatedPurchaseOrders,
+  purchaseOrders: filteredPurchaseOrders,
   pagination: {
     page,
     limit,
@@ -162,42 +167,81 @@ return {
    * @param {string} deletedBy
    * @returns {Object} Deleted purchase order
    */
+  // async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
+  //   // First find the purchase order to get attachment info
+  //   let purchaseOrder = null
+  //   if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+  //     purchaseOrder = await PurchaseOrder.findById(identifier)
+  //   }
+  //   if (!purchaseOrder) {
+  //     purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier })
+  //   }
+    
+  //   // If purchase order has an attachment, delete the files
+  //   if (purchaseOrder && purchaseOrder.attachment) {
+  //     const fs = require('fs');
+  //     const path = require('path');
+      
+  //     // Delete from public directory
+  //     const publicPath = path.join(__dirname, "../../public", purchaseOrder.attachment);
+  //     fs.unlink(publicPath, (err) => {
+  //       if (err) console.error("Error deleting attachment from public:", err.message);
+  //     });
+      
+  //     // Delete from uploads directory
+  //     const uploadsPath = path.join(__dirname, "../..", purchaseOrder.attachment);
+  //     fs.unlink(uploadsPath, (err) => {
+  //       if (err) console.error("Error deleting attachment from uploads:", err.message);
+  //     });
+  //   }
+    
+  //   // Now delete the purchase order
+  //   if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+  //     purchaseOrder = await PurchaseOrder.findByIdAndDelete(identifier)
+  //   }
+  //   if (!purchaseOrder) {
+  //     purchaseOrder = await PurchaseOrder.findOneAndDelete({ ref_num: identifier })
+  //   }
+  //   return purchaseOrder
+  // }
+
+  // Soft deleted 
   async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
-    // First find the purchase order to get attachment info
-    let purchaseOrder = null
+    let purchaseOrder = null;
+  
+    // Try finding by ObjectId
     if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
-      purchaseOrder = await PurchaseOrder.findById(identifier)
+      purchaseOrder = await PurchaseOrder.findById(identifier);
     }
+  
+    // Try finding by ref_num
     if (!purchaseOrder) {
-      purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier })
+      purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier });
     }
-    
-    // If purchase order has an attachment, delete the files
-    if (purchaseOrder && purchaseOrder.attachment) {
-      const fs = require('fs');
-      const path = require('path');
-      
-      // Delete from public directory
-      const publicPath = path.join(__dirname, "../../public", purchaseOrder.attachment);
-      fs.unlink(publicPath, (err) => {
-        if (err) console.error("Error deleting attachment from public:", err.message);
-      });
-      
-      // Delete from uploads directory
-      const uploadsPath = path.join(__dirname, "../..", purchaseOrder.attachment);
-      fs.unlink(uploadsPath, (err) => {
-        if (err) console.error("Error deleting attachment from uploads:", err.message);
-      });
+  
+    if (!purchaseOrder) return null;
+  
+    // Move attachment if exists
+    if (purchaseOrder.attachment) {
+      const filePath = path.join(__dirname, "..", "..", purchaseOrder.attachment);
+      if (fs.existsSync(filePath)) {
+        try {
+          const newRelativePath = moveFileToRecycleBin(filePath, "purchase-orders");
+          purchaseOrder.attachment = newRelativePath;
+        } catch (err) {
+          console.error("Failed to move attachment to recyclebin:", err.message);
+        }
+      }
     }
-    
-    // Now delete the purchase order
-    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
-      purchaseOrder = await PurchaseOrder.findByIdAndDelete(identifier)
-    }
-    if (!purchaseOrder) {
-      purchaseOrder = await PurchaseOrder.findOneAndDelete({ ref_num: identifier })
-    }
-    return purchaseOrder
+  
+    // Perform soft delete
+    purchaseOrder.isDeleted = true;
+    purchaseOrder.deletedBy = deletedBy;
+    purchaseOrder.deletedAt = new Date();
+  
+    await purchaseOrder.save();
+  
+    return purchaseOrder;
   }
 
   /**

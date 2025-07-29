@@ -1,5 +1,6 @@
 const Purchase = require("../models/Purchase")
 const Product = require("../models/Product")
+const {moveFileToRecycleBin} = require("../utils/fileMover")
 
 class PurchaseService {
   /**
@@ -129,7 +130,7 @@ class PurchaseService {
     const purchase = await Purchase.findByIdAndUpdate(purchaseId, updatePayload, {
       new: true,
       runValidators: true,
-    }).populate("createdBy", "name username").populate("relatedPO", "poNumber")
+    }).populate("createdBy", "name username")
 
     return purchase
   }
@@ -140,8 +141,23 @@ class PurchaseService {
    * @param {string} deletedBy
    * @returns {Object} Deleted purchase
    */
+  // Hard delete
+  // async deletePurchase(purchaseId, deletedBy) {
+  //   const purchase = await Purchase.findByIdAndDelete(purchaseId);
+  //   return purchase;
+  // }
+
+// Soft delete 
   async deletePurchase(purchaseId, deletedBy) {
-    const purchase = await Purchase.findByIdAndDelete(purchaseId);
+    const purchase = await Purchase.findByIdAndUpdate(
+      purchaseId,
+      {
+        isDeleted: true,
+        deletedBy,
+        deletedAt: new Date(), // Optional: track when it was deleted
+      },
+      { new: true } // return the updated document
+    );
     return purchase;
   }
 

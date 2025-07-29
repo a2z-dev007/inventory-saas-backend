@@ -1,5 +1,5 @@
 const express = require("express");
-const createImageUploader = require("../utils/imageUploader");
+const createFileUploader = require("../utils/createFileUploader");
 
 const router = express.Router();
 const purchaseOrderController = require("../controllers/purchaseOrderController");
@@ -190,9 +190,10 @@ const parseItemsMiddleware = (req, res, next) => {
 };
 
 
-const uploadImage = createImageUploader({
+const uploadImage = createFileUploader({
   folder: "uploads/purchase-orders", // custom folder if needed
   fieldName: "attachment", // match your frontend FormData
+  maxSize: 10 * 1024 * 1024, // 10MB
 });
 router.post(
   "/",
@@ -319,6 +320,15 @@ router.delete(
   validateId,
   purchaseOrderController.deletePurchaseOrder
 );
+
+// restore 
+router.put(
+  "/:id/restore",
+  authorize("admin"),
+  validateId,
+  purchaseOrderController.restorePurchaseOrder
+);
+
 
 /**
  * @swagger

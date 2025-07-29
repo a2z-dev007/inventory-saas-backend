@@ -28,6 +28,7 @@ const purchaseItemSchema = new mongoose.Schema({
     required: true,
     min: [0, "Total cannot be negative"],
   },
+
 })
 
 const purchaseSchema = new mongoose.Schema(
@@ -80,6 +81,22 @@ const purchaseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    remarks: {
+      type: String,
+      trim: true,
+      maxlength: [1000, "Remarks cannot exceed 1000 characters"],
+    },
+    deletedAt: {
+      type: Date,
     },
 
   },
