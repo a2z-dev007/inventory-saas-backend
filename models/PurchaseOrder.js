@@ -85,11 +85,7 @@ const purchaseOrderSchema = new mongoose.Schema(
       required: true,
       min: [0, "Total cannot be negative"],
     },
-    notes: {
-      type: String,
-      trim: true,
-      maxlength: [1000, "Notes cannot exceed 1000 characters"],
-    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -118,6 +114,14 @@ const purchaseOrderSchema = new mongoose.Schema(
         trim: true,
         maxlength: [1000, "Remarks cannot exceed 1000 characters"],
       },
+      site_incharge: {
+        type: String,
+        trim: true,
+      },
+      contractor:{
+        type: String,
+        trim: true
+      }
   },
   {
     timestamps: true,

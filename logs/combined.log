@@ -1200,3 +1200,5 @@
 {"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:12:25"}
 {"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:15:47"}
 {"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:15:47"}
+{"level":"info","message":"Server running on port 8080 in development mode","service":"inventory-management","timestamp":"2025-07-29 22:25:31"}
+{"level":"info","message":"Connected to MongoDB","service":"inventory-management","timestamp":"2025-07-29 22:25:31"}
