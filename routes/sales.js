@@ -12,6 +12,19 @@ const {
 
 // Apply authentication to all routes
 router.use(protect)
+const parseItemsMiddleware = (req, res, next) => {
+  if (typeof req.body.items === "string") {
+    try {
+      req.body.items = JSON.parse(req.body.items);
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid JSON format for items",
+      });
+    }
+  }
+  next();
+};
 
 /**
  * @swagger
@@ -171,7 +184,7 @@ router.get("/:id", authorize("admin", "manager"), validateId, saleController.get
  *       401:
  *         description: Unauthorized
  */
-router.post("/", authorize("admin", "manager"), validateSale, saleController.createSale)
+router.post("/", authorize("admin", "manager"),  parseItemsMiddleware, validateSale, saleController.createSale)
 
 /**
  * @swagger
@@ -204,7 +217,7 @@ router.post("/", authorize("admin", "manager"), validateSale, saleController.cre
  *       401:
  *         description: Unauthorized
  */
-router.put("/:id", authorize("admin", "manager"), validateId, validateSale, saleController.updateSale)
+router.put("/:id", authorize("admin", "manager"),  parseItemsMiddleware, validateId, validateSale, saleController.updateSale)
 
 /**
  * @swagger

@@ -13,7 +13,7 @@ class SaleService {
     const skip = (page - 1) * limit
 
     // Build query
-    const query = {}
+    const query = { isDeleted: { $ne: true } }
 
     // Filter by status
     if (status) {
@@ -76,7 +76,7 @@ class SaleService {
    * @returns {Object} Sale data
    */
   async getSaleById(saleId) {
-    return await Sale.findById(saleId)
+    return await Sale.findOne({ _id: saleId, isDeleted: { $ne: true } })
       .populate("createdBy", "name username")
       .lean()
   }
@@ -166,6 +166,7 @@ class SaleService {
    */
   async searchSales(searchTerm, limit = 10) {
     return await Sale.find({
+      isDeleted: { $ne: true },
       $or: [
         { invoiceNumber: { $regex: searchTerm, $options: "i" } },
         { customerName: { $regex: searchTerm, $options: "i" } },
@@ -204,6 +205,7 @@ class SaleService {
         productName: product.name,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
+        unitType:item.unitType,
         total,
       })
 
@@ -223,6 +225,9 @@ class SaleService {
   async getSaleStats() {
     const stats = await Sale.aggregate([
       {
+        $match: { isDeleted: { $ne: true } }
+      },
+      {
         $group: {
           _id: "$status",
           count: { $sum: 1 },
@@ -231,8 +236,11 @@ class SaleService {
       },
     ])
 
-    const totalSales = await Sale.countDocuments()
+    const totalSales = await Sale.countDocuments({ isDeleted: { $ne: true } })
     const totalValue = await Sale.aggregate([
+      {
+        $match: { isDeleted: { $ne: true } }
+      },
       {
         $group: {
           _id: null,
@@ -259,7 +267,10 @@ class SaleService {
 
     const skip = (page - 1) * limit
 
-    const query = { customerName: { $regex: customerName, $options: "i" } }
+    const query = { 
+      customerName: { $regex: customerName, $options: "i" },
+      isDeleted: { $ne: true }
+    }
 
     const sort = {}
     sort[sortBy] = sortOrder === "desc" ? -1 : 1
@@ -301,6 +312,7 @@ class SaleService {
         $gte: startOfDay,
         $lte: endOfDay,
       },
+      isDeleted: { $ne: true }
     }).lean()
 
     const totalSales = sales.length

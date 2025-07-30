@@ -25,11 +25,11 @@ const productSchema = new mongoose.Schema(
       required: [true, " Price is required"],
       min: [0, " Price cannot be negative"],
     },
-    // salesRate: {
-    //   type: Number,
-    //   required: [true, "Sales rate is required"],
-    //   min: [0, "Sales rate cannot be negative"],
-    // },
+    salesRate: {
+      type: Number,
+      required:false,
+      min: [0, "Sales rate cannot be negative"],
+    },
     currentStock: {
       type: Number,
       required: [true, "Current stock is required"],

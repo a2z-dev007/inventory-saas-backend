@@ -20,6 +20,10 @@ const saleItemSchema = new mongoose.Schema({
     required: true,
     min: [0, "Unit price cannot be negative"],
   },
+  unitType: {
+    type: String,
+    required: true
+  },
   total: {
     type: Number,
     required: true,
@@ -28,7 +32,15 @@ const saleItemSchema = new mongoose.Schema({
 })
 
 const saleSchema = new mongoose.Schema(
+
   {
+    ref_num:{
+      type: String,
+      required: [true, "DB number is required"],
+      unique: true,
+      trim: true,
+      uppercase: true,
+    },
     invoiceNumber: {
       type: String,
       required: [true, "Invoice number is required"],
@@ -41,13 +53,11 @@ const saleSchema = new mongoose.Schema(
       required: [true, "Customer name is required"],
       trim: true,
     },
-    customerEmail: {
+    address: {
       type: String,
       trim: true,
-      lowercase: true,
-      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Please enter a valid email"],
     },
-    customerPhone: {
+   phone: {
       type: String,
       trim: true,
     },
@@ -62,11 +72,6 @@ const saleSchema = new mongoose.Schema(
       required: true,
       min: [0, "Subtotal cannot be negative"],
     },
-    discount: {
-      type: Number,
-      min: [0, "Discount cannot be negative"],
-      default: 0,
-    },
     total: {
       type: Number,
       required: true,
@@ -78,12 +83,8 @@ const saleSchema = new mongoose.Schema(
       enum: ["pending", "paid", "cancelled", "refunded"],
       default: "pending",
     },
-    paymentMethod: {
-      type: String,
-      enum: ["cash", "card", "bank_transfer", "check"],
-      default: "cash",
-    },
-    notes: {
+
+    remarks: {
       type: String,
       trim: true,
       maxlength: [1000, "Notes cannot exceed 1000 characters"],
@@ -93,6 +94,23 @@ const saleSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+    },
+
+    // paymentMethod: {
+    //   type: String,
+    //   enum: ["cash", "card", "bank_transfer", "check"],
+    //   default: "cash",
+    // },
   },
   {
     timestamps: true,
@@ -105,6 +123,7 @@ saleSchema.index({ customerName: 1 })
 saleSchema.index({ saleDate: -1 })
 saleSchema.index({ status: 1 })
 saleSchema.index({ createdBy: 1 })
+saleSchema.index({ isDeleted: 1 })
 
 // Auto-generate invoice number
 saleSchema.pre("save", async function (next) {

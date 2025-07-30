@@ -309,18 +309,10 @@ const validateSale = [
     .trim()
     .notEmpty()
     .withMessage("Customer name is required"),
-
-  body("customerEmail")
-    .optional()
-    .isEmail()
-    .normalizeEmail()
-    .withMessage("Please provide a valid email"),
-
-  body("customerPhone")
-    .optional()
+    body("address")
     .trim()
-    .isMobilePhone()
-    .withMessage("Please provide a valid phone number"),
+    .notEmpty()
+    .withMessage("Customer address is required"),
 
   body("items")
     .isArray({ min: 1 })
@@ -333,11 +325,9 @@ const validateSale = [
   body("items.*.quantity")
     .isInt({ min: 1 })
     .withMessage("Quantity must be at least 1"),
-
   body("items.*.unitPrice")
-    .isFloat({ min: 0 })
+    .isFloat({ min: 0 })  
     .withMessage("Unit price must be a positive number"),
-
   body("discount")
     .optional()
     .isFloat({ min: 0 })
@@ -347,8 +337,8 @@ const validateSale = [
     .optional()
     .isIn(["cash", "card", "bank_transfer", "check"])
     .withMessage("Invalid payment method"),
-
-  body("notes")
+  
+  body("remark")
     .optional()
     .isString()
     .trim()
