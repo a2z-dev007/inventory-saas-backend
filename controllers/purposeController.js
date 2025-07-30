@@ -21,7 +21,7 @@ exports.createPurpose = async (req, res) => {
 exports.getPurposes = async (req, res) => {
   try {
     const data = await purposeService.getPurposes(req.query);
-    res.status(200).json({ success: true, ...data });
+    res.status(200).json({ success: true, data: data });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

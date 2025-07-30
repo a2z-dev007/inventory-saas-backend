@@ -95,6 +95,10 @@ const purchaseOrderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    orderedBy: {
+      type: String,
+        trim: true,
+    },
     approvedAt: {
       type: Date,
     },
@@ -121,6 +125,10 @@ const purchaseOrderSchema = new mongoose.Schema(
       contractor:{
         type: String,
         trim: true
+      },
+      purpose:{
+        type: String,
+        trim: true
       }
   },
   {
@@ -135,6 +143,11 @@ purchaseOrderSchema.index({ vendor: 1 });
 purchaseOrderSchema.index({ status: 1 });
 purchaseOrderSchema.index({ orderDate: -1 });
 purchaseOrderSchema.index({ createdBy: 1 });
+purchaseOrderSchema.index({ approvedBy: 1 });
+purchaseOrderSchema.index({ isDeleted: 1 });
+purchaseOrderSchema.index({ deletedBy: 1 });
+purchaseOrderSchema.index({ deletedAt: -1 });
+
 
 // Auto-generate ref_num
 purchaseOrderSchema.pre("save", async function (next) {
