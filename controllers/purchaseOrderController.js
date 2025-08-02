@@ -37,6 +37,7 @@ class PurchaseOrderController {
           endDate: req.query.endDate,
           sortBy: req.query.sortBy || "orderDate",
           sortOrder: req.query.sortOrder || "desc",
+          all: req.query.all === 'true',
         };
   
         const result = await purchaseOrderService.getPurchaseOrders(options);

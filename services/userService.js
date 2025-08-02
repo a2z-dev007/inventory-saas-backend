@@ -7,9 +7,9 @@ class UserService {
    * @returns {Object} Users and pagination info
    */
   async getUsers(options) {
-    const { page = 1, limit = 10, search, role, sortBy = "createdAt", sortOrder = "desc" } = options
+    const { page = 1, limit = 10, search, role, sortBy = "createdAt", sortOrder = "desc", all = false } = options
 
-    const skip = (page - 1) * limit
+    const skip = all ? 0 : (page - 1) * limit
 
     // Build query
     const query = { isActive: true }
@@ -33,7 +33,7 @@ class UserService {
     sort[sortBy] = sortOrder === "desc" ? -1 : 1
 
     // Execute query
-    const users = await User.find(query).select("-password").sort(sort).skip(skip).limit(limit).lean()
+    const users = await User.find(query).select("-password").sort(sort).skip(skip).limit(all ? undefined : limit).lean()
 
     const total = await User.countDocuments(query)
 

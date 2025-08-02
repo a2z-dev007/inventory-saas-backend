@@ -26,6 +26,7 @@ class CustomerController {
         status: req.query.status,
         sortBy: req.query.sortBy || "name",
         sortOrder: req.query.sortOrder || "asc",
+        all: req.query.all === 'true',
       }
 
       const result = await customerService.getCustomers(options)

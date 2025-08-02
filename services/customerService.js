@@ -8,9 +8,9 @@ class CustomerService {
    * @returns {Object} Customers and pagination info
    */
   async getCustomers(options) {
-    const { page = 1, limit = 10, search, status, sortBy = "name", sortOrder = "asc" } = options
+    const { page = 1, limit = 10, search, status, sortBy = "name", sortOrder = "asc", all = false } = options
 
-    const skip = (page - 1) * limit
+    const skip = all ? 0 : (page - 1) * limit
 
     // Build query
     const query = {}
@@ -39,7 +39,7 @@ class CustomerService {
       .populate("createdBy", "name username")
       .sort(sort)
       .skip(skip)
-      .limit(limit)
+      .limit(all ? undefined : limit)
       .lean()
 
     const total = await Customer.countDocuments(query)

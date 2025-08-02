@@ -1,8 +1,8 @@
 const Category = require("../models/ProductCategory")
 
 class CategoryService {
-  async getCategories({ page = 1, limit = 10, search = "", sortBy = "createdAt", sortOrder = "desc" }) {
-    const skip = (page - 1) * limit
+  async getCategories({ page = 1, limit = 10, search = "", sortBy = "createdAt", sortOrder = "desc", all = false }) {
+    const skip = all ? 0 : (page - 1) * limit
     const query = { isActive: true }
 
     if (search) {
@@ -12,7 +12,7 @@ class CategoryService {
     const sort = {}
     sort[sortBy] = sortOrder === "desc" ? -1 : 1
 
-    const categories = await Category.find(query).sort(sort).skip(skip).limit(limit).lean()
+    const categories = await Category.find(query).sort(sort).skip(skip).limit(all ? undefined : limit).lean()
     const total = await Category.countDocuments(query)
 
     return {

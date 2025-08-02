@@ -9,9 +9,9 @@ class PurchaseService {
    * @returns {Object} Purchases and pagination info
    */
   async getPurchases(options) {
-    const { page = 1, limit = 10, search, vendor, startDate, endDate, sortBy = "purchaseDate", sortOrder = "desc" } = options
+    const { page = 1, limit = 10, search, vendor, startDate, endDate, sortBy = "purchaseDate", sortOrder = "desc", all = false } = options
 
-    const skip = (page - 1) * limit
+    const skip = all ? 0 : (page - 1) * limit
 
     // Build query
     const query = {}
@@ -51,7 +51,7 @@ class PurchaseService {
       // .populate("relatedPO", "poNumber")
       .sort(sort)
       .skip(skip)
-      .limit(limit)
+      .limit(all ? undefined : limit)
       .lean()
 
     const total = await Purchase.countDocuments(query)

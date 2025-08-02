@@ -29,6 +29,7 @@ class SaleController {
         endDate: req.query.endDate,
         sortBy: req.query.sortBy || "saleDate",
         sortOrder: req.query.sortOrder || "desc",
+        all: req.query.all === 'true',
       }
 
       const result = await saleService.getSales(options)

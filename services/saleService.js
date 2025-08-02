@@ -8,9 +8,9 @@ class SaleService {
    * @returns {Object} Sales and pagination info
    */
   async getSales(options) {
-    const { page = 1, limit = 10, search, status, customerName, startDate, endDate, sortBy = "saleDate", sortOrder = "desc" } = options
+    const { page = 1, limit = 10, search, status, customerName, startDate, endDate, sortBy = "saleDate", sortOrder = "desc", all = false } = options
 
-    const skip = (page - 1) * limit
+    const skip = all ? 0 : (page - 1) * limit
 
     // Build query
     const query = { isDeleted: { $ne: true } }
@@ -54,7 +54,7 @@ class SaleService {
       .populate("createdBy", "name username")
       .sort(sort)
       .skip(skip)
-      .limit(limit)
+      .limit(all ? undefined : limit)
       .lean()
 
     const total = await Sale.countDocuments(query)

@@ -16,6 +16,7 @@ class CategoryController {
         search: req.query.search || "",
         sortBy: req.query.sortBy || "createdAt",
         sortOrder: req.query.sortOrder || "desc",
+        all: req.query.all === 'true',
       }
 
       const result = await categoryService.getCategories(options)

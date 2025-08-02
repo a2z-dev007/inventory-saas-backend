@@ -44,7 +44,8 @@ router.get("/", validatePagination, async (req, res) => {
   try {
     const page = Number.parseInt(req.query.page) || 1
     const limit = Number.parseInt(req.query.limit) || 10
-    const skip = (page - 1) * limit
+    const all = req.query.all === 'true'
+    const skip = all ? 0 : (page - 1) * limit
 
     // Build query
     const query = { isActive: true }
@@ -58,7 +59,7 @@ router.get("/", validatePagination, async (req, res) => {
       ]
     }
 
-    const vendors = await Vendor.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit)
+    const vendors = await Vendor.find(query).sort({ createdAt: -1 }).skip(skip).limit(all ? undefined : limit)
 
     const total = await Vendor.countDocuments(query)
 

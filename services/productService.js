@@ -16,9 +16,10 @@ class ProductService {
       lowStock = false,
       sortBy = "createdAt",
       sortOrder = "desc",
+      all = false,
     } = options
 
-    const skip = (page - 1) * limit
+    const skip = all ? 0 : (page - 1) * limit
 
     // Build query
     const query = { isActive: true }
@@ -53,7 +54,7 @@ class ProductService {
     sort[sortBy] = sortOrder === "desc" ? -1 : 1
 
     // Execute query
-    const products = await Product.find(query).sort(sort).skip(skip).limit(limit).populate({
+    const products = await Product.find(query).sort(sort).skip(skip).limit(all ? undefined : limit).populate({
       path: "category",
       select: "name unitType", // select only what you need
     }).lean()

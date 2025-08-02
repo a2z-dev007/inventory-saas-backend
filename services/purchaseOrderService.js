@@ -11,9 +11,9 @@ class PurchaseOrderService {
    * @returns {Object} Purchase orders and pagination info
    */
   async getPurchaseOrders(options) {
-    const { page = 1, limit = 10, search, status, vendor, startDate, endDate, sortBy = "orderDate", sortOrder = "desc" } = options
+    const { page = 1, limit = 10, search, status, vendor, startDate, endDate, sortBy = "orderDate", sortOrder = "desc", all = false } = options
 
-    const skip = (page - 1) * limit
+    const skip = all ? 0 : (page - 1) * limit
 
     // Build query
     const query = {}
@@ -59,7 +59,7 @@ class PurchaseOrderService {
       .populate("approvedBy", "name username")
       .sort(sort)
       .skip(skip)
-      .limit(limit)
+      .limit(all ? undefined : limit)
       .lean()
 
     const total = await PurchaseOrder.countDocuments(query)

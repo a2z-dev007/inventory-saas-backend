@@ -35,6 +35,7 @@ class PurchaseController {
         endDate: req.query.endDate,
         sortBy: req.query.sortBy || "purchaseDate",
         sortOrder: req.query.sortOrder || "desc",
+        all: req.query.all === 'true',
       }
 
       const result = await purchaseService.getPurchases(options)
@@ -45,10 +46,14 @@ class PurchaseController {
       }));
       console.log("Get purchases result:", purchaseData)
       const filteredPurchase = purchaseData.filter((po) => po.isDeleted === false);
+    
       res.json({
         success: true,
-        data: {purchases:filteredPurchase},
-      })
+        data: {
+          ...result,
+          purchases:filteredPurchase,
+        },
+      });
     } catch (error) {
       logger.error("Get purchases error:", error)
       next(error)

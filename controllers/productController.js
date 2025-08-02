@@ -28,6 +28,7 @@ class ProductController {
         lowStock: req.query.lowStock === "true",
         sortBy: req.query.sortBy || "createdAt",
         sortOrder: req.query.sortOrder || "desc",
+        all: req.query.all === 'true',
       }
 
       const result = await productService.getProducts(options)
