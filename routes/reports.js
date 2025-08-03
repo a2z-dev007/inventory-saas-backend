@@ -1,6 +1,9 @@
 const express = require("express")
 const router = express.Router()
 const reportController = require("../controllers/reportController")
+const reportDataController = require("../controllers/reportsDataController")
+// const reportController = require('../controllers/reports.controller'); // ✅ check this path
+
 const { protect, authorize } = require("../middleware/auth")
 const {
   validateId,
@@ -333,5 +336,7 @@ router.get("/low-stock", authorize("admin", "manager"), reportController.getLowS
  *         description: Unauthorized
  */
 router.get("/export/:type", authorize("admin", "manager"), validateDateRange, reportController.exportReport)
+router.get('/:module', reportDataController.getReportData);
+
 
 module.exports = router 

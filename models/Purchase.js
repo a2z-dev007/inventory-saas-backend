@@ -90,6 +90,18 @@ const purchaseSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isCancelled:{
+      type: Boolean,
+      default: false,
+    },
+    cancelledAmount: {
+      type: Number,
+      default: 0,
+    },
+    cancelledQty: {
+      type: Number,
+      default: 0,
+    },
     remarks: {
       type: String,
       trim: true,

@@ -89,14 +89,26 @@ class PurchaseService {
 
     // Process items to include product names and calculate totals
     const processedItems = await this.processItems(items)
-    const subtotal = processedItems.reduce((sum, item) => sum + item.total, 0)
-    const total = subtotal
-
+    const subtotal = processedItems
+    .filter(item => !item.isCancelled)
+    .reduce((sum, item) => sum + item.total, 0);
+  
+  const cancelledAmount = processedItems
+    .filter(item => item.isCancelled)
+    .reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+  
+  const cancelledQty = processedItems
+    .filter(item => item.isCancelled)
+    .reduce((sum, item) => sum + item.quantity, 0);
+  
+  const total = subtotal;
     const purchase = new Purchase({
       ...otherData,
       items: processedItems,
       subtotal,
       total,
+      cancelledAmount,
+      cancelledQty,
     })
 
     return await purchase.save()
@@ -117,15 +129,33 @@ class PurchaseService {
 
     // If items are being updated, process them
     if (items) {
-      processedItems = await this.processItems(items)
-      subtotal = processedItems.reduce((sum, item) => sum + item.total, 0)
-      total = subtotal
+      processedItems = await this.processItems(items);
+    
+      subtotal = processedItems
+        .filter(item => !item.isCancelled)
+        .reduce((sum, item) => sum + item.total, 0);
+    
+      cancelledAmount = processedItems
+        .filter(item => item.isCancelled)
+        .reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+    
+      cancelledQty = processedItems
+        .filter(item => item.isCancelled)
+        .reduce((sum, item) => sum + item.quantity, 0);
+    
+      total = subtotal;
     }
 
     const updatePayload = {
       ...otherData,
-      ...(items && { items: processedItems, subtotal, total }),
-    }
+      ...(items && {
+        items: processedItems,
+        subtotal,
+        total,
+        cancelledAmount,
+        cancelledQty,
+      }),
+    };
 
     const purchase = await Purchase.findByIdAndUpdate(purchaseId, updatePayload, {
       new: true,
@@ -186,34 +216,68 @@ class PurchaseService {
    * @param {Array} items
    * @returns {Array} Processed items
    */
+  // async processItems(items) {
+  //   const processedItems = []
+
+  //   for (const item of items) {
+  //     const product = await Product.findById(item.productId).select("name")
+  //     if (!product) {
+  //       throw new Error(`Product with ID ${item.productId} not found`)
+  //     }
+
+  //     const total = item.quantity * item.unitPrice
+
+  //     processedItems.push({
+  //       productId: item.productId,
+  //       productName: product.name,
+  //       quantity: item.quantity,
+  //       unitPrice: item.unitPrice,
+  //       unitType: item.unitType,
+  //       total,
+  //     })
+
+  //     // Update product stock
+  //     await Product.findByIdAndUpdate(item.productId, {
+  //       $inc: { currentStock: item.quantity },
+  //     })
+  //   }
+
+  //   return processedItems
+  // }
+
   async processItems(items) {
-    const processedItems = []
-
+    const processedItems = [];
+  
     for (const item of items) {
-      const product = await Product.findById(item.productId).select("name")
+      const product = await Product.findById(item.productId).select("name");
       if (!product) {
-        throw new Error(`Product with ID ${item.productId} not found`)
+        throw new Error(`Product with ID ${item.productId} not found`);
       }
-
-      const total = item.quantity * item.unitPrice
-
+  
+      const isCancelled = item.isCancelled === true;
+      const total = isCancelled ? 0 : item.quantity * item.unitPrice;
+  
       processedItems.push({
         productId: item.productId,
         productName: product.name,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         unitType: item.unitType,
+        isCancelled,
         total,
-      })
-
-      // Update product stock
-      await Product.findByIdAndUpdate(item.productId, {
-        $inc: { currentStock: item.quantity },
-      })
+      });
+  
+      // Update product stock only if not cancelled
+      if (!isCancelled) {
+        await Product.findByIdAndUpdate(item.productId, {
+          $inc: { currentStock: item.quantity },
+        });
+      }
     }
-
-    return processedItems
+  
+    return processedItems;
   }
+  
 
   /**
    * Get purchase statistics

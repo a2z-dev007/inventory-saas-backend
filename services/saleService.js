@@ -180,6 +180,25 @@ class SaleService {
   }
 
   /**
+ * Update sale status
+ * @param {string} saleId
+ * @param {boolean} isActive
+ * @returns {Object} Updated sale
+ */
+async updateSaleStatus(saleId, isActive) {
+  const updatedSale = await Sale.findByIdAndUpdate(
+    saleId,
+    { isActive },
+    { new: true }
+  )
+  return {
+    success:true,
+    data:updatedSale,
+    message:"Site status Updated Successfully!"
+  }
+}
+
+  /**
    * Process items to include product names and calculate totals
    * @param {Array} items
    * @returns {Array} Processed items

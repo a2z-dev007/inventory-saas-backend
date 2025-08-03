@@ -83,6 +83,10 @@ const saleSchema = new mongoose.Schema(
       enum: ["pending", "paid", "cancelled", "refunded"],
       default: "pending",
     },
+    receivedBy: {
+      type: String,
+      trim: true,
+    },
 
     remarks: {
       type: String,
@@ -105,6 +109,10 @@ const saleSchema = new mongoose.Schema(
     deletedAt: {
       type: Date,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },  
 
     // paymentMethod: {
     //   type: String,

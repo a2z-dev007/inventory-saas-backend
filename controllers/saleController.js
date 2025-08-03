@@ -1,3 +1,4 @@
+const Sale = require("../models/Sale")
 const saleService = require("../services/saleService")
 const logger = require("../utils/logger")
 const { validationResult } = require("express-validator")
@@ -39,7 +40,7 @@ class SaleController {
         data: result,
       })
     } catch (error) {
-      logger.error("Get sales error:", error)
+      logger.error("Get Site error:", error)
       next(error)
     }
   }
@@ -65,7 +66,7 @@ class SaleController {
       if (!sale) {
         return res.status(404).json({
           success: false,
-          message: "Sale not found",
+          message: "Site not found",
         })
       }
 
@@ -74,7 +75,7 @@ class SaleController {
         data: { sale },
       })
     } catch (error) {
-      logger.error("Get sale error:", error)
+      logger.error("Get Site error:", error)
       next(error)
     }
   }
@@ -102,15 +103,15 @@ class SaleController {
 
       const sale = await saleService.createSale(saleData)
 
-      logger.info(`Sale created: ${sale.invoiceNumber} by user ${req.user.username}`)
+      logger.info(`Site created: ${sale.invoiceNumber} by user ${req.user.username}`)
 
       res.status(201).json({
         success: true,
-        message: "Sale created successfully",
+        message: "Site created successfully",
         data: { sale },
       })
     } catch (error) {
-      logger.error("Create sale error:", error)
+      logger.error("Create Site error:", error)
 
       if (error.code === 11000) {
         return res.status(400).json({
@@ -149,19 +150,19 @@ class SaleController {
       if (!sale) {
         return res.status(404).json({
           success: false,
-          message: "Sale not found",
+          message: "Site not found",
         })
       }
 
-      logger.info(`Sale updated: ${sale.invoiceNumber} by user ${req.user.username}`)
+      logger.info(`Site updated: ${sale.invoiceNumber} by user ${req.user.username}`)
 
       res.json({
         success: true,
-        message: "Sale updated successfully",
+        message: "Site updated successfully",
         data: { sale },
       })
     } catch (error) {
-      logger.error("Update sale error:", error)
+      logger.error("Update Site error:", error)
       next(error)
     }
   }
@@ -194,19 +195,19 @@ class SaleController {
       if (!sale) {
         return res.status(404).json({
           success: false,
-          message: "Sale not found",
+          message: "Site not found",
         })
       }
 
-      logger.info(`Sale status updated: ${sale.invoiceNumber} to ${status} by user ${req.user.username}`)
+      logger.info(`Site status updated: ${sale.invoiceNumber} to ${status} by user ${req.user.username}`)
 
       res.json({
         success: true,
-        message: "Sale status updated successfully",
+        message: "Site status updated successfully",
         data: { sale },
       })
     } catch (error) {
-      logger.error("Update sale status error:", error)
+      logger.error("Update Site status error:", error)
       next(error)
     }
   }
@@ -232,22 +233,54 @@ class SaleController {
       if (!sale) {
         return res.status(404).json({
           success: false,
-          message: "Sale not found",
+          message: "Site not found",
         })
       }
 
-      logger.info(`Sale deleted: ${sale.invoiceNumber} by admin ${req.user.username}`)
+      logger.info(`Site deleted: ${sale.invoiceNumber} by admin ${req.user.username}`)
 
       res.json({
         success: true,
-        message: "Sale deleted successfully",
+        message: "Site deleted successfully",
       })
     } catch (error) {
-      logger.error("Delete sale error:", error)
+      logger.error("Delete Site error:", error)
       next(error)
     }
   }
 
+    /**
+   * Toggle active status of sale (isActive: true/false)
+   * @route PATCH /api/sales/:id/active
+   * @access Private (Admin/Manager)
+   */
+    async toggleSaleActiveStatus(req, res, next) {
+      console.log("req-----------",req.body)
+      try {
+        const { id } = req.params;
+        const { isActive } = req.body;
+    
+        if (typeof isActive !== 'boolean') {
+          return res.status(400).json({ success: false, message: 'isActive must be a boolean' });
+        }
+    
+        const updatedSale = await Sale.findByIdAndUpdate(
+          id,
+          { isActive, updatedBy: req.user?._id },
+          { new: true }
+        );
+    
+        if (!updatedSale) {
+          return res.status(404).json({ success: false, message: 'Site not found' });
+        }
+    
+        res.json({ success: true, message: 'Site status updated', data: updatedSale });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error', stack: error.stack });
+      }
+    }
+  
   /**
    * Search sales
    * @route GET /api/sales/search

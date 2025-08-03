@@ -137,6 +137,7 @@ const parseItemsMiddleware = (req, res, next) => {
  */
 router.get("/", authorize("admin", "manager"), validatePagination, validateDateRange, saleController.getSales)
 
+
 /**
  * @swagger
  * /api/sales/{id}:
@@ -217,7 +218,9 @@ router.post("/", authorize("admin", "manager"),  parseItemsMiddleware, validateS
  *       401:
  *         description: Unauthorized
  */
+router.patch('/:id/active', authorize("admin"), saleController.toggleSaleActiveStatus);
 router.put("/:id", authorize("admin", "manager"),  parseItemsMiddleware, validateId, validateSale, saleController.updateSale)
+// update the sales status
 
 /**
  * @swagger
