@@ -165,15 +165,15 @@ const validateProduct = [
   //   .isFloat({ min: 0 })
   //   .withMessage("Sales rate must be a positive number"),
 
-  body("currentStock")
-    .optional()
-    .isInt({ min: 0 })
-    .withMessage("Current stock must be a non-negative integer"),
+  // body("currentStock")
+  //   .optional()
+  //   .isInt({ min: 0 })
+  //   .withMessage("Current stock must be a non-negative integer"),
 
-  body("category")
-    .trim()
-    .isLength({ min: 1, max: 100 })
-    .withMessage("Category is required and cannot exceed 100 characters"),
+  // body("category")
+  //   .trim()
+  //   .isLength({ min: 1, max: 100 })
+  //   .withMessage("Category is required and cannot exceed 100 characters"),
 
   body("vendor")
     .optional()
@@ -181,17 +181,17 @@ const validateProduct = [
     .isLength({ min: 1, max: 200 })
     .withMessage("Vendor is required and cannot exceed 200 characters"),
 
-  body("description")
-    .optional()
-    .isString()
-    .trim()
-    .isLength({ max: 1000 })
-    .withMessage("Description cannot exceed 1000 characters"),
+  // body("description")
+  //   .optional()
+  //   .isString()
+  //   .trim()
+  //   .isLength({ max: 1000 })
+  //   .withMessage("Description cannot exceed 1000 characters"),
 
-  body("minStockLevel")
-    .optional()
-    .isInt({ min: 0 })
-    .withMessage("Minimum stock level must be a non-negative integer"),
+  // body("minStockLevel")
+  //   .optional()
+  //   .isInt({ min: 0 })
+  //   .withMessage("Minimum stock level must be a non-negative integer"),
 
   handleValidationErrors,
 ];

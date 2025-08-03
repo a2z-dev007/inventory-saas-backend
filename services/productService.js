@@ -28,9 +28,7 @@ class ProductService {
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
-        { category: { $regex: search, $options: "i" } },
         { sku: { $regex: search, $options: "i" } },
-        { vendor: { $regex: search, $options: "i" } },
       ]
     }
 
@@ -54,21 +52,11 @@ class ProductService {
     sort[sortBy] = sortOrder === "desc" ? -1 : 1
 
     // Execute query
-    const products = await Product.find(query).sort(sort).skip(skip).limit(all ? undefined : limit).populate({
-      path: "category",
-      select: "name unitType", // select only what you need
-    }).lean()
+    const products = await Product.find(query).sort(sort).skip(skip).limit(all ? undefined : limit).lean()
 
-    // Restructure each product to flatten the category fields
-const formattedProducts = products.map((product) => {
-  const { category, ...rest } = product
-  return {
-    ...rest,
-    category: category?._id || null,
-    categoryName: category?.name || null,
-    unitType: category?.unitType || null,
-  }
-})
+    // Remove search, filter, and formatting for salesRate, currentStock, and category
+    // Remove population of category
+    const formattedProducts = products.map((product) => ({ ...product }))
     const total = await Product.countDocuments(query)
 
     return {
@@ -89,15 +77,6 @@ const formattedProducts = products.map((product) => {
    */
   async getProductById(productId) {
     return await Product.findById(productId).lean()
-  }
-
-  /**
-   * Get product by SKU
-   * @param {string} sku
-   * @returns {Object} Product data
-   */
-  async getProductBySku(sku) {
-    return await Product.findOne({ sku, isActive: true }).lean()
   }
 
   /**
@@ -242,7 +221,6 @@ const formattedProducts = products.map((product) => {
       $or: [
         { name: { $regex: searchTerm, $options: "i" } },
         { sku: { $regex: searchTerm, $options: "i" } },
-        { category: { $regex: searchTerm, $options: "i" } },
       ],
     })
       .select("name sku currentStock salesRate")
@@ -297,22 +275,6 @@ const formattedProducts = products.map((product) => {
       },
       categoryDistribution: categoryStats,
     }
-  }
-
-  /**
-   * Check if SKU exists
-   * @param {string} sku
-   * @param {string} excludeProductId
-   * @returns {boolean}
-   */
-  async isSkuExists(sku, excludeProductId = null) {
-    const query = { sku }
-    if (excludeProductId) {
-      query._id = { $ne: excludeProductId }
-    }
-
-    const product = await Product.findOne(query)
-    return !!product
   }
 
   /**

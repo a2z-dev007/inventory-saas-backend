@@ -70,11 +70,11 @@ const updatedPurchaseOrders = purchaseOrders.map((po) => ({
   attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
 }));
   // console.log("updatedPurchaseOrders",updatedPurchaseOrders)
-const filteredPurchaseOrders = updatedPurchaseOrders.filter((po) => po.isDeleted === false);
+// const filteredPurchaseOrders = updatedPurchaseOrders.filter((po) => po.isDeleted === false);
 // console.log("filteredPurchaseOrders",filteredPurchaseOrders)
 
 return {
-  purchaseOrders: filteredPurchaseOrders,
+  purchaseOrders: updatedPurchaseOrders,
   pagination: {
     page,
     limit,

@@ -98,6 +98,10 @@ class ProductController {
         ...req.body,
         createdBy: req.user.id,
       }
+      // Remove salesRate, currentStock, and category from productData if present
+      delete productData.salesRate
+      delete productData.currentStock
+      delete productData.category
 
       const product = await productService.createProduct(productData)
 
@@ -112,10 +116,12 @@ class ProductController {
       logger.error("Create product error:", error)
 
       if (error.code === 11000) {
-        return res.status(400).json({
-          success: false,
-          message: "SKU already exists",
-        })
+        if (error.keyPattern && error.keyPattern.name && error.keyPattern.unitType) {
+          return res.status(400).json({
+            success: false,
+            message: "Product with this name and unit type already exists"
+          });
+        }
       }
 
       next(error)
@@ -142,6 +148,10 @@ class ProductController {
         ...req.body,
         updatedBy: req.user.id,
       }
+      // Remove salesRate, currentStock, and category from updateData if present
+      delete updateData.salesRate
+      delete updateData.currentStock
+      delete updateData.category
 
       const product = await productService.updateProduct(req.params.id, updateData)
 
@@ -161,6 +171,14 @@ class ProductController {
       })
     } catch (error) {
       logger.error("Update product error:", error)
+      if (error.code === 11000) {
+        if (error.keyPattern && error.keyPattern.name && error.keyPattern.unitType) {
+          return res.status(400).json({
+            success: false,
+            message: "Product with this name and unit type already exists"
+          });
+        }
+      }
       next(error)
     }
   }

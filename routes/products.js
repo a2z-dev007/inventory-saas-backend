@@ -166,8 +166,6 @@ router.get("/:id", validateId, productController.getProductById);
  *               - name
  *               - sku
  *               - purchaseRate
- *               - salesRate
- *               - category
  *               - vendor
  *             properties:
  *               name:
@@ -176,12 +174,8 @@ router.get("/:id", validateId, productController.getProductById);
  *                 type: string
  *               purchaseRate:
  *                 type: number
- *               salesRate:
- *                 type: number
  *               currentStock:
  *                 type: number
- *               category:
- *                 type: string
  *               vendor:
  *                 type: string
  *               description:
@@ -229,12 +223,8 @@ router.post(
  *                 type: string
  *               purchaseRate:
  *                 type: number
- *               salesRate:
- *                 type: number
  *               currentStock:
  *                 type: number
- *               category:
- *                 type: string
  *               vendor:
  *                 type: string
  *               description:

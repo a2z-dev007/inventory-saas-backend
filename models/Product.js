@@ -25,23 +25,17 @@ const productSchema = new mongoose.Schema(
       required: [true, " Price is required"],
       min: [0, " Price cannot be negative"],
     },
-    salesRate: {
-      type: Number,
-      required:false,
-      min: [0, "Sales rate cannot be negative"],
-    },
-    currentStock: {
-      type: Number,
-      required: [true, "Current stock is required"],
-      min: [0, "Stock cannot be negative"],
-      default: 0,
-    },
-
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      required: true,
-    },
+    // currentStock: {
+    //   type: Number,
+    //   required: [true, "Current stock is required"],
+    //   min: [0, "Stock cannot be negative"],
+    //   default: 0,
+    // },
+    // category: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Category",
+    //   required: true,
+    // },
     vendor: {
       type: String,
       required: false,
@@ -61,7 +55,7 @@ const productSchema = new mongoose.Schema(
     },
     unitType: {
       type: String,
-      // required: [true, "Unit type is required"],
+      required: [true, "Unit type is required"],
       enum: {
         values: [
           "Nos",
@@ -101,23 +95,23 @@ const productSchema = new mongoose.Schema(
 )
 
 // Indexes for performance
-productSchema.index({ sku: 1 })
-productSchema.index({ name: "text", category: "text" })
-productSchema.index({ category: 1 })
+productSchema.index({ name: 1, unitType: 1 }, { unique: true });
+productSchema.index({ name: "text" })
 productSchema.index({ vendor: 1 })
-productSchema.index({ currentStock: 1 })
 productSchema.index({ createdBy: 1 })
 
+// Remove related indexes and virtuals
+// productSchema.index({ name: "text", category: "text" })
+// productSchema.index({ category: 1 })
 // Virtual for profit margin
-productSchema.virtual("profitMargin").get(function () {
-  if (this.purchaseRate === 0) return 0
-  return (((this.salesRate - this.purchaseRate) / this.purchaseRate) * 100).toFixed(2)
-})
-
+// productSchema.virtual("profitMargin").get(function () {
+//   if (this.purchaseRate === 0) return 0
+//   return (((this.salesRate - this.purchaseRate) / this.purchaseRate) * 100).toFixed(2)
+// })
 // Virtual for low stock alert
-productSchema.virtual("isLowStock").get(function () {
-  return this.currentStock <= this.minStockLevel
-})
+// productSchema.virtual("isLowStock").get(function () {
+//   return this.currentStock <= this.minStockLevel
+// })
 
 // Ensure virtual fields are serialized
 productSchema.set("toJSON", { virtuals: true })
