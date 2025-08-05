@@ -109,6 +109,7 @@ class PurchaseService {
       total,
       cancelledAmount,
       cancelledQty,
+      
     })
 
     return await purchase.save()

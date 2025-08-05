@@ -23,6 +23,10 @@ const purchaseItemSchema = new mongoose.Schema({
   unitType: {
     type: String,
   },
+  isCancelled:{
+    type: Boolean,
+    default: false,
+  },
   total: {
     type: Number,
     required: true,
