@@ -8,64 +8,131 @@ class PurchaseService {
    * @param {Object} options - Query options
    * @returns {Object} Purchases and pagination info
    */
+  // async getPurchases(options) {
+  //   const { page = 1, limit = 10, search, vendor, startDate, endDate, sortBy = "purchaseDate", sortOrder = "desc", all = false } = options
+
+  //   const skip = all ? 0 : (page - 1) * limit
+
+  //   // Build query
+  //   const query = {}
+
+  //   // Filter by vendor
+  //   if (vendor) {
+  //     query.vendor = { $regex: vendor, $options: "i" }
+  //   }
+
+  //   // Date range filter
+  //   if (startDate || endDate) {
+  //     query.purchaseDate = {}
+  //     if (startDate) {
+  //       query.purchaseDate.$gte = new Date(startDate)
+  //     }
+  //     if (endDate) {
+  //       query.purchaseDate.$lte = new Date(endDate)
+  //     }
+  //   }
+
+  //   // Search functionality
+  //   if (search) {
+  //     query.$or = [
+  //       { receiptNumber: { $regex: search, $options: "i" } },
+  //       { vendor: { $regex: search, $options: "i" } },
+  //       { "items.productName": { $regex: search, $options: "i" } },
+  //     ]
+  //   }
+
+  //   // Build sort object
+  //   const sort = {}
+  //   sort[sortBy] = sortOrder === "desc" ? -1 : 1
+
+  //   // Execute query
+  //   const purchases = await Purchase.find(query)
+  //     .populate("createdBy", "name username")
+  //     // .populate("relatedPO", "poNumber")
+  //     .sort(sort)
+  //     .skip(skip)
+  //     .limit(all ? undefined : limit)
+  //     .lean()
+
+  //   const total = await Purchase.countDocuments(query)
+
+  //   return {
+  //     purchases,
+  //     pagination: {
+  //       page,
+  //       limit,
+  //       total,
+  //       pages: Math.ceil(total / limit),
+  //     },
+  //   }
+  // }
+
   async getPurchases(options) {
-    const { page = 1, limit = 10, search, vendor, startDate, endDate, sortBy = "purchaseDate", sortOrder = "desc", all = false } = options
-
-    const skip = all ? 0 : (page - 1) * limit
-
-    // Build query
-    const query = {}
-
-    // Filter by vendor
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      vendor,
+      startDate,
+      endDate,
+      sortBy = "purchaseDate",
+      sortOrder = "desc",
+      all = false,
+      isDeleted,
+    } = options;
+  
+    const skip = all ? 0 : (page - 1) * limit;
+    const query = {};
+  
+    // Handle isDeleted
+    if (typeof isDeleted === "boolean") {
+      query.isDeleted = isDeleted;
+    } else {
+      query.isDeleted = false;
+    }
+  
+    // Filters
     if (vendor) {
-      query.vendor = { $regex: vendor, $options: "i" }
+      query.vendor = { $regex: vendor, $options: "i" };
     }
-
-    // Date range filter
+  
     if (startDate || endDate) {
-      query.purchaseDate = {}
-      if (startDate) {
-        query.purchaseDate.$gte = new Date(startDate)
-      }
-      if (endDate) {
-        query.purchaseDate.$lte = new Date(endDate)
-      }
+      query.purchaseDate = {};
+      if (startDate) query.purchaseDate.$gte = new Date(startDate);
+      if (endDate) query.purchaseDate.$lte = new Date(endDate);
     }
-
-    // Search functionality
+  
     if (search) {
       query.$or = [
         { receiptNumber: { $regex: search, $options: "i" } },
         { vendor: { $regex: search, $options: "i" } },
         { "items.productName": { $regex: search, $options: "i" } },
-      ]
+      ];
     }
-
-    // Build sort object
-    const sort = {}
-    sort[sortBy] = sortOrder === "desc" ? -1 : 1
-
-    // Execute query
-    const purchases = await Purchase.find(query)
-      .populate("createdBy", "name username")
-      // .populate("relatedPO", "poNumber")
-      .sort(sort)
-      .skip(skip)
-      .limit(all ? undefined : limit)
-      .lean()
-
-    const total = await Purchase.countDocuments(query)
-
+  
+    const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+  
+    const [purchases, total] = await Promise.all([
+      Purchase.find(query)
+        .populate("createdBy", "name username")
+        .sort(sort)
+        .skip(skip)
+        .limit(all ? 0 : limit)
+        .lean(),
+      Purchase.countDocuments(query),
+    ]);
+  
     return {
       purchases,
       pagination: {
         page,
-        limit,
+        limit: all ? total : limit,
         total,
-        pages: Math.ceil(total / limit),
+        pages: all ? 1 : Math.ceil(total / limit),
       },
-    }
+    };
   }
+  
 
   /**
    * Get purchase by ID
@@ -109,7 +176,7 @@ class PurchaseService {
       total,
       cancelledAmount,
       cancelledQty,
-      
+
     })
 
     return await purchase.save()
@@ -380,6 +447,8 @@ class PurchaseService {
       purchases,
     }
   }
+
+
 }
 
 module.exports = new PurchaseService() 

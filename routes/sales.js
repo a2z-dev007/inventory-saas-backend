@@ -135,6 +135,8 @@ const parseItemsMiddleware = (req, res, next) => {
  *       401:
  *         description: Unauthorized
  */
+router.get('/recycle-bin', saleController.getDeletedSales);
+
 router.get("/", authorize("admin", "manager"), validatePagination, validateDateRange, saleController.getSales)
 
 
@@ -218,8 +220,11 @@ router.post("/", authorize("admin", "manager"),  parseItemsMiddleware, validateS
  *       401:
  *         description: Unauthorized
  */
+router.patch("/:id/restore", saleController.restoreSale);
 router.patch('/:id/active', authorize("admin"), saleController.toggleSaleActiveStatus);
 router.put("/:id", authorize("admin", "manager"),  parseItemsMiddleware, validateId, validateSale, saleController.updateSale)
+
+
 // update the sales status
 
 /**

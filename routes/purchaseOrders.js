@@ -114,6 +114,8 @@ router.use(protect);
  *       401:
  *         description: Unauthorized
  */
+
+router.get('/recycle-bin', purchaseOrderController.getDeletedPurchaseOrders);
 router.get(
   "/",
   authorize("admin", "manager"),
@@ -328,6 +330,8 @@ router.put(
   validateId,
   purchaseOrderController.restorePurchaseOrder
 );
+
+
 
 
 /**

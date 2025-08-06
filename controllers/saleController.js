@@ -308,6 +308,104 @@ class SaleController {
       next(error)
     }
   }
+
+  async  restoreSale(req, res, next) {
+    try {
+      const sale = await Sale.findById(req.params.id);
+  
+      if (!sale || !sale.isDeleted) {
+        return res.status(404).json({
+          success: false,
+          message: "Sale not found in recycle bin",
+        });
+      }
+  
+      // if (sale.attachment?.includes("recyclebin/sales")) {
+      //   const oldPath = path.join(__dirname, "..", "..", sale.attachment);
+  
+      //   if (fs.existsSync(oldPath)) {
+      //     try {
+      //       const newRelativePath = moveFileFromRecycleBin(oldPath, "uploads/sales");
+      //       sale.attachment = newRelativePath;
+      //     } catch (err) {
+      //       logger.error("Failed to restore attachment:", err.message);
+      //     }
+      //   }
+      // }
+  
+      sale.isDeleted = false;
+      sale.deletedBy = undefined;
+      sale.deletedAt = undefined;
+  
+      await sale.save();
+  
+      logger.info(`Sale restored: ${sale.ref_num} by ${req.user.username}`);
+  
+      res.json({
+        success: true,
+        message: "Sale successfully restored from recycle bin",
+      });
+    } catch (error) {
+      logger.error("Restore sale error:", error);
+      next(error);
+    }
+  }
+
+  async getDeletedSales(req, res, next) {
+    try {
+      const {
+        page = 1,
+        limit = 10,
+        search = "",
+        startDate,
+        endDate,
+      } = req.query;
+  
+      const skip = (page - 1) * limit;
+      const query = { isDeleted: true };
+  
+      if (search) {
+        query.$or = [
+          { ref_num: { $regex: search, $options: "i" } },
+          { customerName: { $regex: search, $options: "i" } },
+          { invoiceNumber: { $regex: search, $options: "i" } },
+        ];
+      }
+  
+      if (startDate && endDate) {
+        query.createdAt = {
+          $gte: new Date(startDate),
+          $lte: new Date(endDate),
+        };
+      }
+  
+      const [total, sales] = await Promise.all([
+        Sale.countDocuments(query),
+        Sale.find(query)
+          .skip(skip)
+          .limit(Number(limit))
+          .sort({ createdAt: -1 })
+          .populate("createdBy", "username name"),
+      ]);
+  
+      res.json({
+        success: true,
+        data: {
+          sales,
+          pagination: {
+            page: Number(page),
+            limit: Number(limit),
+            total,
+            pages: Math.ceil(total / limit),
+          },
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  
+
 }
 
 module.exports = new SaleController() 

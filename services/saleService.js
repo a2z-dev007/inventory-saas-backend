@@ -7,68 +7,138 @@ class SaleService {
    * @param {Object} options - Query options
    * @returns {Object} Sales and pagination info
    */
+  // async getSales(options) {
+  //   const { page = 1, limit = 10, search, status, customerName, startDate, endDate, sortBy = "saleDate", sortOrder = "desc", all = false } = options
+
+  //   const skip = all ? 0 : (page - 1) * limit
+
+  //   // Build query
+  //   const query = { isDeleted: { $ne: true } }
+
+  //   // Filter by status
+  //   if (status) {
+  //     query.status = status
+  //   }
+
+  //   // Filter by customer name
+  //   if (customerName) {
+  //     query.customerName = { $regex: customerName, $options: "i" }
+  //   }
+
+  //   // Date range filter
+  //   if (startDate || endDate) {
+  //     query.saleDate = {}
+  //     if (startDate) {
+  //       query.saleDate.$gte = new Date(startDate)
+  //     }
+  //     if (endDate) {
+  //       query.saleDate.$lte = new Date(endDate)
+  //     }
+  //   }
+
+  //   // Search functionality
+  //   if (search) {
+  //     query.$or = [
+  //       { invoiceNumber: { $regex: search, $options: "i" } },
+  //       { customerName: { $regex: search, $options: "i" } },
+  //       { "items.productName": { $regex: search, $options: "i" } },
+  //     ]
+  //   }
+
+  //   // Build sort object
+  //   const sort = {}
+  //   sort[sortBy] = sortOrder === "desc" ? -1 : 1
+
+  //   // Execute query
+  //   const sales = await Sale.find(query)
+  //     .populate("createdBy", "name username")
+  //     .sort(sort)
+  //     .skip(skip)
+  //     .limit(all ? undefined : limit)
+  //     .lean()
+
+  //   const total = await Sale.countDocuments(query)
+
+  //   return {
+  //     sales,
+  //     pagination: {
+  //       page,
+  //       limit,
+  //       total,
+  //       pages: Math.ceil(total / limit),
+  //     },
+  //   }
+  // }
+
   async getSales(options) {
-    const { page = 1, limit = 10, search, status, customerName, startDate, endDate, sortBy = "saleDate", sortOrder = "desc", all = false } = options
-
-    const skip = all ? 0 : (page - 1) * limit
-
-    // Build query
-    const query = { isDeleted: { $ne: true } }
-
-    // Filter by status
-    if (status) {
-      query.status = status
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      status,
+      customerName,
+      startDate,
+      endDate,
+      sortBy = "saleDate",
+      sortOrder = "desc",
+      all = false,
+      isDeleted,
+    } = options;
+  
+    const skip = all ? 0 : (page - 1) * limit;
+    const query = {};
+  
+    // Handle isDeleted
+    if (typeof isDeleted === "boolean") {
+      query.isDeleted = isDeleted;
+    } else {
+      query.isDeleted = false;
     }
-
-    // Filter by customer name
+  
+    // Filters
+    if (status) query.status = status;
     if (customerName) {
-      query.customerName = { $regex: customerName, $options: "i" }
+      query.customerName = { $regex: customerName, $options: "i" };
     }
-
-    // Date range filter
+  
     if (startDate || endDate) {
-      query.saleDate = {}
-      if (startDate) {
-        query.saleDate.$gte = new Date(startDate)
-      }
-      if (endDate) {
-        query.saleDate.$lte = new Date(endDate)
-      }
+      query.saleDate = {};
+      if (startDate) query.saleDate.$gte = new Date(startDate);
+      if (endDate) query.saleDate.$lte = new Date(endDate);
     }
-
-    // Search functionality
+  
     if (search) {
       query.$or = [
         { invoiceNumber: { $regex: search, $options: "i" } },
         { customerName: { $regex: search, $options: "i" } },
         { "items.productName": { $regex: search, $options: "i" } },
-      ]
+      ];
     }
-
-    // Build sort object
-    const sort = {}
-    sort[sortBy] = sortOrder === "desc" ? -1 : 1
-
-    // Execute query
-    const sales = await Sale.find(query)
-      .populate("createdBy", "name username")
-      .sort(sort)
-      .skip(skip)
-      .limit(all ? undefined : limit)
-      .lean()
-
-    const total = await Sale.countDocuments(query)
-
+  
+    const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+  
+    const [sales, total] = await Promise.all([
+      Sale.find(query)
+        .populate("createdBy", "name username")
+        .sort(sort)
+        .skip(skip)
+        .limit(all ? 0 : limit)
+        .lean(),
+      Sale.countDocuments(query),
+    ]);
+  
     return {
       sales,
       pagination: {
         page,
-        limit,
+        limit: all ? total : limit,
         total,
-        pages: Math.ceil(total / limit),
+        pages: all ? 1 : Math.ceil(total / limit),
       },
-    }
+    };
   }
+  
+
 
   /**
    * Get sale by ID
@@ -157,6 +227,10 @@ class SaleService {
 
     return sale
   }
+
+  // restore sales
+  
+
 
   /**
    * Search sales
@@ -346,6 +420,16 @@ async updateSaleStatus(saleId, isActive) {
       sales,
     }
   }
+  async  restoreSale(id) {
+    const updated = await Sale.findByIdAndUpdate(
+      id,
+      { isDeleted: false },
+      { new: true }
+    );
+    return updated;
+  }
+
+  // 
 }
 
 module.exports = new SaleService() 

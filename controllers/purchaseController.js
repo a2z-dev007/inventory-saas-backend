@@ -450,6 +450,61 @@ async createPurchase(req, res, next) {
       next(error)
     }
   }
+  async getDeletedPurchases(req, res, next) {
+    try {
+      const {
+        page = 1,
+        limit = 10,
+        search = "",
+        startDate,
+        endDate,
+      } = req.query;
+  
+      const skip = (page - 1) * limit;
+      const query = { isDeleted: true };
+  
+      if (search) {
+        query.$or = [
+          { ref_num: { $regex: search, $options: "i" } },
+          { remarks: { $regex: search, $options: "i" } },
+        ];
+      }
+  
+      if (startDate && endDate) {
+        query.createdAt = {
+          $gte: new Date(startDate),
+          $lte: new Date(endDate),
+        };
+      }
+  
+      const [total, purchases] = await Promise.all([
+        Purchase.countDocuments(query),
+        Purchase.find(query)
+          .skip(skip)
+          .limit(Number(limit))
+          .sort({ createdAt: -1 })
+          .populate("createdBy", "username name"),
+      ]);
+  
+      res.json({
+        success: true,
+        data: {
+          purchases,
+          pagination: {
+            page: Number(page),
+            limit: Number(limit),
+            total,
+            pages: Math.ceil(total / limit),
+          },
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  
+
+  
 }
 
 module.exports = new PurchaseController() 

@@ -83,6 +83,102 @@ class PurchaseOrderService {
 //   },
 // };
 //   }
+// async getPurchaseOrders(options) {
+//   const {
+//     page = 1,
+//     limit = 10,
+//     search,
+//     status,
+//     vendor,
+//     startDate,
+//     endDate,
+//     sortBy = "orderDate",
+//     sortOrder = "desc",
+//     all = false,
+//     isDeleted = false,
+//   } = options;
+
+//   const skip = all ? 0 : (page - 1) * limit;
+
+//   // Build query
+//   const query = {};
+
+//   // Handle deletion filters
+//   if (all) {
+//     // Fetch all non-deleted records (for dropdowns)
+//     query.isDeleted = false;
+//   } else if (isDeleted) {
+//     // Fetch only deleted records
+//     query.isDeleted = true;
+//   } else {
+//     // Fetch only active (non-deleted) records
+//     query.isDeleted = false;
+//   }
+
+//   // Filter by status
+//   if (status) {
+//     query.status = status;
+//   }
+
+//   // Filter by vendor
+//   if (vendor) {
+//     query.vendor = { $regex: vendor, $options: "i" };
+//   }
+
+//   // Date range filter
+//   if (startDate || endDate) {
+//     query.orderDate = {};
+//     if (startDate) {
+//       query.orderDate.$gte = new Date(startDate);
+//     }
+//     if (endDate) {
+//       query.orderDate.$lte = new Date(endDate);
+//     }
+//   }
+
+//   // Search functionality
+//   if (search) {
+//     query.$or = [
+//       { ref_num: { $regex: search, $options: "i" } },
+//       { poNumber: { $regex: search, $options: "i" } },
+//       { vendor: { $regex: search, $options: "i" } },
+//       { "items.productName": { $regex: search, $options: "i" } },
+//     ];
+//   }
+
+//   // Sort object
+//   const sort = {};
+//   sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+//   // Fetch records
+//   const purchaseOrders = await PurchaseOrder.find(query)
+//     .populate("createdBy", "name username")
+//     .populate("approvedBy", "name username")
+//     .sort(sort)
+//     .skip(skip)
+//     .limit(all ? 0 : limit) // 0 means no limit in Mongoose
+//     .lean();
+
+//   // Count total matching documents
+//   const total = await PurchaseOrder.countDocuments(query);
+
+//   // Process attachments
+//   const updatedPurchaseOrders = purchaseOrders.map((po) => ({
+//     ...po,
+//     attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+//   }));
+
+//   return {
+//     purchaseOrders: updatedPurchaseOrders,
+//     pagination: {
+//       page,
+//       limit: all ? total : limit,
+//       total,
+//       pages: all ? 1 : Math.ceil(total / limit),
+//     },
+//   };
+// }
+
 async getPurchaseOrders(options) {
   const {
     page = 1,
@@ -95,48 +191,30 @@ async getPurchaseOrders(options) {
     sortBy = "orderDate",
     sortOrder = "desc",
     all = false,
-    isDeleted = false,
+    isDeleted,
   } = options;
 
   const skip = all ? 0 : (page - 1) * limit;
-
-  // Build query
   const query = {};
 
-  // Handle deletion filters
-  if (all) {
-    // Fetch all non-deleted records (for dropdowns)
-    query.isDeleted = false;
-  } else if (isDeleted) {
-    // Fetch only deleted records
-    query.isDeleted = true;
-  } else {
-    // Fetch only active (non-deleted) records
-    query.isDeleted = false;
+  if (typeof isDeleted !== "undefined") {
+    if (typeof isDeleted === "string") {
+      query.isDeleted = isDeleted.toLowerCase() === "true";
+    } else {
+      query.isDeleted = Boolean(isDeleted);
+    }
   }
 
-  // Filter by status
-  if (status) {
-    query.status = status;
-  }
+  // Other filters
+  if (status) query.status = status;
+  if (vendor) query.vendor = { $regex: vendor, $options: "i" };
 
-  // Filter by vendor
-  if (vendor) {
-    query.vendor = { $regex: vendor, $options: "i" };
-  }
-
-  // Date range filter
   if (startDate || endDate) {
     query.orderDate = {};
-    if (startDate) {
-      query.orderDate.$gte = new Date(startDate);
-    }
-    if (endDate) {
-      query.orderDate.$lte = new Date(endDate);
-    }
+    if (startDate) query.orderDate.$gte = new Date(startDate);
+    if (endDate) query.orderDate.$lte = new Date(endDate);
   }
 
-  // Search functionality
   if (search) {
     query.$or = [
       { ref_num: { $regex: search, $options: "i" } },
@@ -146,23 +224,19 @@ async getPurchaseOrders(options) {
     ];
   }
 
-  // Sort object
-  const sort = {};
-  sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+  const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
-  // Fetch records
-  const purchaseOrders = await PurchaseOrder.find(query)
-    .populate("createdBy", "name username")
-    .populate("approvedBy", "name username")
-    .sort(sort)
-    .skip(skip)
-    .limit(all ? 0 : limit) // 0 means no limit in Mongoose
-    .lean();
+  const [purchaseOrders, total] = await Promise.all([
+    PurchaseOrder.find(query)
+      .populate("createdBy", "name username")
+      .populate("approvedBy", "name username")
+      .sort(sort)
+      .skip(skip)
+      .limit(all ? 0 : limit)
+      .lean(),
+    PurchaseOrder.countDocuments(query),
+  ]);
 
-  // Count total matching documents
-  const total = await PurchaseOrder.countDocuments(query);
-
-  // Process attachments
   const updatedPurchaseOrders = purchaseOrders.map((po) => ({
     ...po,
     attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
@@ -178,6 +252,10 @@ async getPurchaseOrders(options) {
     },
   };
 }
+
+
+
+
 
 
   /**
@@ -202,6 +280,86 @@ async getPurchaseOrders(options) {
     }
     return purchaseOrder
   }
+
+// get delete po
+async getPurchaseOrders(options) {
+  const {
+    page = 1,
+    limit = 10,
+    search,
+    status,
+    vendor,
+    startDate,
+    endDate,
+    sortBy = "orderDate",
+    sortOrder = "desc",
+    all = false,
+    isDeleted,
+  } = options;
+
+  const skip = all ? 0 : (page - 1) * limit;
+  const query = {};
+
+  // Always force filter on isDeleted
+  if (isDeleted === true || isDeleted === "true") {
+    query.isDeleted = true;
+  } else {
+    query.isDeleted = false;
+  }
+
+  // Search
+  if (search) {
+    query.$or = [
+      { ref_num: { $regex: search, $options: "i" } },
+      { poNumber: { $regex: search, $options: "i" } },
+      { vendor: { $regex: search, $options: "i" } },
+      { "items.productName": { $regex: search, $options: "i" } },
+    ];
+  }
+
+  // Status
+  if (status) query.status = status;
+
+  // Vendor
+  if (vendor) query.vendor = { $regex: vendor, $options: "i" };
+
+  // Date Range
+  if (startDate || endDate) {
+    query.orderDate = {};
+    if (startDate) query.orderDate.$gte = new Date(startDate);
+    if (endDate) query.orderDate.$lte = new Date(endDate);
+  }
+
+  const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+
+  const [purchaseOrders, total] = await Promise.all([
+    PurchaseOrder.find(query)
+      .populate("createdBy", "name username")
+      .populate("approvedBy", "name username")
+      .sort(sort)
+      .skip(skip)
+      .limit(all ? 0 : limit)
+      .lean(),
+    PurchaseOrder.countDocuments(query),
+  ]);
+
+  const updatedPurchaseOrders = purchaseOrders.map((po) => ({
+    ...po,
+    attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+  }));
+
+  return {
+    purchaseOrders: updatedPurchaseOrders,
+    pagination: {
+      page,
+      limit: all ? total : limit,
+      total,
+      pages: all ? 1 : Math.ceil(total / limit),
+    },
+  };
+}
+
+
 
   /**
    * Create new purchase order
@@ -457,6 +615,17 @@ async getPurchaseOrders(options) {
       },
     }
   }
+
+  // // restore purchaseOrder🧮 
+  // async restorePurchaseOrder(id) {
+  //   const updated = await PurchaseOrder.findByIdAndUpdate(
+  //     id,
+  //     { isDeleted: false },
+  //     { new: true }
+  //   );
+  //   return updated;
+  // }
+  
 }
 
 module.exports = new PurchaseOrderService()

@@ -130,6 +130,9 @@ const uploadInvoice = createFileUploader({
  *       401:
  *         description: Unauthorized
  */
+
+router.get('/recycle-bin', purchaseController.getDeletedPurchases);
+
 router.get(
   "/",
   authorize("admin", "manager"),
