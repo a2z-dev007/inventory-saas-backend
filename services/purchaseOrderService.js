@@ -253,11 +253,6 @@ async getPurchaseOrders(options) {
   };
 }
 
-
-
-
-
-
   /**
    * Get purchase order by ID
    * @param {string} purchaseOrderId
@@ -421,6 +416,7 @@ async getPurchaseOrders(options) {
    * @param {string} deletedBy
    * @returns {Object} Deleted purchase order
    */
+
   // async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
   //   // First find the purchase order to get attachment info
   //   let purchaseOrder = null
@@ -460,43 +456,137 @@ async getPurchaseOrders(options) {
   // }
 
   // Soft deleted 
-  async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
-    let purchaseOrder = null;
+  // async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
+  //   let purchaseOrder = null;
   
-    // Try finding by ObjectId
-    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
-      purchaseOrder = await PurchaseOrder.findById(identifier);
-    }
+  //   // Try finding by ObjectId
+  //   if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+  //     purchaseOrder = await PurchaseOrder.findById(identifier);
+  //   }
   
-    // Try finding by ref_num
+  //   // Try finding by ref_num
+  //   if (!purchaseOrder) {
+  //     purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier });
+  //   }
+  
+  //   if (!purchaseOrder) return null;
+  
+  //   // Move attachment if exists
+  //   if (purchaseOrder.attachment) {
+  //     const filePath = path.join(__dirname, "..", "..", purchaseOrder.attachment);
+  //     if (fs.existsSync(filePath)) {
+  //       try {
+  //         const newRelativePath = moveFileToRecycleBin(filePath, "purchase-orders");
+  //         purchaseOrder.attachment = newRelativePath;
+  //       } catch (err) {
+  //         console.error("Failed to move attachment to recyclebin:", err.message);
+  //       }
+  //     }
+  //   }
+  
+  //   // Perform soft delete
+  //   purchaseOrder.isDeleted = true;
+  //   purchaseOrder.deletedBy = deletedBy;
+  //   purchaseOrder.deletedAt = new Date();
+  
+  //   await purchaseOrder.save();
+  
+  //   return purchaseOrder;
+  // }
+
+  
+
+  // async  deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
+  //   let purchaseOrder = null;
+  
+  //   // Try finding by ObjectId
+  //   if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+  //     purchaseOrder = await PurchaseOrder.findById(identifier);
+  //   }
+  
+  //   // Try finding by ref_num
+  //   if (!purchaseOrder) {
+  //     purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier });
+  //   }
+  
+  //   if (!purchaseOrder) return null;
+  
+  //   // Move attachment if exists
+  //   if (purchaseOrder.attachment) {
+  //     try {
+  //       // Extract filename from the URL or path
+  //       const fileName = path.basename(purchaseOrder.attachment);
+  
+  //       // Actual location in filesystem
+  //       const filePath = path.join(process.cwd(), "uploads", "purchase-orders", fileName);
+  
+  //       if (fs.existsSync(filePath)) {
+  //         // Ensure recycle bin directory exists
+  //         const recycleBinDir = path.join(process.cwd(), "uploads", "recyclebin", "purchase-orders");
+  //         fs.mkdirSync(recycleBinDir, { recursive: true });
+  
+  //         const newPath = path.join(recycleBinDir, fileName);
+  
+  //         fs.renameSync(filePath, newPath); // Move file
+  
+  //         // Store relative path for DB (so it can be restored later)
+  //         purchaseOrder.attachment = path.relative(process.cwd(), newPath);
+  
+  //         console.log(`Moved attachment to recycle bin: ${purchaseOrder.attachment}`);
+  //       } else {
+  //         console.warn(`Attachment file not found: ${filePath}`);
+  //       }
+  //     } catch (err) {
+  //       console.error("Failed to move attachment to recyclebin:", err.message);
+  //     }
+  //   }
+  
+  //   // Perform soft delete
+  //   purchaseOrder.isDeleted = true;
+  //   purchaseOrder.deletedBy = deletedBy;
+  //   purchaseOrder.deletedAt = new Date();
+  
+  //   await purchaseOrder.save();
+  
+  //   return purchaseOrder;
+  // }
+
+  async  deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
+    const purchaseOrder = await PurchaseOrder.findOne({
+      $or: [{ _id: identifier }, { ref_num: identifier }],
+    });
+  
     if (!purchaseOrder) {
-      purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier });
+      throw new Error("Purchase Order not found");
     }
   
-    if (!purchaseOrder) return null;
-  
-    // Move attachment if exists
+    // Move attachment to recycle bin if exists
     if (purchaseOrder.attachment) {
-      const filePath = path.join(__dirname, "..", "..", purchaseOrder.attachment);
-      if (fs.existsSync(filePath)) {
-        try {
-          const newRelativePath = moveFileToRecycleBin(filePath, "purchase-orders");
-          purchaseOrder.attachment = newRelativePath;
-        } catch (err) {
-          console.error("Failed to move attachment to recyclebin:", err.message);
-        }
+      const fileUrl = purchaseOrder.attachment; // full URL like http://localhost:8080/uploads/purchase-orders/file.pdf
+      const fileName = path.basename(fileUrl);
+      const currentFilePath = path.join(process.cwd(), "uploads", "purchase-orders", fileName);
+      const recycleBinDir = path.join(process.cwd(), "uploads", "recycle-bin","purchase-orders");
+      
+      // Create recycle bin folder if not exists
+      if (!fs.existsSync(recycleBinDir)) {
+        fs.mkdirSync(recycleBinDir, { recursive: true });
+      }
+  
+      // Move the file
+      if (fs.existsSync(currentFilePath)) {
+        const newFilePath = path.join(recycleBinDir, fileName);
+        fs.renameSync(currentFilePath, newFilePath);
+        purchaseOrder.attachment = `/uploads/recycle-bin/purchase-orders/${fileName}`;
       }
     }
   
-    // Perform soft delete
+    // Soft delete the purchase order
     purchaseOrder.isDeleted = true;
-    purchaseOrder.deletedBy = deletedBy;
-    purchaseOrder.deletedAt = new Date();
-  
     await purchaseOrder.save();
   
-    return purchaseOrder;
-  }
+    return { success: true, message: "Purchase order moved to recycle bin" };
+  };
+  
 
   /**
    * Search purchase orders

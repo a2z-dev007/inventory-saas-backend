@@ -325,6 +325,57 @@ async createPurchase(req, res, next) {
   // }
 
    //Soft deleted purchases
+  // async deletePurchase(req, res, next) {
+  //   try {
+  //     const errors = validationResult(req);
+  //     if (!errors.isEmpty()) {
+  //       return res.status(400).json({
+  //         success: false,
+  //         message: "Validation failed",
+  //         errors: errors.array(),
+  //       });
+  //     }
+  
+  //     const purchase = await purchaseService.deletePurchase(req.params.id, req.user.id);
+  
+  //     if (!purchase) {
+  //       return res.status(404).json({
+  //         success: false,
+  //         message: "Purchase not found",
+  //       });
+  //     }
+  
+  //     // Move invoice file if it exists
+  //     if (purchase.invoiceFile) {
+  //       const filePath = path.join(__dirname, "..", purchase.invoiceFile);
+  
+  //       if (fs.existsSync(filePath)) {
+  //         try {
+  //           const newRelativePath = moveFileToRecycleBin(filePath, "invoices");
+  //           // Optional: update DB path if needed (commented below)
+  //           // await Purchase.findByIdAndUpdate(purchase._id, { invoiceFile: newRelativePath });
+  //           // ✅ Update DB with new invoiceFile path
+  //           await Purchase.findByIdAndUpdate(purchase._id, {
+  //             invoiceFile: newRelativePath,
+  //           });
+  //           logger.info(`Moved invoice file to recycle bin: ${newRelativePath}`);
+  //         } catch (moveErr) {
+  //           logger.error("Failed to move invoice file to recycle bin:", moveErr);
+  //         }
+  //       }
+  //     }
+  
+  //     logger.info(`Purchase soft-deleted: ${purchase.receiptNumber} by ${req.user.username}`);
+  
+  //     res.json({
+  //       success: true,
+  //       message: "Purchase moved to recycle bin (soft deleted)",
+  //     });
+  //   } catch (error) {
+  //     logger.error("Delete purchase error:", error);
+  //     next(error);
+  //   }
+  // }
   async deletePurchase(req, res, next) {
     try {
       const errors = validationResult(req);
@@ -336,34 +387,42 @@ async createPurchase(req, res, next) {
         });
       }
   
-      const purchase = await purchaseService.deletePurchase(req.params.id, req.user.id);
-  
+      const purchase = await Purchase.findById(req.params.id);
       if (!purchase) {
-        return res.status(404).json({
-          success: false,
-          message: "Purchase not found",
-        });
+        return res.status(404).json({ success: false, message: "Purchase not found" });
       }
   
-      // Move invoice file if it exists
+      // Move invoice file to recycle bin if exists
       if (purchase.invoiceFile) {
-        const filePath = path.join(__dirname, "..", purchase.invoiceFile);
+        let filePath = purchase.invoiceFile; // could be URL or relative path
+        const fileName = path.basename(filePath);
   
-        if (fs.existsSync(filePath)) {
-          try {
-            const newRelativePath = moveFileToRecycleBin(filePath, "invoices");
-            // Optional: update DB path if needed (commented below)
-            // await Purchase.findByIdAndUpdate(purchase._id, { invoiceFile: newRelativePath });
-            // ✅ Update DB with new invoiceFile path
-            await Purchase.findByIdAndUpdate(purchase._id, {
-              invoiceFile: newRelativePath,
-            });
-            logger.info(`Moved invoice file to recycle bin: ${newRelativePath}`);
-          } catch (moveErr) {
-            logger.error("Failed to move invoice file to recycle bin:", moveErr);
-          }
+        // Convert full URL to relative path if needed
+        if (filePath.startsWith("http")) {
+          filePath = new URL(filePath).pathname; // /uploads/invoices/file.pdf
+        }
+  
+        const currentFilePath = path.join(process.cwd(), filePath);
+        const recycleBinDir = path.join(process.cwd(), "uploads", "recycle-bin", "invoices");
+  
+        // Create recycle bin directory if missing
+        if (!fs.existsSync(recycleBinDir)) {
+          fs.mkdirSync(recycleBinDir, { recursive: true });
+        }
+  
+        // Move the file
+        if (fs.existsSync(currentFilePath)) {
+          const newFilePath = path.join(recycleBinDir, fileName);
+          fs.renameSync(currentFilePath, newFilePath);
+          purchase.invoiceFile = `/uploads/recycle-bin/invoices/${fileName}`;
         }
       }
+  
+      // Soft delete
+      purchase.isDeleted = true;
+      purchase.deletedBy = req.user.id;
+      purchase.deletedAt = new Date();
+      await purchase.save();
   
       logger.info(`Purchase soft-deleted: ${purchase.receiptNumber} by ${req.user.username}`);
   
@@ -376,12 +435,14 @@ async createPurchase(req, res, next) {
       next(error);
     }
   }
+  
+  
 
   // Restore deleted purchase
   async restorePurchase(req, res, next) {
     try {
       const purchase = await Purchase.findById(req.params.id);
-  
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
       if (!purchase || !purchase.isDeleted) {
         return res.status(404).json({
           success: false,
@@ -390,19 +451,12 @@ async createPurchase(req, res, next) {
       }
   
       // Restore invoice file if it exists
-      if (purchase.invoiceFile?.includes("recyclebin/invoices")) {
-        const oldPath = path.join(__dirname, "..", purchase.invoiceFile);
-        if (fs.existsSync(oldPath)) {
-          try {
-            const newRelativePath = moveFileFromRecycleBin(oldPath, "uploads/invoices");
-  
-            // Update invoice path
-            purchase.invoiceFile = newRelativePath;
-          } catch (moveErr) {
-            logger.error("Failed to restore invoice file:", moveErr);
-          }
-        }
+      if (purchase.invoiceFile) {
+        // const oldPath = path.join(__dirname, "..", purchase.invoiceFile);
+        const recycleBinPath = purchase.invoiceFile.replace(baseUrl + "/", ""); // Make relative path
+        purchase.invoiceFile = moveFileFromRecycleBin(recycleBinPath, "invoices", baseUrl);
       }
+        
   
       // Un-delete
       purchase.isDeleted = false;

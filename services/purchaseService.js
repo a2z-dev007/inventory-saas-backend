@@ -194,6 +194,8 @@ class PurchaseService {
     let processedItems = []
     let subtotal = 0
     let total = 0
+    let cancelledAmount = 0
+    let cancelledQty = 0
 
     // If items are being updated, process them
     if (items) {

@@ -8,42 +8,42 @@ class CustomerService {
    * @returns {Object} Customers and pagination info
    */
   async getCustomers(options) {
-    const { page = 1, limit = 10, search, status, sortBy = "name", sortOrder = "asc", all = false } = options
-
-    const skip = all ? 0 : (page - 1) * limit
-
-    // Build query
-    const query = {}
-
-    // Filter by status
-    if (status) {
-      query.status = status
-    }
-
-    // Search functionality
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      status,
+      sortBy = "createdAt",  // default sort field
+      sortOrder = "desc",    // latest first
+      all = false
+    } = options;
+  
+    const skip = all ? 0 : (page - 1) * limit;
+  
+    const query = {};
+    if (status) query.status = status;
+  
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
         { phone: { $regex: search, $options: "i" } },
         { company: { $regex: search, $options: "i" } },
-      ]
+      ];
     }
-
-    // Build sort object
-    const sort = {}
-    sort[sortBy] = sortOrder === "desc" ? -1 : 1
-
-    // Execute query
+  
+    const sort = {};
+    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+  
     const customers = await Customer.find(query)
       .populate("createdBy", "name username")
       .sort(sort)
       .skip(skip)
       .limit(all ? undefined : limit)
-      .lean()
-
-    const total = await Customer.countDocuments(query)
-
+      .lean();
+  
+    const total = await Customer.countDocuments(query);
+  
     return {
       customers,
       pagination: {
@@ -52,8 +52,10 @@ class CustomerService {
         total,
         pages: Math.ceil(total / limit),
       },
-    }
+    };
   }
+  
+  
 
   /**
    * Get customer by ID

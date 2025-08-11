@@ -440,49 +440,79 @@ class PurchaseOrderController {
   }
   
   // restore :
+  // async restorePurchaseOrder(req, res, next) {
+  //   try {
+  //     const purchaseOrder = await PurchaseOrder.findById(req.params.id);
+  
+  //     if (!purchaseOrder || !purchaseOrder.isDeleted) {
+  //       return res.status(404).json({
+  //         success: false,
+  //         message: "Purchase order not found in recycle bin",
+  //       });
+  //     }
+  
+  //     // Restore attachment if needed
+  //     if (purchaseOrder.attachment?.includes("recyclebin/purchase-orders")) {
+  //       const oldPath = path.join(__dirname, "..", "..", purchaseOrder.attachment);
+  
+  //       if (fs.existsSync(oldPath)) {
+  //         try {
+  //           const newRelativePath = moveFileFromRecycleBin(oldPath, "uploads/purchase-orders");
+  //           purchaseOrder.attachment = newRelativePath;
+  //         } catch (err) {
+  //           logger.error("Failed to restore attachment:", err.message);
+  //         }
+  //       }
+  //     }
+  
+  //     // Clear deletion flags
+  //     purchaseOrder.isDeleted = false;
+  //     purchaseOrder.deletedBy = undefined;
+  //     purchaseOrder.deletedAt = undefined;
+  
+  //     await purchaseOrder.save();
+  
+  //     logger.info(`Purchase order restored: ${purchaseOrder.ref_num} by ${req.user.username}`);
+  
+  //     res.json({
+  //       success: true,
+  //       message: "Purchase order successfully restored from recycle bin",
+  //     });
+  //   } catch (error) {
+  //     logger.error("Restore purchase order error:", error);
+  //     next(error);
+  //   }
+  // }
+
   async restorePurchaseOrder(req, res, next) {
     try {
-      const purchaseOrder = await PurchaseOrder.findById(req.params.id);
+      const { id } = req.params;
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
   
-      if (!purchaseOrder || !purchaseOrder.isDeleted) {
-        return res.status(404).json({
-          success: false,
-          message: "Purchase order not found in recycle bin",
-        });
+      const purchaseOrder = await PurchaseOrder.findOne({ _id: id, isDeleted: true });
+      if (!purchaseOrder) {
+        return res.status(404).json({ success: false, message: "Purchase order not found in recycle bin" });
       }
   
-      // Restore attachment if needed
-      if (purchaseOrder.attachment?.includes("recyclebin/purchase-orders")) {
-        const oldPath = path.join(__dirname, "..", "..", purchaseOrder.attachment);
-  
-        if (fs.existsSync(oldPath)) {
-          try {
-            const newRelativePath = moveFileFromRecycleBin(oldPath, "uploads/purchase-orders");
-            purchaseOrder.attachment = newRelativePath;
-          } catch (err) {
-            logger.error("Failed to restore attachment:", err.message);
-          }
-        }
+      // Restore attachment if exists
+      if (purchaseOrder.attachment) {
+        const recycleBinPath = purchaseOrder.attachment.replace(baseUrl + "/", ""); // Make relative path
+        purchaseOrder.attachment = moveFileFromRecycleBin(recycleBinPath, "purchase-orders", baseUrl);
       }
   
-      // Clear deletion flags
       purchaseOrder.isDeleted = false;
-      purchaseOrder.deletedBy = undefined;
-      purchaseOrder.deletedAt = undefined;
-  
       await purchaseOrder.save();
-  
-      logger.info(`Purchase order restored: ${purchaseOrder.ref_num} by ${req.user.username}`);
   
       res.json({
         success: true,
-        message: "Purchase order successfully restored from recycle bin",
+        message: "Purchase order restored successfully",
+        data: purchaseOrder,
       });
     } catch (error) {
-      logger.error("Restore purchase order error:", error);
-      next(error);
+      console.error("Error restoring purchase order:", error);
+      res.status(500).json({ success: false, message: "Failed to restore purchase order" });
     }
-  }
+  };
 
   /**
    * Search purchase orders
