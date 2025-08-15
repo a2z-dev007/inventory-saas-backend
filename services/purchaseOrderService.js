@@ -1,257 +1,193 @@
-const PurchaseOrder = require("../models/PurchaseOrder")
-const Product = require("../models/Product")
-const { getAttachmentUrl } = require("../utils/constants")
-const {moveFileToRecycleBin} = require("../utils/fileMover")
-const path = require("path")
-const fs = require("fs")
+const PurchaseOrder = require("../models/PurchaseOrder");
+const Product = require("../models/Product");
+const { getAttachmentUrl } = require("../utils/constants");
+const { moveFileToRecycleBin } = require("../utils/fileMover");
+const path = require("path");
+const fs = require("fs");
+const Purchase = require("../models/Purchase");
 class PurchaseOrderService {
   /**
    * Get purchase orders with pagination and filters
    * @param {Object} options - Query options
    * @returns {Object} Purchase orders and pagination info
    */
-//   async getPurchaseOrders(options) {
-//     const { page = 1, limit = 10, search, status, vendor, startDate, endDate, sortBy = "orderDate", sortOrder = "desc", all = false } = options
+ 
+  // async getPurchaseOrders(options) {
+  //   const {
+  //     page = 1,
+  //     limit = 10,
+  //     search,
+  //     status,
+  //     vendor,
+  //     startDate,
+  //     endDate,
+  //     sortBy = "orderDate",
+  //     sortOrder = "desc",
+  //     all = false,
+  //     isDeleted,
+  //   } = options;
 
-//     const skip = all ? 0 : (page - 1) * limit
+  //   const skip = all ? 0 : (page - 1) * limit;
+  //   const query = {};
 
-//     // Build query
-//     const query = {}
+  //   if (typeof isDeleted !== "undefined") {
+  //     if (typeof isDeleted === "string") {
+  //       query.isDeleted = isDeleted.toLowerCase() === "true";
+  //     } else {
+  //       query.isDeleted = Boolean(isDeleted);
+  //     }
+  //   }
 
-//     // Filter by status
-//     if (status) {
-//       query.status = status
-//     }
+  //   // Other filters
+  //   if (status) query.status = status;
+  //   if (vendor) query.vendor = { $regex: vendor, $options: "i" };
 
-//     // Filter by vendor
-//     if (vendor) {
-//       query.vendor = { $regex: vendor, $options: "i" }
-//     }
+  //   if (startDate || endDate) {
+  //     query.orderDate = {};
+  //     if (startDate) query.orderDate.$gte = new Date(startDate);
+  //     if (endDate) query.orderDate.$lte = new Date(endDate);
+  //   }
 
-//     // Date range filter
-//     if (startDate || endDate) {
-//       query.orderDate = {}
-//       if (startDate) {
-//         query.orderDate.$gte = new Date(startDate)
-//       }
-//       if (endDate) {
-//         query.orderDate.$lte = new Date(endDate)
-//       }
-//     }
+  //   if (search) {
+  //     query.$or = [
+  //       { ref_num: { $regex: search, $options: "i" } },
+  //       { poNumber: { $regex: search, $options: "i" } },
+  //       { vendor: { $regex: search, $options: "i" } },
+  //       { "items.productName": { $regex: search, $options: "i" } },
+  //     ];
+  //   }
 
-//     // Search functionality
-//     if (search) {
-//       query.$or = [
-//         { ref_num: { $regex: search, $options: "i" } },
-//         { poNumber: { $regex: search, $options: "i" } },
-//         { vendor: { $regex: search, $options: "i" } },
-//         { "items.productName": { $regex: search, $options: "i" } },
-//       ]
-//     }
+  //   const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
-//     // Build sort object
-//     const sort = {}
-//     sort[sortBy] = sortOrder === "desc" ? -1 : 1
+  //   const [purchaseOrders, total] = await Promise.all([
+  //     PurchaseOrder.find(query)
+  //       .populate("createdBy", "name username")
+  //       .populate("approvedBy", "name username")
+  //       .sort(sort)
+  //       .skip(skip)
+  //       .limit(all ? 0 : limit)
+  //       .lean(),
+  //     PurchaseOrder.countDocuments(query),
+  //   ]);
 
-//     // Execute query
-//     const purchaseOrders = await PurchaseOrder.find(query)
-//       .populate("createdBy", "name username")
-//       .populate("approvedBy", "name username")
-//       .sort(sort)
-//       .skip(skip)
-//       .limit(all ? undefined : limit)
-//       .lean()
+  //   const updatedPurchaseOrders = purchaseOrders.map((po) => ({
+  //     ...po,
+  //     attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+  //   }));
 
-//     const total = await PurchaseOrder.countDocuments(query)
+  //   return {
+  //     purchaseOrders: updatedPurchaseOrders,
+  //     pagination: {
+  //       page,
+  //       limit: all ? total : limit,
+  //       total,
+  //       pages: all ? 1 : Math.ceil(total / limit),
+  //     },
+  //   };
+  // }
 
-//    // At the end of getPurchaseOrders function
-// const updatedPurchaseOrders = purchaseOrders.map((po) => ({
-//   ...po,
-//   attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
-// }));
-//   // console.log("updatedPurchaseOrders",updatedPurchaseOrders)
-// // const filteredPurchaseOrders = updatedPurchaseOrders.filter((po) => po.isDeleted === false);
-// // console.log("filteredPurchaseOrders",filteredPurchaseOrders)
-
-// return {
-//   purchaseOrders: updatedPurchaseOrders,
-//   pagination: {
-//     page,
-//     limit,
-//     total,
-//     pages: Math.ceil(total / limit),
-//   },
-// };
-//   }
-// async getPurchaseOrders(options) {
-//   const {
-//     page = 1,
-//     limit = 10,
-//     search,
-//     status,
-//     vendor,
-//     startDate,
-//     endDate,
-//     sortBy = "orderDate",
-//     sortOrder = "desc",
-//     all = false,
-//     isDeleted = false,
-//   } = options;
-
-//   const skip = all ? 0 : (page - 1) * limit;
-
-//   // Build query
-//   const query = {};
-
-//   // Handle deletion filters
-//   if (all) {
-//     // Fetch all non-deleted records (for dropdowns)
-//     query.isDeleted = false;
-//   } else if (isDeleted) {
-//     // Fetch only deleted records
-//     query.isDeleted = true;
-//   } else {
-//     // Fetch only active (non-deleted) records
-//     query.isDeleted = false;
-//   }
-
-//   // Filter by status
-//   if (status) {
-//     query.status = status;
-//   }
-
-//   // Filter by vendor
-//   if (vendor) {
-//     query.vendor = { $regex: vendor, $options: "i" };
-//   }
-
-//   // Date range filter
-//   if (startDate || endDate) {
-//     query.orderDate = {};
-//     if (startDate) {
-//       query.orderDate.$gte = new Date(startDate);
-//     }
-//     if (endDate) {
-//       query.orderDate.$lte = new Date(endDate);
-//     }
-//   }
-
-//   // Search functionality
-//   if (search) {
-//     query.$or = [
-//       { ref_num: { $regex: search, $options: "i" } },
-//       { poNumber: { $regex: search, $options: "i" } },
-//       { vendor: { $regex: search, $options: "i" } },
-//       { "items.productName": { $regex: search, $options: "i" } },
-//     ];
-//   }
-
-//   // Sort object
-//   const sort = {};
-//   sort[sortBy] = sortOrder === "desc" ? -1 : 1;
-
-//   // Fetch records
-//   const purchaseOrders = await PurchaseOrder.find(query)
-//     .populate("createdBy", "name username")
-//     .populate("approvedBy", "name username")
-//     .sort(sort)
-//     .skip(skip)
-//     .limit(all ? 0 : limit) // 0 means no limit in Mongoose
-//     .lean();
-
-//   // Count total matching documents
-//   const total = await PurchaseOrder.countDocuments(query);
-
-//   // Process attachments
-//   const updatedPurchaseOrders = purchaseOrders.map((po) => ({
-//     ...po,
-//     attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
-//   }));
-
-//   return {
-//     purchaseOrders: updatedPurchaseOrders,
-//     pagination: {
-//       page,
-//       limit: all ? total : limit,
-//       total,
-//       pages: all ? 1 : Math.ceil(total / limit),
-//     },
-//   };
-// }
-
-async getPurchaseOrders(options) {
-  const {
-    page = 1,
-    limit = 10,
-    search,
-    status,
-    vendor,
-    startDate,
-    endDate,
-    sortBy = "orderDate",
-    sortOrder = "desc",
-    all = false,
-    isDeleted,
-  } = options;
-
-  const skip = all ? 0 : (page - 1) * limit;
-  const query = {};
-
-  if (typeof isDeleted !== "undefined") {
-    if (typeof isDeleted === "string") {
-      query.isDeleted = isDeleted.toLowerCase() === "true";
-    } else {
-      query.isDeleted = Boolean(isDeleted);
+  async getPurchaseOrders(options) {
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      status,
+      vendor,
+      startDate,
+      endDate,
+      sortBy = "orderDate",
+      sortOrder = "desc",
+      all = false,
+      isDeleted,
+    } = options;
+  
+    const skip = all ? 0 : (page - 1) * limit;
+    const query = {};
+  
+    // Deleted filter
+    if (typeof isDeleted !== "undefined") {
+      if (typeof isDeleted === "string") {
+        query.isDeleted = isDeleted.toLowerCase() === "true";
+      } else {
+        query.isDeleted = Boolean(isDeleted);
+      }
     }
+  
+    // Other filters
+    if (status) query.status = status;
+    if (vendor) query.vendor = { $regex: vendor, $options: "i" };
+  
+    if (startDate || endDate) {
+      query.orderDate = {};
+      if (startDate) query.orderDate.$gte = new Date(startDate);
+      if (endDate) query.orderDate.$lte = new Date(endDate);
+    }
+  
+    if (search) {
+      query.$or = [
+        { ref_num: { $regex: search, $options: "i" } },
+        { poNumber: { $regex: search, $options: "i" } },
+        { vendor: { $regex: search, $options: "i" } },
+        { "items.productName": { $regex: search, $options: "i" } },
+      ];
+    }
+  
+    const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+  
+    // 1️⃣ Fetch purchase orders and total count
+    const [purchaseOrders, total] = await Promise.all([
+      PurchaseOrder.find(query)
+        .populate("createdBy", "name username")
+        .populate("approvedBy", "name username")
+        .sort(sort)
+        .skip(skip)
+        .limit(all ? 0 : limit)
+        .lean(),
+      PurchaseOrder.countDocuments(query),
+    ]);
+  
+    // If no purchase orders found, return early
+    if (!purchaseOrders.length) {
+      return {
+        purchaseOrders: [],
+        pagination: {
+          page,
+          limit: all ? total : limit,
+          total,
+          pages: all ? 1 : Math.ceil(total / limit),
+        },
+      };
+    }
+  
+    // 2️⃣ Get all ref_nums from the fetched POs
+    const poRefNums = purchaseOrders.map(po => po.ref_num);
+  
+    // 3️⃣ Fetch purchases with matching ref_nums
+    const purchases = await Purchase.find({
+      ref_num: { $in: poRefNums },
+      isDeleted: false
+    }).select("ref_num").lean();
+  
+    const purchaseRefSet = new Set(purchases.map(p => p.ref_num));
+  
+    // 4️⃣ Attach `isPurchasedCreated` + format attachment
+    const updatedPurchaseOrders = purchaseOrders.map((po) => ({
+      ...po,
+      attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+      isPurchasedCreated: purchaseRefSet.has(po.ref_num) // ✅ New flag
+    }));
+  
+    return {
+      purchaseOrders: updatedPurchaseOrders,
+      pagination: {
+        page,
+        limit: all ? total : limit,
+        total,
+        pages: all ? 1 : Math.ceil(total / limit),
+      },
+    };
   }
-
-  // Other filters
-  if (status) query.status = status;
-  if (vendor) query.vendor = { $regex: vendor, $options: "i" };
-
-  if (startDate || endDate) {
-    query.orderDate = {};
-    if (startDate) query.orderDate.$gte = new Date(startDate);
-    if (endDate) query.orderDate.$lte = new Date(endDate);
-  }
-
-  if (search) {
-    query.$or = [
-      { ref_num: { $regex: search, $options: "i" } },
-      { poNumber: { $regex: search, $options: "i" } },
-      { vendor: { $regex: search, $options: "i" } },
-      { "items.productName": { $regex: search, $options: "i" } },
-    ];
-  }
-
-  const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
-
-  const [purchaseOrders, total] = await Promise.all([
-    PurchaseOrder.find(query)
-      .populate("createdBy", "name username")
-      .populate("approvedBy", "name username")
-      .sort(sort)
-      .skip(skip)
-      .limit(all ? 0 : limit)
-      .lean(),
-    PurchaseOrder.countDocuments(query),
-  ]);
-
-  const updatedPurchaseOrders = purchaseOrders.map((po) => ({
-    ...po,
-    attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
-  }));
-
-  return {
-    purchaseOrders: updatedPurchaseOrders,
-    pagination: {
-      page,
-      limit: all ? total : limit,
-      total,
-      pages: all ? 1 : Math.ceil(total / limit),
-    },
-  };
-}
+  
 
   /**
    * Get purchase order by ID
@@ -260,101 +196,99 @@ async getPurchaseOrders(options) {
    */
   async getPurchaseOrderByIdOrRefNum(identifier) {
     // Try to find by MongoDB ObjectId or by ref_num
-    let purchaseOrder = null
+    let purchaseOrder = null;
     if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
       purchaseOrder = await PurchaseOrder.findById(identifier)
         .populate("createdBy", "name username")
         .populate("approvedBy", "name username")
-        .lean()
+        .lean();
     }
     if (!purchaseOrder) {
       purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier })
         .populate("createdBy", "name username")
         .populate("approvedBy", "name username")
-        .lean()
+        .lean();
     }
-    return purchaseOrder
+    return purchaseOrder;
   }
 
-// get delete po
-async getPurchaseOrders(options) {
-  const {
-    page = 1,
-    limit = 10,
-    search,
-    status,
-    vendor,
-    startDate,
-    endDate,
-    sortBy = "orderDate",
-    sortOrder = "desc",
-    all = false,
-    isDeleted,
-  } = options;
+  // get delete po
+  async getPurchaseOrders(options) {
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      status,
+      vendor,
+      startDate,
+      endDate,
+      sortBy = "orderDate",
+      sortOrder = "desc",
+      all = false,
+      isDeleted,
+    } = options;
 
-  const skip = all ? 0 : (page - 1) * limit;
-  const query = {};
+    const skip = all ? 0 : (page - 1) * limit;
+    const query = {};
 
-  // Always force filter on isDeleted
-  if (isDeleted === true || isDeleted === "true") {
-    query.isDeleted = true;
-  } else {
-    query.isDeleted = false;
+    // Always force filter on isDeleted
+    if (isDeleted === true || isDeleted === "true") {
+      query.isDeleted = true;
+    } else {
+      query.isDeleted = false;
+    }
+
+    // Search
+    if (search) {
+      query.$or = [
+        { ref_num: { $regex: search, $options: "i" } },
+        { poNumber: { $regex: search, $options: "i" } },
+        { vendor: { $regex: search, $options: "i" } },
+        { "items.productName": { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Status
+    if (status) query.status = status;
+
+    // Vendor
+    if (vendor) query.vendor = { $regex: vendor, $options: "i" };
+
+    // Date Range
+    if (startDate || endDate) {
+      query.orderDate = {};
+      if (startDate) query.orderDate.$gte = new Date(startDate);
+      if (endDate) query.orderDate.$lte = new Date(endDate);
+    }
+
+    const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+
+    const [purchaseOrders, total] = await Promise.all([
+      PurchaseOrder.find(query)
+        .populate("createdBy", "name username")
+        .populate("approvedBy", "name username")
+        .sort(sort)
+        .skip(skip)
+        .limit(all ? 0 : limit)
+        .lean(),
+      PurchaseOrder.countDocuments(query),
+    ]);
+
+    const updatedPurchaseOrders = purchaseOrders.map((po) => ({
+      ...po,
+      attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+    }));
+
+    return {
+      purchaseOrders: updatedPurchaseOrders,
+      pagination: {
+        page,
+        limit: all ? total : limit,
+        total,
+        pages: all ? 1 : Math.ceil(total / limit),
+      },
+    };
   }
-
-  // Search
-  if (search) {
-    query.$or = [
-      { ref_num: { $regex: search, $options: "i" } },
-      { poNumber: { $regex: search, $options: "i" } },
-      { vendor: { $regex: search, $options: "i" } },
-      { "items.productName": { $regex: search, $options: "i" } },
-    ];
-  }
-
-  // Status
-  if (status) query.status = status;
-
-  // Vendor
-  if (vendor) query.vendor = { $regex: vendor, $options: "i" };
-
-  // Date Range
-  if (startDate || endDate) {
-    query.orderDate = {};
-    if (startDate) query.orderDate.$gte = new Date(startDate);
-    if (endDate) query.orderDate.$lte = new Date(endDate);
-  }
-
-  const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
-
-  const [purchaseOrders, total] = await Promise.all([
-    PurchaseOrder.find(query)
-      .populate("createdBy", "name username")
-      .populate("approvedBy", "name username")
-      .sort(sort)
-      .skip(skip)
-      .limit(all ? 0 : limit)
-      .lean(),
-    PurchaseOrder.countDocuments(query),
-  ]);
-
-  const updatedPurchaseOrders = purchaseOrders.map((po) => ({
-    ...po,
-    attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
-  }));
-
-  return {
-    purchaseOrders: updatedPurchaseOrders,
-    pagination: {
-      page,
-      limit: all ? total : limit,
-      total,
-      pages: all ? 1 : Math.ceil(total / limit),
-    },
-  };
-}
-
-
 
   /**
    * Create new purchase order
@@ -362,21 +296,21 @@ async getPurchaseOrders(options) {
    * @returns {Object} Created purchase order
    */
   async createPurchaseOrder(purchaseOrderData) {
-    const { items, ...otherData } = purchaseOrderData
+    const { items, ...otherData } = purchaseOrderData;
 
     // Process items to include product names and calculate totals
-    const processedItems = await this.processItems(items)
-    const subtotal = processedItems.reduce((sum, item) => sum + item.total, 0)
-    const total = subtotal
+    const processedItems = await this.processItems(items);
+    const subtotal = processedItems.reduce((sum, item) => sum + item.total, 0);
+    const total = subtotal;
 
     const purchaseOrder = new PurchaseOrder({
       ...otherData,
       items: processedItems,
       subtotal,
       total,
-    })
+    });
 
-    return await purchaseOrder.save()
+    return await purchaseOrder.save();
   }
 
   /**
@@ -390,24 +324,39 @@ async getPurchaseOrders(options) {
     if (updateData.items) {
       const processedItems = await this.processItems(updateData.items);
       updateData.items = processedItems;
-      updateData.subtotal = processedItems.reduce((sum, item) => sum + item.total, 0);
+      updateData.subtotal = processedItems.reduce(
+        (sum, item) => sum + item.total,
+        0
+      );
       updateData.total = updateData.subtotal;
     }
     // Try to update by MongoDB ObjectId or by ref_num
-    let purchaseOrder = null
+    let purchaseOrder = null;
     if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
-      purchaseOrder = await PurchaseOrder.findByIdAndUpdate(identifier, updateData, {
-        new: true,
-        runValidators: true,
-      }).populate("createdBy", "name username").populate("approvedBy", "name username")
+      purchaseOrder = await PurchaseOrder.findByIdAndUpdate(
+        identifier,
+        updateData,
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+        .populate("createdBy", "name username")
+        .populate("approvedBy", "name username");
     }
     if (!purchaseOrder) {
-      purchaseOrder = await PurchaseOrder.findOneAndUpdate({ ref_num: identifier }, updateData, {
-        new: true,
-        runValidators: true,
-      }).populate("createdBy", "name username").populate("approvedBy", "name username")
+      purchaseOrder = await PurchaseOrder.findOneAndUpdate(
+        { ref_num: identifier },
+        updateData,
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+        .populate("createdBy", "name username")
+        .populate("approvedBy", "name username");
     }
-    return purchaseOrder
+    return purchaseOrder;
   }
 
   /**
@@ -417,161 +366,87 @@ async getPurchaseOrders(options) {
    * @returns {Object} Deleted purchase order
    */
 
-  // async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
-  //   // First find the purchase order to get attachment info
-  //   let purchaseOrder = null
-  //   if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
-  //     purchaseOrder = await PurchaseOrder.findById(identifier)
-  //   }
-  //   if (!purchaseOrder) {
-  //     purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier })
-  //   }
-    
-  //   // If purchase order has an attachment, delete the files
-  //   if (purchaseOrder && purchaseOrder.attachment) {
-  //     const fs = require('fs');
-  //     const path = require('path');
-      
-  //     // Delete from public directory
-  //     const publicPath = path.join(__dirname, "../../public", purchaseOrder.attachment);
-  //     fs.unlink(publicPath, (err) => {
-  //       if (err) console.error("Error deleting attachment from public:", err.message);
-  //     });
-      
-  //     // Delete from uploads directory
-  //     const uploadsPath = path.join(__dirname, "../..", purchaseOrder.attachment);
-  //     fs.unlink(uploadsPath, (err) => {
-  //       if (err) console.error("Error deleting attachment from uploads:", err.message);
-  //     });
-  //   }
-    
-  //   // Now delete the purchase order
-  //   if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
-  //     purchaseOrder = await PurchaseOrder.findByIdAndDelete(identifier)
-  //   }
-  //   if (!purchaseOrder) {
-  //     purchaseOrder = await PurchaseOrder.findOneAndDelete({ ref_num: identifier })
-  //   }
-  //   return purchaseOrder
-  // }
+  async deletePurchaseOrderFinal(identifier, deletedBy) {
+    // First find the purchase order to get attachment info
+    let purchaseOrder = null;
+    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+      purchaseOrder = await PurchaseOrder.findById(identifier);
+    }
+    if (!purchaseOrder) {
+      purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier });
+    }
 
-  // Soft deleted 
-  // async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
-  //   let purchaseOrder = null;
-  
-  //   // Try finding by ObjectId
-  //   if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
-  //     purchaseOrder = await PurchaseOrder.findById(identifier);
-  //   }
-  
-  //   // Try finding by ref_num
-  //   if (!purchaseOrder) {
-  //     purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier });
-  //   }
-  
-  //   if (!purchaseOrder) return null;
-  
-  //   // Move attachment if exists
-  //   if (purchaseOrder.attachment) {
-  //     const filePath = path.join(__dirname, "..", "..", purchaseOrder.attachment);
-  //     if (fs.existsSync(filePath)) {
-  //       try {
-  //         const newRelativePath = moveFileToRecycleBin(filePath, "purchase-orders");
-  //         purchaseOrder.attachment = newRelativePath;
-  //       } catch (err) {
-  //         console.error("Failed to move attachment to recyclebin:", err.message);
-  //       }
-  //     }
-  //   }
-  
-  //   // Perform soft delete
-  //   purchaseOrder.isDeleted = true;
-  //   purchaseOrder.deletedBy = deletedBy;
-  //   purchaseOrder.deletedAt = new Date();
-  
-  //   await purchaseOrder.save();
-  
-  //   return purchaseOrder;
-  // }
+    // If purchase order has an attachment, delete the files
+    if (purchaseOrder && purchaseOrder.attachment) {
+      const fs = require("fs");
+      const path = require("path");
 
-  
+      // Delete from public directory
+      const publicPath = path.join(
+        __dirname,
+        "../../public",
+        purchaseOrder.attachment
+      );
+      fs.unlink(publicPath, (err) => {
+        if (err)
+          console.error("Error deleting attachment from public:", err.message);
+      });
 
-  // async  deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
-  //   let purchaseOrder = null;
-  
-  //   // Try finding by ObjectId
-  //   if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
-  //     purchaseOrder = await PurchaseOrder.findById(identifier);
-  //   }
-  
-  //   // Try finding by ref_num
-  //   if (!purchaseOrder) {
-  //     purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier });
-  //   }
-  
-  //   if (!purchaseOrder) return null;
-  
-  //   // Move attachment if exists
-  //   if (purchaseOrder.attachment) {
-  //     try {
-  //       // Extract filename from the URL or path
-  //       const fileName = path.basename(purchaseOrder.attachment);
-  
-  //       // Actual location in filesystem
-  //       const filePath = path.join(process.cwd(), "uploads", "purchase-orders", fileName);
-  
-  //       if (fs.existsSync(filePath)) {
-  //         // Ensure recycle bin directory exists
-  //         const recycleBinDir = path.join(process.cwd(), "uploads", "recyclebin", "purchase-orders");
-  //         fs.mkdirSync(recycleBinDir, { recursive: true });
-  
-  //         const newPath = path.join(recycleBinDir, fileName);
-  
-  //         fs.renameSync(filePath, newPath); // Move file
-  
-  //         // Store relative path for DB (so it can be restored later)
-  //         purchaseOrder.attachment = path.relative(process.cwd(), newPath);
-  
-  //         console.log(`Moved attachment to recycle bin: ${purchaseOrder.attachment}`);
-  //       } else {
-  //         console.warn(`Attachment file not found: ${filePath}`);
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to move attachment to recyclebin:", err.message);
-  //     }
-  //   }
-  
-  //   // Perform soft delete
-  //   purchaseOrder.isDeleted = true;
-  //   purchaseOrder.deletedBy = deletedBy;
-  //   purchaseOrder.deletedAt = new Date();
-  
-  //   await purchaseOrder.save();
-  
-  //   return purchaseOrder;
-  // }
+      // Delete from uploads directory
+      const uploadsPath = path.join(
+        __dirname,
+        "../..",
+        purchaseOrder.attachment
+      );
+      fs.unlink(uploadsPath, (err) => {
+        if (err)
+          console.error("Error deleting attachment from uploads:", err.message);
+      });
+    }
 
-  async  deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
+    // Now delete the purchase order
+    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+      purchaseOrder = await PurchaseOrder.findByIdAndDelete(identifier);
+    }
+    if (!purchaseOrder) {
+      purchaseOrder = await PurchaseOrder.findOneAndDelete({
+        ref_num: identifier,
+      });
+    }
+    return purchaseOrder;
+  }
+
+  async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
     const purchaseOrder = await PurchaseOrder.findOne({
       $or: [{ _id: identifier }, { ref_num: identifier }],
     });
-  
+
     if (!purchaseOrder) {
       throw new Error("Purchase Order not found");
     }
-  
+
     // Move attachment to recycle bin if exists
     if (purchaseOrder.attachment) {
       const fileUrl = purchaseOrder.attachment; // full URL like http://localhost:8080/uploads/purchase-orders/file.pdf
       const fileName = path.basename(fileUrl);
-      const currentFilePath = path.join(process.cwd(), "uploads", "purchase-orders", fileName);
-      const recycleBinDir = path.join(process.cwd(), "uploads", "recycle-bin","purchase-orders");
-      
+      const currentFilePath = path.join(
+        process.cwd(),
+        "uploads",
+        "purchase-orders",
+        fileName
+      );
+      const recycleBinDir = path.join(
+        process.cwd(),
+        "uploads",
+        "recycle-bin",
+        "purchase-orders"
+      );
+
       // Create recycle bin folder if not exists
       if (!fs.existsSync(recycleBinDir)) {
         fs.mkdirSync(recycleBinDir, { recursive: true });
       }
-  
+
       // Move the file
       if (fs.existsSync(currentFilePath)) {
         const newFilePath = path.join(recycleBinDir, fileName);
@@ -579,14 +454,13 @@ async getPurchaseOrders(options) {
         purchaseOrder.attachment = `/uploads/recycle-bin/purchase-orders/${fileName}`;
       }
     }
-  
+
     // Soft delete the purchase order
     purchaseOrder.isDeleted = true;
     await purchaseOrder.save();
-  
+
     return { success: true, message: "Purchase order moved to recycle bin" };
-  };
-  
+  }
 
   /**
    * Search purchase orders
@@ -606,7 +480,7 @@ async getPurchaseOrders(options) {
       .select("ref_num poNumber vendor status orderDate total")
       .sort({ orderDate: -1 })
       .limit(limit)
-      .lean()
+      .lean();
   }
 
   /**
@@ -615,15 +489,15 @@ async getPurchaseOrders(options) {
    * @returns {Array} Processed items
    */
   async processItems(items) {
-    const processedItems = []
+    const processedItems = [];
 
     for (const item of items) {
-      const product = await Product.findById(item.productId).select("name")
+      const product = await Product.findById(item.productId).select("name");
       if (!product) {
-        throw new Error(`Product with ID ${item.productId} not found`)
+        throw new Error(`Product with ID ${item.productId} not found`);
       }
 
-      const total = item.quantity * item.unitPrice
+      const total = item.quantity * item.unitPrice;
 
       processedItems.push({
         productId: item.productId,
@@ -632,10 +506,10 @@ async getPurchaseOrders(options) {
         unitPrice: item.unitPrice,
         unitType: item.unitType,
         total,
-      })
+      });
     }
 
-    return processedItems
+    return processedItems;
   }
 
   /**
@@ -651,9 +525,9 @@ async getPurchaseOrders(options) {
           totalValue: { $sum: "$total" },
         },
       },
-    ])
+    ]);
 
-    const totalOrders = await PurchaseOrder.countDocuments()
+    const totalOrders = await PurchaseOrder.countDocuments();
     const totalValue = await PurchaseOrder.aggregate([
       {
         $group: {
@@ -661,13 +535,13 @@ async getPurchaseOrders(options) {
           total: { $sum: "$total" },
         },
       },
-    ])
+    ]);
 
     return {
       byStatus: stats,
       totalOrders,
       totalValue: totalValue[0]?.total || 0,
-    }
+    };
   }
 
   /**
@@ -677,23 +551,28 @@ async getPurchaseOrders(options) {
    * @returns {Object} Purchase orders and pagination
    */
   async getPurchaseOrdersByVendor(vendor, options = {}) {
-    const { page = 1, limit = 10, sortBy = "orderDate", sortOrder = "desc" } = options
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "orderDate",
+      sortOrder = "desc",
+    } = options;
 
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * limit;
 
-    const query = { vendor: { $regex: vendor, $options: "i" } }
+    const query = { vendor: { $regex: vendor, $options: "i" } };
 
-    const sort = {}
-    sort[sortBy] = sortOrder === "desc" ? -1 : 1
+    const sort = {};
+    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
     const purchaseOrders = await PurchaseOrder.find(query)
       .populate("createdBy", "name username")
       .sort(sort)
       .skip(skip)
       .limit(limit)
-      .lean()
+      .lean();
 
-    const total = await PurchaseOrder.countDocuments(query)
+    const total = await PurchaseOrder.countDocuments(query);
 
     return {
       purchaseOrders,
@@ -703,10 +582,10 @@ async getPurchaseOrders(options) {
         total,
         pages: Math.ceil(total / limit),
       },
-    }
+    };
   }
 
-  // // restore purchaseOrder🧮 
+  // // restore purchaseOrder🧮
   // async restorePurchaseOrder(id) {
   //   const updated = await PurchaseOrder.findByIdAndUpdate(
   //     id,
@@ -715,7 +594,6 @@ async getPurchaseOrders(options) {
   //   );
   //   return updated;
   // }
-  
 }
 
-module.exports = new PurchaseOrderService()
+module.exports = new PurchaseOrderService();

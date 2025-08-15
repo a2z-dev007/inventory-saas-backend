@@ -39,6 +39,7 @@ const purchaseOrderSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       index: true,
+      required: [true, "DB Number is required"],
     },
     attachment: {
       type: String,
@@ -54,7 +55,12 @@ const purchaseOrderSchema = new mongoose.Schema(
     },
     vendor: {
       type: String,
-      required: [true, "Vendor is required"],
+      required: [true, "Supplier is required"],
+      trim: true,
+    },
+    customer: {
+      type: String,
+      required: [true, "Client is required"],
       trim: true,
     },
     status: {
@@ -63,6 +69,12 @@ const purchaseOrderSchema = new mongoose.Schema(
       enum: ["draft", "pending", "approved", "delivered", "cancelled"],
       default: "draft",
     },
+    siteType: {
+      type: String,
+      required: true,
+      enum: ["Site", "Unit",],
+      default: "Site",
+    },
     orderDate: {
       type: Date,
       required: true,
@@ -70,6 +82,10 @@ const purchaseOrderSchema = new mongoose.Schema(
     },
     deliveryDate: {
       type: Date,
+    },
+    isPurchasedCreated:{
+      type:Boolean,
+      default: false,
     },
     expectedDeliveryDate: {
       type: Date,
@@ -128,7 +144,8 @@ const purchaseOrderSchema = new mongoose.Schema(
       },
       purpose:{
         type: String,
-        trim: true
+        trim: true,
+        required: [true, "Purpose is required"],
       }
   },
   {
