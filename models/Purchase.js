@@ -23,7 +23,11 @@ const purchaseItemSchema = new mongoose.Schema({
   unitType: {
     type: String,
   },
-  isCancelled:{
+  isCancelled: {
+    type: Boolean,
+    default: false,
+  },
+  isReturn: {
     type: Boolean,
     default: false,
   },
@@ -32,8 +36,22 @@ const purchaseItemSchema = new mongoose.Schema({
     required: true,
     min: [0, "Total cannot be negative"],
   },
-
 })
+
+// 🔹 Return object schema
+const returnSchema = new mongoose.Schema({
+  items: [purchaseItemSchema], // only items with isReturn = true
+  returnAmount: {
+    type: Number,
+    default: 0,
+    min: [0, "Return amount cannot be negative"],
+  },
+  returnQty: {
+    type: Number,
+    default: 0,
+    min: [0, "Return quantity cannot be negative"],
+  },
+}, { _id: false })
 
 const purchaseSchema = new mongoose.Schema(
   {
@@ -42,7 +60,7 @@ const purchaseSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       index: true,
-      required:[true,'DB Number is required']
+      required: [true, "DB Number is required"],
     },
     invoiceFile: {
       type: String,
@@ -94,9 +112,12 @@ const purchaseSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isCancelled:{
+    isCancelled: {
       type: Boolean,
       default: false,
+    },
+    receivedBy:{
+      type:String,
     },
     cancelledAmount: {
       type: Number,
@@ -106,6 +127,13 @@ const purchaseSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    // 🔹 New return object
+    return: {
+      type: returnSchema,
+      default: () => ({ items: [], returnAmount: 0, returnQty: 0 }),
+    },
+
     remarks: {
       type: String,
       trim: true,
@@ -114,7 +142,6 @@ const purchaseSchema = new mongoose.Schema(
     deletedAt: {
       type: Date,
     },
-
   },
   {
     timestamps: true,

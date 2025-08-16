@@ -151,36 +151,55 @@ class PurchaseService {
    * @param {Object} purchaseData
    * @returns {Object} Created purchase
    */
-  async createPurchase(purchaseData) {
-    const { items, ...otherData } = purchaseData
+// Create Purchase
+async createPurchase(purchaseData) {
+  const { items, ...otherData } = purchaseData;
 
-    // Process items to include product names and calculate totals
-    const processedItems = await this.processItems(items)
-    const subtotal = processedItems
-    .filter(item => !item.isCancelled)
+  const processedItems = await this.processItems(items);
+
+  // Subtotal (exclude cancelled + return items)
+  const subtotal = processedItems
+    .filter(item => !item.isCancelled && !item.isReturn)
     .reduce((sum, item) => sum + item.total, 0);
-  
+
+  // Cancelled tracking
   const cancelledAmount = processedItems
     .filter(item => item.isCancelled)
     .reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-  
+
   const cancelledQty = processedItems
     .filter(item => item.isCancelled)
     .reduce((sum, item) => sum + item.quantity, 0);
-  
+
+  // Return tracking
+  const returnItems = processedItems.filter(item => item.isReturn);
+  const returnAmount = returnItems.reduce(
+    (sum, item) => sum + (item.quantity * item.unitPrice),
+    0
+  );
+  const returnQty = returnItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Final total = subtotal (already excludes return + cancelled)
   const total = subtotal;
-    const purchase = new Purchase({
-      ...otherData,
-      items: processedItems,
-      subtotal,
-      total,
-      cancelledAmount,
-      cancelledQty,
 
-    })
+  const purchase = new Purchase({
+    ...otherData,
+    items: processedItems,
+    subtotal,
+    total,
+    cancelledAmount,
+    cancelledQty,
+    return: {
+      items: returnItems,
+      returnAmount,
+      returnQty,
+    },
+  });
 
-    return await purchase.save()
-  }
+  return await purchase.save();
+}
+
+  
 
   /**
    * Update purchase
@@ -188,52 +207,69 @@ class PurchaseService {
    * @param {Object} updateData
    * @returns {Object} Updated purchase
    */
-  async updatePurchase(purchaseId, updateData) {
-    const { items, ...otherData } = updateData
+ // Update Purchase
+async updatePurchase(purchaseId, updateData) {
+  const { items, ...otherData } = updateData;
 
-    let processedItems = []
-    let subtotal = 0
-    let total = 0
-    let cancelledAmount = 0
-    let cancelledQty = 0
+  let processedItems = [];
+  let subtotal = 0;
+  let total = 0;
+  let cancelledAmount = 0;
+  let cancelledQty = 0;
+  let returnObj = { items: [], returnAmount: 0, returnQty: 0 };
 
-    // If items are being updated, process them
-    if (items) {
-      processedItems = await this.processItems(items);
-    
-      subtotal = processedItems
-        .filter(item => !item.isCancelled)
-        .reduce((sum, item) => sum + item.total, 0);
-    
-      cancelledAmount = processedItems
-        .filter(item => item.isCancelled)
-        .reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
-    
-      cancelledQty = processedItems
-        .filter(item => item.isCancelled)
-        .reduce((sum, item) => sum + item.quantity, 0);
-    
-      total = subtotal;
-    }
+  if (items) {
+    processedItems = await this.processItems(items);
 
-    const updatePayload = {
-      ...otherData,
-      ...(items && {
-        items: processedItems,
-        subtotal,
-        total,
-        cancelledAmount,
-        cancelledQty,
-      }),
+    subtotal = processedItems
+      .filter(item => !item.isCancelled && !item.isReturn)
+      .reduce((sum, item) => sum + item.total, 0);
+
+    cancelledAmount = processedItems
+      .filter(item => item.isCancelled)
+      .reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0);
+
+    cancelledQty = processedItems
+      .filter(item => item.isCancelled)
+      .reduce((sum, item) => sum + item.quantity, 0);
+
+    const returnItems = processedItems.filter(item => item.isReturn);
+    const returnAmount = returnItems.reduce(
+      (sum, item) => sum + (item.quantity * item.unitPrice),
+      0
+    );
+    const returnQty = returnItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    returnObj = {
+      items: returnItems,
+      returnAmount,
+      returnQty,
     };
 
-    const purchase = await Purchase.findByIdAndUpdate(purchaseId, updatePayload, {
-      new: true,
-      runValidators: true,
-    }).populate("createdBy", "name username")
-
-    return purchase
+    // Final total = subtotal
+    total = subtotal;
   }
+
+  const updatePayload = {
+    ...otherData,
+    ...(items && {
+      items: processedItems,
+      subtotal,
+      total,
+      cancelledAmount,
+      cancelledQty,
+      return: returnObj,
+    }),
+  };
+
+  const purchase = await Purchase.findByIdAndUpdate(purchaseId, updatePayload, {
+    new: true,
+    runValidators: true,
+  }).populate("createdBy", "name username");
+
+  return purchase;
+}
+  
 
   /**
    * Delete purchase (hard delete)
@@ -325,7 +361,10 @@ class PurchaseService {
       }
   
       const isCancelled = item.isCancelled === true;
-      const total = isCancelled ? 0 : item.quantity * item.unitPrice;
+      const isReturn = item.isReturn === true;
+  
+      // Cancelled or return items contribute 0 to line total
+      const total = (isCancelled || isReturn) ? 0 : item.quantity * item.unitPrice;
   
       processedItems.push({
         productId: item.productId,
@@ -334,19 +373,29 @@ class PurchaseService {
         unitPrice: item.unitPrice,
         unitType: item.unitType,
         isCancelled,
+        isReturn,
         total,
       });
   
-      // Update product stock only if not cancelled
-      if (!isCancelled) {
+      // Stock updates
+      if (!isCancelled && !isReturn) {
+        // Normal purchase -> increase stock
         await Product.findByIdAndUpdate(item.productId, {
           $inc: { currentStock: item.quantity },
+        });
+      } else if (isReturn) {
+        // Return -> decrease stock
+        await Product.findByIdAndUpdate(item.productId, {
+          $inc: { currentStock: -item.quantity },
         });
       }
     }
   
     return processedItems;
   }
+  
+  
+  
   
 
   /**
