@@ -8,7 +8,25 @@ const fs = require("fs");
 const { getAttachmentUrl } = require("../utils/constants");
 const { moveFileFromRecycleBin } = require("../utils/fileMover");
 const PurchaseOrder = require("../models/PurchaseOrder");
+const Counter = require("../models/Counter");
+const moment = require("moment")
+async function  generatePONumber(siteType) {
+  const prefix = siteType.charAt(0).toUpperCase(); // S or U
+  const dateStr = moment().format("YYMMDD"); // e.g. 250817
 
+  const counterName = `${prefix}-${dateStr}`;
+
+  // find counter for this prefix+date, increment
+  const counter = await Counter.findOneAndUpdate(
+    { name: counterName, date: dateStr },
+    { $inc: { seq: 1 }, $set: { date: dateStr } },
+    { new: true, upsert: true }
+  );
+
+  const seq = String(counter.seq).padStart(2, "0");
+
+  return `${prefix}-${dateStr}-${seq}`;
+}
 class PurchaseOrderController {
   /**
    * Get all purchase orders with pagination and filters
@@ -105,13 +123,96 @@ class PurchaseOrderController {
    * @access Private (Admin/Manager)
    */
 
+  // async createPurchaseOrder(req, res, next) {
+  //   try {
+  //     // Parse items if sent as string
+  //     if (req.body.items && typeof req.body.items === "string") {
+  //       req.body.items = JSON.parse(req.body.items);
+  //     }
+
+  //     const errors = validationResult(req);
+  //     if (!errors.isEmpty()) {
+  //       // Delete uploaded file if validation fails
+  //       if (req.file) {
+  //         const filePath = path.join(
+  //           __dirname,
+  //           "../..",
+  //           `/uploads/purchase-orders/${req.file.filename}`
+  //         );
+  //         fs.unlink(filePath, (err) => {
+  //           if (err)
+  //             console.error(
+  //               "Error deleting file after validation fail:",
+  //               err.message
+  //             );
+  //         });
+  //       }
+
+  //       return res.status(400).json({
+  //         success: false,
+  //         message: errors.array()[0].msg,
+  //         errors: errors.array(),
+  //       });
+  //     }
+
+  //     let attachmentPath = null;
+
+  //     if (req.file) {
+  //       console.log("File uploaded:", req.file.filename);
+  //       attachmentPath = `/uploads/purchase-orders/${req.file.filename}`;
+  //     }
+
+     
+ 
+  //    const poNumber = await generatePONumber(req.body.siteType);
+ 
+
+  //     const purchaseOrderData = {
+  //       ...req.body,
+  //       createdBy: req.user.id,
+  //       attachment: attachmentPath,
+  //       remarks: req.body.remarks || null,
+  //       poNumber,
+  //     };
+
+  //     const purchaseOrder = await purchaseOrderService.createPurchaseOrder(
+  //       purchaseOrderData
+  //     );
+
+  //     purchaseOrder.attachment = getAttachmentUrl(purchaseOrder.attachment);
+
+  //     res.status(201).json({
+  //       success: true,
+  //       message: "Purchase order created successfully",
+  //       data: { purchaseOrder },
+  //     });
+  //   } catch (error) {
+  //     logger.error("Create purchase order error:", error);
+
+  //     // Cleanup uploaded file on error
+  //     if (req.file) {
+  //       const filePath = path.join(
+  //         __dirname,
+  //         "../..",
+  //         `/uploads/purchase-orders/${req.file.filename}`
+  //       );
+  //       fs.unlink(filePath, (err) => {
+  //         if (err)
+  //           console.error("Error deleting file after exception:", err.message);
+  //       });
+  //     }
+
+  //     next(error);
+  //   }
+  // }
+
   async createPurchaseOrder(req, res, next) {
     try {
       // Parse items if sent as string
       if (req.body.items && typeof req.body.items === "string") {
         req.body.items = JSON.parse(req.body.items);
       }
-
+  
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         // Delete uploaded file if validation fails
@@ -123,40 +224,45 @@ class PurchaseOrderController {
           );
           fs.unlink(filePath, (err) => {
             if (err)
-              console.error(
-                "Error deleting file after validation fail:",
-                err.message
-              );
+              console.error("Error deleting file after validation fail:", err.message);
           });
         }
-
+  
         return res.status(400).json({
           success: false,
           message: errors.array()[0].msg,
           errors: errors.array(),
         });
       }
-
+  
       let attachmentPath = null;
-
       if (req.file) {
         console.log("File uploaded:", req.file.filename);
         attachmentPath = `/uploads/purchase-orders/${req.file.filename}`;
       }
-
+  
+      // Step 1: Create order without PO number
       const purchaseOrderData = {
         ...req.body,
         createdBy: req.user.id,
         attachment: attachmentPath,
         remarks: req.body.remarks || null,
+        customerAddress:req.body.customerAddress
       };
-
-      const purchaseOrder = await purchaseOrderService.createPurchaseOrder(
+  
+      let purchaseOrder = await purchaseOrderService.createPurchaseOrder(
         purchaseOrderData
       );
-
+  
+      // Step 2: Generate PO number only after successful creation
+      const poNumber = await generatePONumber(req.body.siteType);
+  
+      // Step 3: Update the PO with generated number
+      purchaseOrder.poNumber = poNumber;
+      await purchaseOrder.save();
+  
       purchaseOrder.attachment = getAttachmentUrl(purchaseOrder.attachment);
-
+  
       res.status(201).json({
         success: true,
         message: "Purchase order created successfully",
@@ -164,7 +270,7 @@ class PurchaseOrderController {
       });
     } catch (error) {
       logger.error("Create purchase order error:", error);
-
+  
       // Cleanup uploaded file on error
       if (req.file) {
         const filePath = path.join(
@@ -177,10 +283,11 @@ class PurchaseOrderController {
             console.error("Error deleting file after exception:", err.message);
         });
       }
-
+  
       next(error);
     }
   }
+  
 
   /**
    * Update purchase order

@@ -8,7 +8,22 @@ const Purchase = require("../models/Purchase");
 const {moveFileToRecycleBin} = require("../utils/fileMover")
 const { moveFileFromRecycleBin } = require("../utils/fileMover");
 const PurchaseOrder = require("../models/PurchaseOrder");
+const Counter = require("../models/Counter");
+const moment = require("moment")
+// Generate Receipt Number (no siteType here)
+async function generateReceiptNumber() {
+  const dateStr = moment().format("YYMMDD"); // e.g. 250817
+  const counterName = `R-${dateStr}`;
 
+  const counter = await Counter.findOneAndUpdate(
+    { name: counterName, date: dateStr },
+    { $inc: { seq: 1 }, $set: { date: dateStr } },
+    { new: true, upsert: true }
+  );
+
+  const seq = String(counter.seq).padStart(2, "0"); // 2 digit sequence
+  return `R-${dateStr}-${seq}`;
+}
 
 class PurchaseController {
   /**
@@ -160,14 +175,40 @@ async createPurchase(req, res, next) {
       remarks: req.body.remarks || "",
     };
 
-    const purchase = await purchaseService.createPurchase(purchaseData);
+      //  // Step 1: Create purchase
+       let purchase = await purchaseService.createPurchase(purchaseData);
+
+      //  // Step 2: Generate receipt number only after purchase success
+      //  const receiptNumber = await generateReceiptNumber();
+      //  purchase.receiptNumber = receiptNumber;
+      //  await purchase.save();
+   
+     
  // Update the corresponding PurchaseOrder
-        if (purchase.ref_num) {
-          await PurchaseOrder.updateOne(
-            { ref_num: purchase.ref_num },
-            { $set: { isPurchasedCreated: true } }
-          );
-        }
+ if (purchase.ref_num) {
+  const receiptNumber = await generateReceiptNumber();
+
+  // Update PurchaseOrder and Purchase together
+  await Promise.all([
+    PurchaseOrder.updateOne(
+      { ref_num: purchase.ref_num },
+      { $set: { isPurchasedCreated: true } }
+    ),
+    Purchase.updateOne(
+      { _id: purchase._id },
+      { $set: { receiptNumber } }
+    )
+  ]);
+
+  // Keep it in memory for response/logs
+  purchase.receiptNumber = receiptNumber;
+}
+        // if (purchase.ref_num) {
+        //   await PurchaseOrder.updateOne(
+        //     { ref_num: purchase.ref_num },
+        //     { $set: { isPurchasedCreated: true } }
+        //   );
+        // }
     logger.info(`Purchase created: ${purchase.receiptNumber} by user ${req.user.username}`);
 
     res.status(201).json({
@@ -187,6 +228,7 @@ async createPurchase(req, res, next) {
     }
 
     if (error.code === 11000) {
+
       return res.status(400).json({
         success: false,
         message: "Purchased Already Created. Please Check (Recycle Bin or Cancelled or Purchase Return section.",
