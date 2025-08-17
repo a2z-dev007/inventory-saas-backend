@@ -160,21 +160,20 @@ class PurchaseOrderService {
     }
   
     // 2️⃣ Get all ref_nums from the fetched POs
-    const poRefNums = purchaseOrders.map(po => po.ref_num);
+    // const poRefNums = purchaseOrders.map(po => po.ref_num);
   
     // 3️⃣ Fetch purchases with matching ref_nums
-    const purchases = await Purchase.find({
-      ref_num: { $in: poRefNums },
-      isDeleted: false
-    }).select("ref_num").lean();
+    // const purchases = await Purchase.find({
+    //   ref_num: { $in: poRefNums },
+    //   isDeleted: false
+    // }).select("ref_num").lean();
   
-    const purchaseRefSet = new Set(purchases.map(p => p.ref_num));
+    // const purchaseRefSet = new Set(purchases.map(p => p.ref_num));
   
-    // 4️⃣ Attach `isPurchasedCreated` + format attachment
+    // // 4️⃣ Attach `isPurchasedCreated` + format attachment
     const updatedPurchaseOrders = purchaseOrders.map((po) => ({
       ...po,
       attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
-      isPurchasedCreated: purchaseRefSet.has(po.ref_num) // ✅ New flag
     }));
   
     return {
@@ -213,21 +212,272 @@ class PurchaseOrderService {
   }
 
   // get delete po
-  async getPurchaseOrders(options) {
-    const {
-      page = 1,
-      limit = 10,
-      search,
-      status,
-      vendor,
-      startDate,
-      endDate,
-      sortBy = "orderDate",
-      sortOrder = "desc",
-      all = false,
-      isDeleted,
-    } = options;
+  // async getPurchaseOrders(options) {
+  //   const {
+  //     page = 1,
+  //     limit = 10,
+  //     search,
+  //     status,
+  //     vendor,
+  //     startDate,
+  //     endDate,
+  //     sortBy = "orderDate",
+  //     sortOrder = "desc",
+  //     all = false,
+  //     isDeleted,
+  //   } = options;
 
+  //   const skip = all ? 0 : (page - 1) * limit;
+  //   const query = {};
+
+  //   // Always force filter on isDeleted
+  //   if (isDeleted === true || isDeleted === "true") {
+  //     query.isDeleted = true;
+  //   } else {
+  //     query.isDeleted = false;
+  //   }
+
+  //   // Search
+  //   if (search) {
+  //     query.$or = [
+  //       { ref_num: { $regex: search, $options: "i" } },
+  //       { poNumber: { $regex: search, $options: "i" } },
+  //       { vendor: { $regex: search, $options: "i" } },
+  //       { "items.productName": { $regex: search, $options: "i" } },
+  //     ];
+  //   }
+
+  //   // Status
+  //   if (status) query.status = status;
+
+  //   // Vendor
+  //   if (vendor) query.vendor = { $regex: vendor, $options: "i" };
+
+  //   // Date Range
+  //   if (startDate || endDate) {
+  //     query.orderDate = {};
+  //     if (startDate) query.orderDate.$gte = new Date(startDate);
+  //     if (endDate) query.orderDate.$lte = new Date(endDate);
+  //   }
+
+  //   const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+
+  //   const [purchaseOrders, total] = await Promise.all([
+  //     PurchaseOrder.find(query)
+  //       .populate("createdBy", "name username")
+  //       .populate("approvedBy", "name username")
+  //       .sort(sort)
+  //       .skip(skip)
+  //       .limit(all ? 0 : limit)
+  //       .lean(),
+  //     PurchaseOrder.countDocuments(query),
+  //   ]);
+
+  //   const updatedPurchaseOrders = purchaseOrders.map((po) => ({
+  //     ...po,
+  //     attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+  //   }));
+
+  //   return {
+  //     purchaseOrders: updatedPurchaseOrders,
+  //     pagination: {
+  //       page,
+  //       limit: all ? total : limit,
+  //       total,
+  //       pages: all ? 1 : Math.ceil(total / limit),
+  //     },
+  //   };
+  // }
+
+  // async getPurchaseOrders(options) {
+  //   const {
+  //     page = 1,
+  //     limit = 10,
+  //     search,
+  //     status,
+  //     vendor,
+  //     startDate,
+  //     endDate,
+  //     sortBy = "orderDate",
+  //     sortOrder = "desc",
+  //     all = false,
+  //     isDeleted,
+  //   } = options;
+  
+  //   try {
+  //     const skip = all ? 0 : (page - 1) * limit;
+  //     const query = {};
+  
+  //     // Always force filter on isDeleted
+  //     if (isDeleted === true || isDeleted === "true") {
+  //       query.isDeleted = true;
+  //     } else {
+  //       query.isDeleted = { $ne: true }; // More robust way to exclude deleted items
+  //     }
+  
+  //     // Enhanced Search with better field coverage
+  //     if (search && search.trim()) {
+  //       const searchRegex = { $regex: search.trim(), $options: "i" };
+  //       query.$or = [
+  //         { ref_num: searchRegex },
+  //         { poNumber: searchRegex },
+  //         { vendor: searchRegex },
+  //         { "items.productName": searchRegex },
+  //         { "items.description": searchRegex },
+  //         { notes: searchRegex },
+  //         { description: searchRegex }
+  //       ];
+  //     }
+  
+  //     // Status filter - handle both single status and array of statuses
+  //     if (status) {
+  //       if (Array.isArray(status)) {
+  //         query.status = { $in: status };
+  //       } else {
+  //         query.status = { $regex: `^${status}$`, $options: "i" }; // Exact match, case insensitive
+  //       }
+  //     }
+  
+  //     // Vendor filter - enhanced with partial matching
+  //     if (vendor && vendor.trim()) {
+  //       query.vendor = { $regex: vendor.trim(), $options: "i" };
+  //     }
+  
+  //     // Enhanced Date Range filtering
+  //     if (startDate || endDate) {
+  //       query.orderDate = {};
+        
+  //       if (startDate) {
+  //         const start = new Date(startDate);
+  //         // Set to beginning of day
+  //         start.setHours(0, 0, 0, 0);
+  //         query.orderDate.$gte = start;
+  //       }
+        
+  //       if (endDate) {
+  //         const end = new Date(endDate);
+  //         // Set to end of day
+  //         end.setHours(23, 59, 59, 999);
+  //         query.orderDate.$lte = end;
+  //       }
+  //     }
+  
+  //     // Enhanced sorting with fallback options
+  //     const validSortFields = ['orderDate', 'poNumber', 'vendor', 'status', 'total', 'ref_num', 'createdAt'];
+  //     const finalSortBy = validSortFields.includes(sortBy) ? sortBy : 'orderDate';
+  //     const finalSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'desc';
+      
+  //     const sort = { [finalSortBy]: finalSortOrder === "desc" ? -1 : 1 };
+      
+  //     // Add secondary sort for consistent ordering
+  //     if (finalSortBy !== 'createdAt') {
+  //       sort.createdAt = -1; // Always sort by creation date as secondary
+  //     }
+  
+  //     // Enhanced aggregation pipeline for better performance and features
+  //     const aggregationPipeline = [
+  //       { $match: query },
+  //       {
+  //         $lookup: {
+  //           from: "users",
+  //           localField: "createdBy",
+  //           foreignField: "_id",
+  //           as: "createdBy",
+  //           pipeline: [{ $project: { name: 1, username: 1 } }]
+  //         }
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "users",
+  //           localField: "approvedBy",
+  //           foreignField: "_id",
+  //           as: "approvedBy",
+  //           pipeline: [{ $project: { name: 1, username: 1 } }]
+  //         }
+  //       },
+  //       {
+  //         $addFields: {
+  //           createdBy: { $arrayElemAt: ["$createdBy", 0] },
+  //           approvedBy: { $arrayElemAt: ["$approvedBy", 0] },
+  //           // Add computed fields for better sorting/filtering
+  //           totalItems: { $size: { $ifNull: ["$items", []] } },
+  //           hasAttachment: { $ne: ["$attachment", null] }
+  //         }
+  //       },
+  //       { $sort: sort }
+  //     ];
+  
+  //     // Get total count and paginated results
+  //     const [countResult, purchaseOrders] = await Promise.all([
+  //       PurchaseOrder.aggregate([
+  //         ...aggregationPipeline,
+  //         { $count: "total" }
+  //       ]),
+  //       PurchaseOrder.aggregate([
+  //         ...aggregationPipeline,
+  //         ...(all ? [] : [{ $skip: skip }, { $limit: limit }])
+  //       ])
+  //     ]);
+  
+  //     const total = countResult[0]?.total || 0;
+  
+  //     // Process attachments
+  //     const updatedPurchaseOrders = purchaseOrders.map((po) => ({
+  //       ...po,
+  //       attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+  //       // Ensure consistent ID field
+  //       id: po._id?.toString() || po.id
+  //     }));
+  
+  //     // Enhanced pagination response
+  //     const paginationData = {
+  //       page: parseInt(page),
+  //       limit: all ? total : parseInt(limit),
+  //       total,
+  //       pages: all ? 1 : Math.ceil(total / limit),
+  //       hasNext: !all && page < Math.ceil(total / limit),
+  //       hasPrev: !all && page > 1,
+  //       startIndex: all ? 1 : ((page - 1) * limit) + 1,
+  //       endIndex: all ? total : Math.min(page * limit, total)
+  //     };
+  
+  //     return {
+  //       purchaseOrders: updatedPurchaseOrders,
+  //       pagination: paginationData,
+  //       filters: {
+  //         search: search || null,
+  //         status: status || null,
+  //         vendor: vendor || null,
+  //         startDate: startDate || null,
+  //         endDate: endDate || null,
+  //         sortBy: finalSortBy,
+  //         sortOrder: finalSortOrder
+  //       }
+  //     };
+  
+  //   } catch (error) {
+  //     console.error('Error fetching purchase orders:', error);
+  //     throw new Error(`Failed to fetch purchase orders: ${error.message}`);
+  //   }
+  // }
+
+
+async getPurchaseOrders(options) {
+  const {
+    page = 1,
+    limit = 10,
+    search,
+    status,
+    vendor,
+    startDate,
+    endDate,
+    sortBy = "orderDate",
+    sortOrder = "desc",
+    all = false,
+    isDeleted,
+  } = options;
+
+  try {
     const skip = all ? 0 : (page - 1) * limit;
     const query = {};
 
@@ -235,60 +485,172 @@ class PurchaseOrderService {
     if (isDeleted === true || isDeleted === "true") {
       query.isDeleted = true;
     } else {
-      query.isDeleted = false;
+      query.isDeleted = { $ne: true }; // More robust way to exclude deleted items
     }
 
-    // Search
-    if (search) {
+    // Enhanced Search with better field coverage
+    if (search && search.trim()) {
+      const searchRegex = { $regex: search.trim(), $options: "i" };
       query.$or = [
-        { ref_num: { $regex: search, $options: "i" } },
-        { poNumber: { $regex: search, $options: "i" } },
-        { vendor: { $regex: search, $options: "i" } },
-        { "items.productName": { $regex: search, $options: "i" } },
+        { ref_num: searchRegex },
+        { poNumber: searchRegex },
+        { vendor: searchRegex },
+        { status: searchRegex },
+        { "items.productName": searchRegex },
+        { "items.description": searchRegex },
+        { notes: searchRegex },
+        { description: searchRegex }
       ];
     }
 
-    // Status
-    if (status) query.status = status;
-
-    // Vendor
-    if (vendor) query.vendor = { $regex: vendor, $options: "i" };
-
-    // Date Range
-    if (startDate || endDate) {
-      query.orderDate = {};
-      if (startDate) query.orderDate.$gte = new Date(startDate);
-      if (endDate) query.orderDate.$lte = new Date(endDate);
+    // Status filter - handle both single status and array of statuses
+    if (status && status.trim()) {
+      if (Array.isArray(status)) {
+        query.status = { $in: status };
+      } else {
+        // Exact match for status
+        query.status = status.trim();
+      }
     }
 
-    const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+    // Vendor filter - enhanced with partial matching
+    if (vendor && vendor.trim()) {
+      query.vendor = { $regex: vendor.trim(), $options: "i" };
+    }
 
-    const [purchaseOrders, total] = await Promise.all([
-      PurchaseOrder.find(query)
-        .populate("createdBy", "name username")
-        .populate("approvedBy", "name username")
-        .sort(sort)
-        .skip(skip)
-        .limit(all ? 0 : limit)
-        .lean(),
-      PurchaseOrder.countDocuments(query),
+    // Enhanced Date Range filtering with proper date handling
+    if (startDate || endDate) {
+      query.orderDate = {};
+      
+      if (startDate) {
+        try {
+          const start = new Date(startDate);
+          if (!isNaN(start.getTime())) {
+            // Set to beginning of day
+            start.setHours(0, 0, 0, 0);
+            query.orderDate.$gte = start;
+          }
+        } catch (error) {
+          console.warn('Invalid startDate format:', startDate);
+        }
+      }
+      
+      if (endDate) {
+        try {
+          const end = new Date(endDate);
+          if (!isNaN(end.getTime())) {
+            // Set to end of day
+            end.setHours(23, 59, 59, 999);
+            query.orderDate.$lte = end;
+          }
+        } catch (error) {
+          console.warn('Invalid endDate format:', endDate);
+        }
+      }
+    }
+
+    // Enhanced sorting with fallback options
+    const validSortFields = ['orderDate', 'poNumber', 'vendor', 'status', 'total', 'ref_num', 'createdAt'];
+    const finalSortBy = validSortFields.includes(sortBy) ? sortBy : 'orderDate';
+    const finalSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'desc';
+    
+    const sort = { [finalSortBy]: finalSortOrder === "desc" ? -1 : 1 };
+    
+    // Add secondary sort for consistent ordering
+    if (finalSortBy !== 'createdAt') {
+      sort.createdAt = -1; // Always sort by creation date as secondary
+    }
+
+    // Debug logging
+    console.log('Purchase Orders Query:', JSON.stringify(query, null, 2));
+    console.log('Sort:', sort);
+
+    // Enhanced aggregation pipeline for better performance and features
+    const aggregationPipeline = [
+      { $match: query },
+      {
+        $lookup: {
+          from: "users",
+          localField: "createdBy",
+          foreignField: "_id",
+          as: "createdBy",
+          pipeline: [{ $project: { name: 1, username: 1 } }]
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "approvedBy",
+          foreignField: "_id",
+          as: "approvedBy",
+          pipeline: [{ $project: { name: 1, username: 1 } }]
+        }
+      },
+      {
+        $addFields: {
+          createdBy: { $arrayElemAt: ["$createdBy", 0] },
+          approvedBy: { $arrayElemAt: ["$approvedBy", 0] },
+          // Add computed fields for better sorting/filtering
+          totalItems: { $size: { $ifNull: ["$items", []] } },
+          hasAttachment: { $ne: ["$attachment", null] }
+        }
+      },
+      { $sort: sort }
+    ];
+
+    // Get total count and paginated results
+    const [countResult, purchaseOrders] = await Promise.all([
+      PurchaseOrder.aggregate([
+        ...aggregationPipeline,
+        { $count: "total" }
+      ]),
+      PurchaseOrder.aggregate([
+        ...aggregationPipeline,
+        ...(all ? [] : [{ $skip: skip }, { $limit: limit }])
+      ])
     ]);
 
+    const total = countResult[0]?.total || 0;
+
+    // Process attachments
     const updatedPurchaseOrders = purchaseOrders.map((po) => ({
       ...po,
       attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+      // Ensure consistent ID field
+      id: po._id?.toString() || po.id
     }));
+
+    // Enhanced pagination response
+    const paginationData = {
+      page: parseInt(page),
+      limit: all ? total : parseInt(limit),
+      total,
+      pages: all ? 1 : Math.ceil(total / limit),
+      hasNext: !all && page < Math.ceil(total / limit),
+      hasPrev: !all && page > 1,
+      startIndex: all ? 1 : ((page - 1) * limit) + 1,
+      endIndex: all ? total : Math.min(page * limit, total)
+    };
 
     return {
       purchaseOrders: updatedPurchaseOrders,
-      pagination: {
-        page,
-        limit: all ? total : limit,
-        total,
-        pages: all ? 1 : Math.ceil(total / limit),
-      },
+      pagination: paginationData,
+      filters: {
+        search: search || null,
+        status: status || null,
+        vendor: vendor || null,
+        startDate: startDate || null,
+        endDate: endDate || null,
+        sortBy: finalSortBy,
+        sortOrder: finalSortOrder
+      }
     };
+
+  } catch (error) {
+    console.error('Error fetching purchase orders:', error);
+    throw new Error(`Failed to fetch purchase orders: ${error.message}`);
   }
+}
 
   /**
    * Create new purchase order

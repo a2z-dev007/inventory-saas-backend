@@ -7,6 +7,7 @@ const fs = require("fs");
 const Purchase = require("../models/Purchase");
 const {moveFileToRecycleBin} = require("../utils/fileMover")
 const { moveFileFromRecycleBin } = require("../utils/fileMover");
+const PurchaseOrder = require("../models/PurchaseOrder");
 
 
 class PurchaseController {
@@ -160,7 +161,13 @@ async createPurchase(req, res, next) {
     };
 
     const purchase = await purchaseService.createPurchase(purchaseData);
-
+ // Update the corresponding PurchaseOrder
+        if (purchase.ref_num) {
+          await PurchaseOrder.updateOne(
+            { ref_num: purchase.ref_num },
+            { $set: { isPurchasedCreated: true } }
+          );
+        }
     logger.info(`Purchase created: ${purchase.receiptNumber} by user ${req.user.username}`);
 
     res.status(201).json({
@@ -182,7 +189,7 @@ async createPurchase(req, res, next) {
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
-        message: "something went wrong, duplicate key error",
+        message: "Purchased Already Created. Please Check (Recycle Bin or Cancelled or Purchase Return section.",
       });
     }
 
