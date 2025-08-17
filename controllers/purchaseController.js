@@ -297,39 +297,39 @@ async createPurchase(req, res, next) {
    * @route DELETE /api/purchases/:id
    * @access Private (Admin)
    */
-  // async deletePurchase(req, res, next) {
-  //   try {
-  //     const errors = validationResult(req)
-  //     if (!errors.isEmpty()) {
-  //       return res.status(400).json({
-  //         success: false,
-  //         message: "Validation failed",
-  //         errors: errors.array(),
-  //       })
-  //     }
+  async deletePurchaseFinal(req, res, next) {
+    try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: "Validation failed",
+          errors: errors.array(),
+        })
+      }
 
-  //     console.log('Attempting to delete purchase with ID:', req.params.id);
-  //     const purchase = await purchaseService.deletePurchase(req.params.id, req.user.id)
-  //     console.log('Result of findByIdAndDelete:', purchase);
+      console.log('Attempting to delete purchase with ID:', req.params.id);
+      const purchase = await purchaseService.deletePurchaseFinal(req.params.id, req.user.id)
+      console.log('Result of findByIdAndDelete:', purchase);
 
-  //     if (!purchase) {
-  //       return res.status(404).json({
-  //         success: false,
-  //         message: "Purchase not found",
-  //       })
-  //     }
+      if (!purchase) {
+        return res.status(404).json({
+          success: false,
+          message: "Purchase not found",
+        })
+      }
 
-  //     logger.info(`Purchase deleted: ${purchase.receiptNumber} by admin ${req.user.username}`)
+      logger.info(`Purchase deleted: ${purchase.receiptNumber} by admin ${req.user.username}`)
 
-  //     res.json({
-  //       success: true,
-  //       message: "Purchase deleted successfully",
-  //     })
-  //   } catch (error) {
-  //     logger.error("Delete purchase error:", error)
-  //     next(error)
-  //   }
-  // }
+      res.json({
+        success: true,
+        message: "Purchase deleted successfully",
+      })
+    } catch (error) {
+      logger.error("Delete purchase error:", error)
+      next(error)
+    }
+  }
 
    //Soft deleted purchases
   // async deletePurchase(req, res, next) {

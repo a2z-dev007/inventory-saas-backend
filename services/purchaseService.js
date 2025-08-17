@@ -278,10 +278,10 @@ async updatePurchase(purchaseId, updateData) {
    * @returns {Object} Deleted purchase
    */
   // Hard delete
-  // async deletePurchase(purchaseId, deletedBy) {
-  //   const purchase = await Purchase.findByIdAndDelete(purchaseId);
-  //   return purchase;
-  // }
+  async deletePurchaseFinal(purchaseId, deletedBy) {
+    const purchase = await Purchase.findByIdAndDelete(purchaseId);
+    return purchase;
+  }
 
 // Soft delete 
   async deletePurchase(purchaseId, deletedBy) {

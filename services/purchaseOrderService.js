@@ -737,47 +737,48 @@ async getPurchaseOrders(options) {
     if (!purchaseOrder) {
       purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier });
     }
-
-    // If purchase order has an attachment, delete the files
-    if (purchaseOrder && purchaseOrder.attachment) {
-      const fs = require("fs");
-      const path = require("path");
-
-      // Delete from public directory
-      const publicPath = path.join(
-        __dirname,
-        "../../public",
-        purchaseOrder.attachment
-      );
-      fs.unlink(publicPath, (err) => {
-        if (err)
-          console.error("Error deleting attachment from public:", err.message);
-      });
-
-      // Delete from uploads directory
-      const uploadsPath = path.join(
-        __dirname,
-        "../..",
-        purchaseOrder.attachment
-      );
-      fs.unlink(uploadsPath, (err) => {
-        if (err)
-          console.error("Error deleting attachment from uploads:", err.message);
-      });
-    }
-
-    // Now delete the purchase order
-    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
-      purchaseOrder = await PurchaseOrder.findByIdAndDelete(identifier);
-    }
+  
     if (!purchaseOrder) {
-      purchaseOrder = await PurchaseOrder.findOneAndDelete({
-        ref_num: identifier,
-      });
+      throw new Error("Purchase Order not found");
     }
-    return purchaseOrder;
+  
+    // If purchase order has an attachment, delete the file from recycle bin
+    if (purchaseOrder.attachment) {
+      const fileUrl = purchaseOrder.attachment; 
+      const fileName = path.basename(fileUrl);
+  
+      // Points to recycle bin path
+      const recycleFilePath = path.join(
+        process.cwd(),
+        "uploads",
+        "recycle-bin",
+        "purchase-orders",
+        fileName
+      );
+  
+      if (fs.existsSync(recycleFilePath)) {
+        try {
+          fs.unlinkSync(recycleFilePath);
+          console.log("Deleted attachment:", recycleFilePath);
+        } catch (err) {
+          console.error("Error deleting attachment:", err.message);
+        }
+      }
+    }
+  
+    // Now permanently delete the purchase order
+    let deletedPO = null;
+    if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
+      deletedPO = await PurchaseOrder.findByIdAndDelete(identifier);
+    }
+    if (!deletedPO) {
+      deletedPO = await PurchaseOrder.findOneAndDelete({ ref_num: identifier });
+    }
+  
+    return deletedPO;
   }
 
+  // Soft delete send to recycle bin
   async deletePurchaseOrderByIdOrRefNum(identifier, deletedBy) {
     const purchaseOrder = await PurchaseOrder.findOne({
       $or: [{ _id: identifier }, { ref_num: identifier }],

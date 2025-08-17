@@ -266,6 +266,8 @@ router.put(
  *       401:
  *         description: Unauthorized
  */
+
+
 router.delete(
   "/:id",
   authorize("admin"),
@@ -273,6 +275,12 @@ router.delete(
   purchaseController.deletePurchase
 );
 
+router.delete(
+  "/final-delete/:id",
+  authorize("admin"),
+  validateId,
+  purchaseController.deletePurchaseFinal
+);
 /**
  * @swagger
  * /api/purchases/search:

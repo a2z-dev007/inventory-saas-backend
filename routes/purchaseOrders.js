@@ -316,11 +316,19 @@ router.put(
  *       401:
  *         description: Unauthorized
  */
+
 router.delete(
   "/:id",
   authorize("admin"),
   validateId,
   purchaseOrderController.deletePurchaseOrder
+);
+
+router.delete(
+  "/final-delete/:id",
+  authorize("admin"),
+  validateId,
+  purchaseOrderController.finalDeletePurchaseOrder
 );
 
 // restore 
