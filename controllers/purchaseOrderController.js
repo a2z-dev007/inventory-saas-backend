@@ -552,6 +552,7 @@ class PurchaseOrderController {
         query.$or = [
           { ref_num: { $regex: search, $options: "i" } },
           { remarks: { $regex: search, $options: "i" } },
+          
         ];
       }
 

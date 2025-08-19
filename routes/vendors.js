@@ -76,10 +76,10 @@ router.get("/", validatePagination, async (req, res) => {
       },
     })
   } catch (error) {
-    logger.error("Get vendors error:", error)
+    logger.error("Get Suppliers error:", error)
     res.status(500).json({
       success: false,
-      message: "Server error while fetching vendors",
+      message: "Server error while fetching Supplier",
     })
   }
 })
@@ -112,7 +112,7 @@ router.get("/:id", validateId, async (req, res) => {
     if (!vendor) {
       return res.status(404).json({
         success: false,
-        message: "Vendor not found",
+        message: "Supplier not found",
       })
     }
 
@@ -121,10 +121,10 @@ router.get("/:id", validateId, async (req, res) => {
       data: { vendor },
     })
   } catch (error) {
-    logger.error("Get vendor error:", error)
+    logger.error("Get Supplier error:", error)
     res.status(500).json({
       success: false,
-      message: "Server error while fetching vendor",
+      message: "Server error while fetching Supplier",
     })
   }
 })
@@ -177,18 +177,18 @@ router.post("/", authorize("admin", "manager"), validateVendor, async (req, res)
     const vendor = new Vendor(req.body)
     await vendor.save()
 
-    logger.info(`Vendor created: ${vendor.name} by user ${req.user.username}`)
+    logger.info(`Supplier created: ${vendor.name} by user ${req.user.username}`)
 
     res.status(201).json({
       success: true,
-      message: "Vendor created successfully",
+      message: "Supplier created successfully",
       data: { vendor },
     })
   } catch (error) {
-    logger.error("Create vendor error:", error)
+    logger.error("Create Supplier error:", error)
     res.status(500).json({
       success: false,
-      message: "Server error while creating vendor",
+      message: "Server error while creating Supplier",
     })
   }
 })
@@ -244,22 +244,22 @@ router.put("/:id", authorize("admin", "manager"), validateId, async (req, res) =
     if (!vendor) {
       return res.status(404).json({
         success: false,
-        message: "Vendor not found",
+        message: "Supplier not found",
       })
     }
 
-    logger.info(`Vendor updated: ${vendor.name} by user ${req.user.username}`)
+    logger.info(`Supplier updated: ${vendor.name} by user ${req.user.username}`)
 
     res.json({
       success: true,
-      message: "Vendor updated successfully",
+      message: "Supplier updated successfully",
       data: { vendor },
     })
   } catch (error) {
-    logger.error("Update vendor error:", error)
+    logger.error("Update Supplier error:", error)
     res.status(500).json({
       success: false,
-      message: "Server error while updating vendor",
+      message: "Server error while updating Supplier",
     })
   }
 })
@@ -292,21 +292,21 @@ router.delete("/:id", authorize("admin"), validateId, async (req, res) => {
     if (!vendor) {
       return res.status(404).json({
         success: false,
-        message: "Vendor not found",
+        message: "Supplier not found",
       })
     }
 
-    logger.info(`Vendor deleted: ${vendor.name} by user ${req.user.username}`)
+    logger.info(`Supplier deleted: ${vendor.name} by user ${req.user.username}`)
 
     res.json({
       success: true,
-      message: "Vendor deleted successfully",
+      message: "Supplier deleted successfully",
     })
   } catch (error) {
-    logger.error("Delete vendor error:", error)
+    logger.error("Supplier Supplier error:", error)
     res.status(500).json({
       success: false,
-      message: "Server error while deleting vendor",
+      message: "Server error while deleting Supplier",
     })
   }
 })

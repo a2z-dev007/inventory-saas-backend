@@ -179,7 +179,7 @@ const validateProduct = [
     .optional()
     .trim()
     .isLength({ min: 1, max: 200 })
-    .withMessage("Vendor is required and cannot exceed 200 characters"),
+    .withMessage("Supplier is required and cannot exceed 200 characters"),
 
   // body("description")
   //   .optional()
@@ -258,7 +258,7 @@ const validateBulkUpdate = [
 
 // Purchase Order validation rules
 const validatePurchaseOrder = [
-  body("vendor").trim().notEmpty().withMessage("Vendor is required"),
+  body("vendor").trim().notEmpty().withMessage("Supplier is required"),
   body("ref_num").trim().notEmpty().withMessage("DB number is required"),
   body("attachment")
     .optional()
@@ -308,11 +308,11 @@ const validateSale = [
   body("customerName")
     .trim()
     .notEmpty()
-    .withMessage("Customer name is required"),
+    .withMessage("Client name is required"),
     body("address")
     .trim()
     .notEmpty()
-    .withMessage("Customer address is required"),
+    .withMessage("Client address is required"),
 
   body("items")
     .isArray({ min: 1 })
@@ -350,7 +350,7 @@ const validateSale = [
 
 // Purchase validation rules
 const validatePurchase = [
-  body("vendor").trim().notEmpty().withMessage("Vendor is required"),
+  body("vendor").trim().notEmpty().withMessage("Supplier is required"),
   body("ref_num").trim().notEmpty().withMessage("DB number is required"),
   body("items")
     .isArray({ min: 1 })
@@ -394,7 +394,7 @@ const validateVendor = [
   body("name")
     .trim()
     .isLength({ min: 1, max: 200 })
-    .withMessage("Vendor name is required and cannot exceed 200 characters"),
+    .withMessage("Supplier name is required and cannot exceed 200 characters"),
 
   body("contact")
     .trim()
@@ -441,7 +441,7 @@ const validateCustomer = [
   body("name")
     .trim()
     .isLength({ min: 1, max: 200 })
-    .withMessage("Customer name is required and cannot exceed 200 characters"),
+    .withMessage("Client name is required and cannot exceed 200 characters"),
 
   body("contact")
     .trim()

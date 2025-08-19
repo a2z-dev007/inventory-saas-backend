@@ -100,17 +100,20 @@ class CustomerService {
    * @returns {Object} Deleted customer
    */
   async deleteCustomer(customerId, deletedBy) {
-    const customer = await Customer.findByIdAndUpdate(
-      customerId,
-      {
-        isDeleted: true,
-        deletedBy,
-        deletedAt: new Date(),
-      },
-      { new: true }
-    )
-
-    return customer
+    // If you want to log who deleted it before removing, you can fetch first
+    const customer = await Customer.findById(customerId);
+  
+    if (!customer) {
+      throw new Error("Customer not found");
+    }
+  
+    // Optional: log delete action somewhere (like an AuditLog collection)
+    // await AuditLog.create({ action: "DELETE_CUSTOMER", customerId, deletedBy });
+  
+    // Permanently remove from DB
+    await Customer.findByIdAndDelete(customerId);
+  
+    return { success: true, message: "Customer permanently deleted" };
   }
 
   /**

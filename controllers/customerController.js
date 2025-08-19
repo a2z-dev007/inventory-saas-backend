@@ -36,7 +36,7 @@ class CustomerController {
         data: result,
       })
     } catch (error) {
-      logger.error("Get customers error:", error)
+      logger.error("Get Client error:", error)
       next(error)
     }
   }
@@ -71,7 +71,7 @@ class CustomerController {
         data: { customer },
       })
     } catch (error) {
-      logger.error("Get customer error:", error)
+      logger.error("Get Client error:", error)
       next(error)
     }
   }
@@ -99,11 +99,11 @@ class CustomerController {
 
       const customer = await customerService.createCustomer(customerData)
 
-      logger.info(`Customer created: ${customer.name} by user ${req.user.username}`)
+      logger.info(`Client created: ${customer.name} by user ${req.user.username}`)
 
       res.status(201).json({
         success: true,
-        message: "Customer created successfully",
+        message: "Client created successfully",
         data: { customer },
       })
     } catch (error) {
@@ -146,11 +146,11 @@ class CustomerController {
       if (!customer) {
         return res.status(404).json({
           success: false,
-          message: "Customer not found",
+          message: "Client not found",
         })
       }
 
-      logger.info(`Customer updated: ${customer.name} by user ${req.user.username}`)
+      logger.info(`Client updated: ${customer.name} by user ${req.user.username}`)
 
       res.json({
         success: true,
@@ -158,7 +158,7 @@ class CustomerController {
         data: { customer },
       })
     } catch (error) {
-      logger.error("Update customer error:", error)
+      logger.error("Update Client error:", error)
       next(error)
     }
   }
@@ -188,14 +188,14 @@ class CustomerController {
         })
       }
 
-      logger.info(`Customer deleted: ${customer.name} by admin ${req.user.username}`)
+      logger.info(`Client deleted: ${customer.name} by admin ${req.user.username}`)
 
       res.json({
         success: true,
-        message: "Customer deleted successfully",
+        message: "Client deleted successfully",
       })
     } catch (error) {
-      logger.error("Delete customer error:", error)
+      logger.error("Delete Client error:", error)
       next(error)
     }
   }
@@ -223,7 +223,7 @@ class CustomerController {
         data: { customers },
       })
     } catch (error) {
-      logger.error("Search customers error:", error)
+      logger.error("Search Clients error:", error)
       next(error)
     }
   }
@@ -254,7 +254,7 @@ class CustomerController {
       if (!result) {
         return res.status(404).json({
           success: false,
-          message: "Customer not found",
+          message: "Client not found",
         })
       }
 
@@ -263,7 +263,7 @@ class CustomerController {
         data: result,
       })
     } catch (error) {
-      logger.error("Get customer sales error:", error)
+      logger.error("Get Client sales error:", error)
       next(error)
     }
   }
