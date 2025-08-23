@@ -63,6 +63,11 @@ const purchaseOrderSchema = new mongoose.Schema(
       required: [true, "Client is required"],
       trim: true,
     },
+    customerName: {
+      type: String,
+      required: [true, "Client is required"],
+      trim: true,
+    },
     customerAddress: {
       type: String,
       trim: true,
