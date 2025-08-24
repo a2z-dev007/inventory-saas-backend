@@ -20,16 +20,16 @@ const purchaseOrderItemSchema = new mongoose.Schema({
     required: true,
     min: [0, "Unit price cannot be negative"],
   },
-  unitType:{
-    type:String,
-    required:true
+  unitType: {
+    type: String,
+    required: true
   },
   total: {
     type: Number,
     required: true,
     min: [0, "Total cannot be negative"],
   },
- 
+
 });
 
 const purchaseOrderSchema = new mongoose.Schema(
@@ -92,8 +92,8 @@ const purchaseOrderSchema = new mongoose.Schema(
     deliveryDate: {
       type: Date,
     },
-    isPurchasedCreated:{
-      type:Boolean,
+    isPurchasedCreated: {
+      type: Boolean,
       default: false,
     },
     expectedDeliveryDate: {
@@ -122,7 +122,7 @@ const purchaseOrderSchema = new mongoose.Schema(
     },
     orderedBy: {
       type: String,
-        trim: true,
+      trim: true,
     },
     approvedAt: {
       type: Date,
@@ -138,24 +138,24 @@ const purchaseOrderSchema = new mongoose.Schema(
     deletedAt: {
       type: Date,
     },
-      remarks: {
-        type: String,
-        trim: true,
-        maxlength: [1000, "Remarks cannot exceed 1000 characters"],
-      },
-      site_incharge: {
-        type: String,
-        trim: true,
-      },
-      contractor:{
-        type: String,
-        trim: true
-      },
-      purpose:{
-        type: String,
-        trim: true,
-        required: [true, "Purpose is required"],
-      }
+    remarks: {
+      type: String,
+      trim: true,
+      maxlength: [1000, "Remarks cannot exceed 1000 characters"],
+    },
+    site_incharge: {
+      type: String,
+      trim: true,
+    },
+    contractor: {
+      type: String,
+      trim: true
+    },
+    purpose: {
+      type: String,
+      trim: true,
+      required: [true, "Purpose is required"],
+    }
   },
   {
     timestamps: true,
