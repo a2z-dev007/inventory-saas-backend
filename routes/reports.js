@@ -273,6 +273,8 @@ router.get("/customers", authorize("admin", "manager"), validateDateRange, repor
  */
 router.get("/vendors", authorize("admin", "manager"), validateDateRange, reportController.getVendorsReport)
 
+
+
 /**
  * @swagger
  * /api/reports/low-stock:

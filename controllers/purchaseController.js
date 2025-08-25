@@ -5,7 +5,7 @@ const { getAttachmentUrl } = require("../utils/constants");
 const path = require("path");
 const fs = require("fs");
 const Purchase = require("../models/Purchase");
-const {moveFileToRecycleBin} = require("../utils/fileMover")
+const { moveFileToRecycleBin } = require("../utils/fileMover")
 const { moveFileFromRecycleBin } = require("../utils/fileMover");
 const PurchaseOrder = require("../models/PurchaseOrder");
 const Counter = require("../models/Counter");
@@ -52,6 +52,8 @@ class PurchaseController {
         sortBy: req.query.sortBy || "purchaseDate",
         sortOrder: req.query.sortOrder || "desc",
         all: req.query.all === 'true',
+        ref_num: req.query.ref_num,
+        isDeleted: req.query.isDeleted === 'true',
       }
 
       const result = await purchaseService.getPurchases(options)
@@ -62,12 +64,12 @@ class PurchaseController {
       }));
       console.log("Get purchases result:", purchaseData)
       const filteredPurchase = purchaseData.filter((po) => po.isDeleted === false);
-    
+
       res.json({
         success: true,
         data: {
           ...result,
-          purchases:filteredPurchase,
+          purchases: filteredPurchase,
         },
       });
     } catch (error) {
@@ -119,125 +121,125 @@ class PurchaseController {
    * @access Private (Admin/Manager)
    */
 
-async createPurchase(req, res, next) {
-  console.log("BODY:", req.body);
-  console.log("FILES:", req.file);
+  async createPurchase(req, res, next) {
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.file);
 
-  try {
-    // Parse items if sent as a string
-    if (req.body.items && typeof req.body.items === "string") {
-      try {
-        req.body.items = JSON.parse(req.body.items);
-      } catch (e) {
-        // Delete uploaded file if parsing fails
+    try {
+      // Parse items if sent as a string
+      if (req.body.items && typeof req.body.items === "string") {
+        try {
+          req.body.items = JSON.parse(req.body.items);
+        } catch (e) {
+          // Delete uploaded file if parsing fails
+          if (req.file) {
+            const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
+            fs.unlink(filePath, (err) => {
+              if (err) console.error("Error deleting file after JSON parse fail:", err.message);
+            });
+          }
+
+          return res.status(400).json({
+            success: false,
+            message: "Invalid items format. Must be a valid JSON array.",
+          });
+        }
+      }
+
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        // Delete uploaded file if validation fails
         if (req.file) {
           const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
           fs.unlink(filePath, (err) => {
-            if (err) console.error("Error deleting file after JSON parse fail:", err.message);
+            if (err) console.error("Error deleting file after validation fail:", err.message);
           });
         }
 
         return res.status(400).json({
           success: false,
-          message: "Invalid items format. Must be a valid JSON array.",
+          message: errors.array()[0].msg,
+          errors: errors.array(),
         });
       }
-    }
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      // Delete uploaded file if validation fails
+      let invoiceFilePath = null;
+
       if (req.file) {
-        const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
-        fs.unlink(filePath, (err) => {
-          if (err) console.error("Error deleting file after validation fail:", err.message);
-        });
+        console.log("Invoice uploaded:", req.file.filename);
+        invoiceFilePath = `/uploads/invoices/${req.file.filename}`;
       }
 
-      return res.status(400).json({
-        success: false,
-        message: errors.array()[0].msg,
-        errors: errors.array(),
-      });
-    }
-
-    let invoiceFilePath = null;
-
-    if (req.file) {
-      console.log("Invoice uploaded:", req.file.filename);
-      invoiceFilePath = `/uploads/invoices/${req.file.filename}`;
-    }
-
-    const purchaseData = {
-      ...req.body,
-      createdBy: req.user.id,
-      invoiceFile: invoiceFilePath,
-      remarks: req.body.remarks || "",
-    };
+      const purchaseData = {
+        ...req.body,
+        createdBy: req.user.id,
+        invoiceFile: invoiceFilePath,
+        remarks: req.body.remarks || "",
+      };
 
       //  // Step 1: Create purchase
-       let purchase = await purchaseService.createPurchase(purchaseData);
+      let purchase = await purchaseService.createPurchase(purchaseData);
 
       //  // Step 2: Generate receipt number only after purchase success
       //  const receiptNumber = await generateReceiptNumber();
       //  purchase.receiptNumber = receiptNumber;
       //  await purchase.save();
-   
-     
- // Update the corresponding PurchaseOrder
- if (purchase.ref_num) {
-  const receiptNumber = await generateReceiptNumber();
 
-  // Update PurchaseOrder and Purchase together
-  await Promise.all([
-    PurchaseOrder.updateOne(
-      { ref_num: purchase.ref_num },
-      { $set: { isPurchasedCreated: true } }
-    ),
-    Purchase.updateOne(
-      { _id: purchase._id },
-      { $set: { receiptNumber } }
-    )
-  ]);
 
-  // Keep it in memory for response/logs
-  purchase.receiptNumber = receiptNumber;
-}
-        // if (purchase.ref_num) {
-        //   await PurchaseOrder.updateOne(
-        //     { ref_num: purchase.ref_num },
-        //     { $set: { isPurchasedCreated: true } }
-        //   );
-        // }
-    logger.info(`Purchase created: ${purchase.receiptNumber} by user ${req.user.username}`);
+      // Update the corresponding PurchaseOrder
+      if (purchase.ref_num) {
+        const receiptNumber = await generateReceiptNumber();
 
-    res.status(201).json({
-      success: true,
-      message: "Purchase created successfully",
-      data: { purchase },
-    });
-  } catch (error) {
-    logger.error("Create purchase error:", error);
-  
-    // Cleanup uploaded file on error
-    if (req.file) {
-      const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
-      fs.unlink(filePath, (err) => {
-        if (err) console.error("Error deleting file after exception:", err.message);
+        // Update PurchaseOrder and Purchase together
+        await Promise.all([
+          PurchaseOrder.updateOne(
+            { ref_num: purchase.ref_num },
+            { $set: { isPurchasedCreated: true } }
+          ),
+          Purchase.updateOne(
+            { _id: purchase._id },
+            { $set: { receiptNumber } }
+          )
+        ]);
+
+        // Keep it in memory for response/logs
+        purchase.receiptNumber = receiptNumber;
+      }
+      // if (purchase.ref_num) {
+      //   await PurchaseOrder.updateOne(
+      //     { ref_num: purchase.ref_num },
+      //     { $set: { isPurchasedCreated: true } }
+      //   );
+      // }
+      logger.info(`Purchase created: ${purchase.receiptNumber} by user ${req.user.username}`);
+
+      res.status(201).json({
+        success: true,
+        message: "Purchase created successfully",
+        data: { purchase },
       });
+    } catch (error) {
+      logger.error("Create purchase error:", error);
+
+      // Cleanup uploaded file on error
+      if (req.file) {
+        const filePath = path.join(__dirname, "../..", `/uploads/invoices/${req.file.filename}`);
+        fs.unlink(filePath, (err) => {
+          if (err) console.error("Error deleting file after exception:", err.message);
+        });
+      }
+
+      if (error.code === 11000) {
+
+        return res.status(400).json({
+          success: false,
+          message: "Purchased Already Created. Please Check (Recycle Bin or Cancelled or Purchase Return section.",
+        });
+      }
+
+      next(error);
     }
-
-    if (error.code === 11000) {
-
-      return res.status(400).json({
-        success: false,
-        message: "Purchased Already Created. Please Check (Recycle Bin or Cancelled or Purchase Return section.",
-      });
-    }
-
-    next(error);
   }
-}
 
   /**
    * Update purchase
@@ -278,7 +280,7 @@ async createPurchase(req, res, next) {
       }
 
       let attachmentPath = existingPurchase.invoiceFile;
-  
+
       if (req.file) {
         // Delete old attachment
         if (existingPurchase.invoiceFile) {
@@ -287,7 +289,7 @@ async createPurchase(req, res, next) {
             if (err) console.error("Error deleting old attachment:", err.message);
           });
         }
-  
+
         attachmentPath = `/uploads/invoices/${req.file.filename}`;
       }
 
@@ -312,7 +314,7 @@ async createPurchase(req, res, next) {
 
       const purchase = await purchaseService.updatePurchase(req.params.id, updateData)
       purchase.invoiceFile = getAttachmentUrl(purchase.invoiceFile);
-      
+
       logger.info(`Purchase updated: ${purchase.receiptNumber} by user ${req.user.username}`)
 
       res.json({
@@ -373,7 +375,7 @@ async createPurchase(req, res, next) {
     }
   }
 
-   //Soft deleted purchases
+  //Soft deleted purchases
   // async deletePurchase(req, res, next) {
   //   try {
   //     const errors = validationResult(req);
@@ -384,20 +386,20 @@ async createPurchase(req, res, next) {
   //         errors: errors.array(),
   //       });
   //     }
-  
+
   //     const purchase = await purchaseService.deletePurchase(req.params.id, req.user.id);
-  
+
   //     if (!purchase) {
   //       return res.status(404).json({
   //         success: false,
   //         message: "Purchase not found",
   //       });
   //     }
-  
+
   //     // Move invoice file if it exists
   //     if (purchase.invoiceFile) {
   //       const filePath = path.join(__dirname, "..", purchase.invoiceFile);
-  
+
   //       if (fs.existsSync(filePath)) {
   //         try {
   //           const newRelativePath = moveFileToRecycleBin(filePath, "invoices");
@@ -413,9 +415,9 @@ async createPurchase(req, res, next) {
   //         }
   //       }
   //     }
-  
+
   //     logger.info(`Purchase soft-deleted: ${purchase.receiptNumber} by ${req.user.username}`);
-  
+
   //     res.json({
   //       success: true,
   //       message: "Purchase moved to recycle bin (soft deleted)",
@@ -435,30 +437,30 @@ async createPurchase(req, res, next) {
           errors: errors.array(),
         });
       }
-  
+
       const purchase = await Purchase.findById(req.params.id);
       if (!purchase) {
         return res.status(404).json({ success: false, message: "Purchase not found" });
       }
-  
+
       // Move invoice file to recycle bin if exists
       if (purchase.invoiceFile) {
         let filePath = purchase.invoiceFile; // could be URL or relative path
         const fileName = path.basename(filePath);
-  
+
         // Convert full URL to relative path if needed
         if (filePath.startsWith("http")) {
           filePath = new URL(filePath).pathname; // /uploads/invoices/file.pdf
         }
-  
+
         const currentFilePath = path.join(process.cwd(), filePath);
         const recycleBinDir = path.join(process.cwd(), "uploads", "recycle-bin", "invoices");
-  
+
         // Create recycle bin directory if missing
         if (!fs.existsSync(recycleBinDir)) {
           fs.mkdirSync(recycleBinDir, { recursive: true });
         }
-  
+
         // Move the file
         if (fs.existsSync(currentFilePath)) {
           const newFilePath = path.join(recycleBinDir, fileName);
@@ -466,15 +468,15 @@ async createPurchase(req, res, next) {
           purchase.invoiceFile = `/uploads/recycle-bin/invoices/${fileName}`;
         }
       }
-  
+
       // Soft delete
       purchase.isDeleted = true;
       purchase.deletedBy = req.user.id;
       purchase.deletedAt = new Date();
       await purchase.save();
-  
+
       logger.info(`Purchase soft-deleted: ${purchase.receiptNumber} by ${req.user.username}`);
-  
+
       res.json({
         success: true,
         message: "Purchase moved to recycle bin (soft deleted)",
@@ -484,8 +486,8 @@ async createPurchase(req, res, next) {
       next(error);
     }
   }
-  
-  
+
+
 
   // Restore deleted purchase
   async restorePurchase(req, res, next) {
@@ -498,24 +500,24 @@ async createPurchase(req, res, next) {
           message: "Purchase not found in recycle bin",
         });
       }
-  
+
       // Restore invoice file if it exists
       if (purchase.invoiceFile) {
         // const oldPath = path.join(__dirname, "..", purchase.invoiceFile);
         const recycleBinPath = purchase.invoiceFile.replace(baseUrl + "/", ""); // Make relative path
         purchase.invoiceFile = moveFileFromRecycleBin(recycleBinPath, "invoices", baseUrl);
       }
-        
-  
+
+
       // Un-delete
       purchase.isDeleted = false;
       purchase.deletedBy = undefined;
       purchase.deletedAt = undefined;
-  
+
       await purchase.save();
-  
+
       logger.info(`Purchase restored: ${purchase.receiptNumber} by ${req.user.username}`);
-  
+
       res.json({
         success: true,
         message: "Purchase successfully restored from recycle bin",
@@ -562,24 +564,24 @@ async createPurchase(req, res, next) {
         startDate,
         endDate,
       } = req.query;
-  
+
       const skip = (page - 1) * limit;
       const query = { isDeleted: true };
-  
+
       if (search) {
         query.$or = [
           { ref_num: { $regex: search, $options: "i" } },
           { remarks: { $regex: search, $options: "i" } },
         ];
       }
-  
+
       if (startDate && endDate) {
         query.createdAt = {
           $gte: new Date(startDate),
           $lte: new Date(endDate),
         };
       }
-  
+
       const [total, purchases] = await Promise.all([
         Purchase.countDocuments(query),
         Purchase.find(query)
@@ -588,7 +590,7 @@ async createPurchase(req, res, next) {
           .sort({ createdAt: -1 })
           .populate("createdBy", "username name"),
       ]);
-  
+
       res.json({
         success: true,
         data: {
@@ -605,9 +607,9 @@ async createPurchase(req, res, next) {
       next(error);
     }
   }
-  
 
-  
+
+
 }
 
 module.exports = new PurchaseController() 

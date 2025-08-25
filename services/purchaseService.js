@@ -21,6 +21,7 @@ class PurchaseService {
       sortOrder = "desc",
       all = false,
       isDeleted,
+      ref_num,
     } = options;
 
     const skip = all ? 0 : (page - 1) * limit;
@@ -36,6 +37,10 @@ class PurchaseService {
     // Filters
     if (vendor) {
       query.vendor = { $regex: vendor, $options: "i" };
+    }
+
+    if (ref_num) {
+      query.ref_num = { $regex: ref_num, $options: "i" };
     }
 
     if (startDate || endDate) {

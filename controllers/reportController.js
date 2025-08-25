@@ -107,9 +107,28 @@ class ReportController {
 
       const report = await reportService.getPurchasesReport(filters)
 
+      // Format the purchases data for Excel export
+      const formatDataForExport = (records) => {
+        return records.map(record => ({
+          'DB': record.ref_num || '',
+          'Supplier': record.vendor || '',
+          'Purchase Date': record.purchaseDate ? new Date(record.purchaseDate).toLocaleDateString() : '',
+          'Items': record.items && record.items.length > 0 ? record.items.map(item => item.productName).join(', ') : 'No items',
+          'Subtotal': record.subtotal || 0,
+          'Purpose': record.purpose || 'Purchase',
+          'Remarks': record.remarks || record.remark || '',
+          'Received By': record.receivedBy || ''
+        }));
+      };
+
+      const formattedPurchases = formatDataForExport(report.purchases);
+
       res.json({
         success: true,
-        data: report,
+        data: {
+          purchases: formattedPurchases,
+          summary: report.summary,
+        },
       })
     } catch (error) {
       logger.error("Get purchases report error:", error)

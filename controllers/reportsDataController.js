@@ -1,5 +1,6 @@
 const PurchaseOrder = require('../models/PurchaseOrder');
 const Purchase = require('../models/Purchase');
+const PurchaseReturn = require('../models/PurchaseReturn');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 const Vendor = require('../models/Vendor');
@@ -7,12 +8,68 @@ const Customer = require('../models/Customer');
 
 const modelMap = {
   'purchase-orders': PurchaseOrder,
+  'purchase-returns': PurchaseReturn,
   purchases: Purchase,
   sales: Sale,
   products: Product,
   vendors: Vendor,
   customers: Customer,
 };
+
+// Function to format data for Excel export with specific columns
+function formatDataForExport(module, records) {
+  switch (module) {
+    case 'purchase-orders':
+      return records.map(record => ({
+        'DB': record.ref_num || '',
+        'PO Number': record.poNumber || '',
+        'Supplier': record.vendor || '',
+        'Status': record.status || '',
+        'Order Date': record.orderDate ? new Date(record.orderDate).toLocaleDateString() : '',
+        'Delivery Date': record.deliveryDate ? new Date(record.deliveryDate).toLocaleDateString() : '',
+        'Items': record.items ? record.items.map(item => item.productName).join(', ') : '',
+        'Subtotal': record.subtotal || 0,
+        'Total': record.total || 0,
+        'Order By': record.orderedBy || '',
+        'Customer': record.customerName || '',
+        'Purpose': record.purpose || '',
+        'Site Incharge': record.site_incharge || '',
+        'Contractor': record.contractor || '',
+        'Is Deleted': record.isDeleted ? 'Yes' : 'No',
+        'Remarks': record.remarks || ''
+      }));
+
+    case 'purchases':
+      return records.map(record => ({
+        'DB': record.ref_num || '',
+        'Supplier': record.vendor || '',
+        'Purchase Date': record.purchaseDate ? new Date(record.purchaseDate).toLocaleDateString() : '',
+        'Items': record.items && record.items.length > 0 ? record.items.map(item => item.productName).join(', ') : 'No items',
+        'Subtotal': record.subtotal || 0,
+        'Client Name': record.customerName || record.receivedBy || '',
+        'Purpose': record.purpose || 'Purchase',
+        'Remarks': record.remarks || record.remark || '',
+        'Received By': record.receivedBy || ''
+      }));
+
+    case 'purchase-returns':
+      return records.map(record => ({
+        'DB': record.ref_num || '',
+        'Supplier': record.vendor || '',
+        'Items': record.items ? record.items.map(item => item.productName).join(', ') : '',
+        'Subtotal': record.subtotal || 0,
+        'Total': record.total || 0,
+        'Return Date': record.returnDate ? new Date(record.returnDate).toLocaleDateString() : '',
+        'Receipt Number': record.receiptNumber || '',
+        'Remarks': record.remarks || '',
+        'Is Deleted': record.isDeleted ? 'Yes' : 'No'
+      }));
+
+    default:
+      return records;
+  }
+}
+
 function generateSummary(module, records) {
   switch (module) {
     case 'purchases': {
@@ -96,6 +153,15 @@ function generateSummary(module, records) {
       };
     }
 
+    case 'purchase-returns': {
+      const total = records.reduce((sum, r) => sum + (r.total || 0), 0);
+      return {
+        totalPurchaseReturns: records.length,
+        totalValue: total,
+        averageValue: records.length ? total / records.length : 0,
+      };
+    }
+
     default:
       return {};
   }
@@ -103,6 +169,7 @@ function generateSummary(module, records) {
 
 const dateFieldMap = {
   'purchase-orders': 'orderDate',
+  'purchase-returns': 'returnDate',
   purchases: 'purchaseDate',
   sales: 'saleDate',
   products: 'createdAt',
@@ -112,6 +179,7 @@ const dateFieldMap = {
 
 const dataKeyMap = {
   'purchase-orders': 'purchaseOrders',
+  'purchase-returns': 'purchaseReturns',
   purchases: 'purchases',
   sales: 'sales',
   products: 'topProducts',
@@ -145,10 +213,13 @@ exports.getReportData = async (req, res) => {
     // 🔢 Generate summaries
     const summary = generateSummary(module, records);
 
+    // Format data for export if requested
+    const formattedRecords = formatDataForExport(module, records);
+
     return res.json({
       success: true,
       data: {
-        [dataKey]: records,
+        [dataKey]: formattedRecords, // Use formattedRecords here
         summary,
       },
     });

@@ -116,8 +116,8 @@ const purchaseSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    receivedBy:{
-      type:String,
+    receivedBy: {
+      type: String,
     },
     cancelledAmount: {
       type: Number,
@@ -138,6 +138,23 @@ const purchaseSchema = new mongoose.Schema(
       type: String,
       trim: true,
       maxlength: [1000, "Remarks cannot exceed 1000 characters"],
+    },
+    // Additional fields for reporting
+    customerName: {
+      type: String,
+      trim: true,
+    },
+    purpose: {
+      type: String,
+      trim: true,
+    },
+    siteIncharge: {
+      type: String,
+      trim: true,
+    },
+    contractor: {
+      type: String,
+      trim: true,
     },
     deletedAt: {
       type: Date,
