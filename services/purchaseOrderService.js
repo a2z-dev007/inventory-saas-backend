@@ -11,7 +11,7 @@ class PurchaseOrderService {
    * @param {Object} options - Query options
    * @returns {Object} Purchase orders and pagination info
    */
- 
+
 
   async getPurchaseOrders(options) {
     const {
@@ -27,10 +27,10 @@ class PurchaseOrderService {
       all = false,
       isDeleted,
     } = options;
-  
+
     const skip = all ? 0 : (page - 1) * limit;
     const query = {};
-  
+
     // Deleted filter
     if (typeof isDeleted !== "undefined") {
       if (typeof isDeleted === "string") {
@@ -39,28 +39,42 @@ class PurchaseOrderService {
         query.isDeleted = Boolean(isDeleted);
       }
     }
-  
+
     // Other filters
     if (status) query.status = status;
     if (vendor) query.vendor = { $regex: vendor, $options: "i" };
-  
+    if (options.poNumber) query.poNumber = { $regex: options.poNumber, $options: "i" };
+    if (options.DBNum) query.ref_num = { $regex: options.DBNum, $options: "i" };
+    if (options.customer) query.customer = { $regex: options.customer, $options: "i" };
+    if (options.siteType) query.siteType = { $regex: options.siteType, $options: "i" };
+    if (options.deliveryDate) query.deliveryDate = { $regex: options.deliveryDate, $options: "i" };
+    if (options.contractor) query.contractor = { $regex: options.contractor, $options: "i" };
+    if (options.orderedBy) query.orderedBy = { $regex: options.orderedBy, $options: "i" };
+    if (options.purpose) query.purpose = { $regex: options.purpose, $options: "i" };
+
     if (startDate || endDate) {
       query.orderDate = {};
       if (startDate) query.orderDate.$gte = new Date(startDate);
       if (endDate) query.orderDate.$lte = new Date(endDate);
     }
-  
+
     if (search) {
       query.$or = [
         { ref_num: { $regex: search, $options: "i" } },
         { poNumber: { $regex: search, $options: "i" } },
         { vendor: { $regex: search, $options: "i" } },
         { "items.productName": { $regex: search, $options: "i" } },
+        { customer: { $regex: search, $options: "i" } },
+        { siteType: { $regex: search, $options: "i" } },
+        { deliveryDate: { $regex: search, $options: "i" } },
+        { contractor: { $regex: search, $options: "i" } },
+        { orderedBy: { $regex: search, $options: "i" } },
+        { purpose: { $regex: search, $options: "i" } },
       ];
     }
-  
+
     const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
-  
+
     // 1️⃣ Fetch purchase orders and total count
     const [purchaseOrders, total] = await Promise.all([
       PurchaseOrder.find(query)
@@ -72,7 +86,7 @@ class PurchaseOrderService {
         .lean(),
       PurchaseOrder.countDocuments(query),
     ]);
-  
+
     // If no purchase orders found, return early
     if (!purchaseOrders.length) {
       return {
@@ -85,24 +99,24 @@ class PurchaseOrderService {
         },
       };
     }
-  
+
     // 2️⃣ Get all ref_nums from the fetched POs
     // const poRefNums = purchaseOrders.map(po => po.ref_num);
-  
+
     // 3️⃣ Fetch purchases with matching ref_nums
     // const purchases = await Purchase.find({
     //   ref_num: { $in: poRefNums },
     //   isDeleted: false
     // }).select("ref_num").lean();
-  
+
     // const purchaseRefSet = new Set(purchases.map(p => p.ref_num));
-  
+
     // // 4️⃣ Attach `isPurchasedCreated` + format attachment
     const updatedPurchaseOrders = purchaseOrders.map((po) => ({
       ...po,
       attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
     }));
-  
+
     return {
       purchaseOrders: updatedPurchaseOrders,
       pagination: {
@@ -113,7 +127,7 @@ class PurchaseOrderService {
       },
     };
   }
-  
+
 
   /**
    * Get purchase order by ID
@@ -138,195 +152,195 @@ class PurchaseOrderService {
     return purchaseOrder;
   }
 
-async getPurchaseOrders(options) {
-  const {
-    page = 1,
-    limit = 10,
-    search,
-    status,
-    vendor,
-    startDate,
-    endDate,
-    sortBy = "orderDate",
-    sortOrder = "desc",
-    all = false,
-    isDeleted,
-  } = options;
+  async getPurchaseOrders(options) {
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      status,
+      vendor,
+      startDate,
+      endDate,
+      sortBy = "orderDate",
+      sortOrder = "desc",
+      all = false,
+      isDeleted,
+    } = options;
 
-  try {
-    const skip = all ? 0 : (page - 1) * limit;
-    const query = {};
+    try {
+      const skip = all ? 0 : (page - 1) * limit;
+      const query = {};
 
-    // Always force filter on isDeleted
-    if (isDeleted === true || isDeleted === "true") {
-      query.isDeleted = true;
-    } else {
-      query.isDeleted = { $ne: true }; // More robust way to exclude deleted items
-    }
-
-    // Enhanced Search with better field coverage
-    if (search && search.trim()) {
-      const searchRegex = { $regex: search.trim(), $options: "i" };
-      query.$or = [
-        { ref_num: searchRegex },
-        { poNumber: searchRegex },
-        { vendor: searchRegex },
-        { status: searchRegex },
-        { "items.productName": searchRegex },
-        { "items.description": searchRegex },
-        { notes: searchRegex },
-        { description: searchRegex }
-      ];
-    }
-
-    // Status filter - handle both single status and array of statuses
-    if (status && status.trim()) {
-      if (Array.isArray(status)) {
-        query.status = { $in: status };
+      // Always force filter on isDeleted
+      if (isDeleted === true || isDeleted === "true") {
+        query.isDeleted = true;
       } else {
-        // Exact match for status
-        query.status = status.trim();
+        query.isDeleted = { $ne: true }; // More robust way to exclude deleted items
       }
-    }
 
-    // Vendor filter - enhanced with partial matching
-    if (vendor && vendor.trim()) {
-      query.vendor = { $regex: vendor.trim(), $options: "i" };
-    }
+      // Enhanced Search with better field coverage
+      if (search && search.trim()) {
+        const searchRegex = { $regex: search.trim(), $options: "i" };
+        query.$or = [
+          { ref_num: searchRegex },
+          { poNumber: searchRegex },
+          { vendor: searchRegex },
+          { status: searchRegex },
+          { "items.productName": searchRegex },
+          { "items.description": searchRegex },
+          { notes: searchRegex },
+          { description: searchRegex }
+        ];
+      }
 
-    // Enhanced Date Range filtering with proper date handling
-    if (startDate || endDate) {
-      query.orderDate = {};
-      
-      if (startDate) {
-        try {
-          const start = new Date(startDate);
-          if (!isNaN(start.getTime())) {
-            // Set to beginning of day
-            start.setHours(0, 0, 0, 0);
-            query.orderDate.$gte = start;
+      // Status filter - handle both single status and array of statuses
+      if (status && status.trim()) {
+        if (Array.isArray(status)) {
+          query.status = { $in: status };
+        } else {
+          // Exact match for status
+          query.status = status.trim();
+        }
+      }
+
+      // Vendor filter - enhanced with partial matching
+      if (vendor && vendor.trim()) {
+        query.vendor = { $regex: vendor.trim(), $options: "i" };
+      }
+
+      // Enhanced Date Range filtering with proper date handling
+      if (startDate || endDate) {
+        query.orderDate = {};
+
+        if (startDate) {
+          try {
+            const start = new Date(startDate);
+            if (!isNaN(start.getTime())) {
+              // Set to beginning of day
+              start.setHours(0, 0, 0, 0);
+              query.orderDate.$gte = start;
+            }
+          } catch (error) {
+            console.warn('Invalid startDate format:', startDate);
           }
-        } catch (error) {
-          console.warn('Invalid startDate format:', startDate);
         }
-      }
-      
-      if (endDate) {
-        try {
-          const end = new Date(endDate);
-          if (!isNaN(end.getTime())) {
-            // Set to end of day
-            end.setHours(23, 59, 59, 999);
-            query.orderDate.$lte = end;
+
+        if (endDate) {
+          try {
+            const end = new Date(endDate);
+            if (!isNaN(end.getTime())) {
+              // Set to end of day
+              end.setHours(23, 59, 59, 999);
+              query.orderDate.$lte = end;
+            }
+          } catch (error) {
+            console.warn('Invalid endDate format:', endDate);
           }
-        } catch (error) {
-          console.warn('Invalid endDate format:', endDate);
         }
       }
-    }
 
-    // Enhanced sorting with fallback options
-    const validSortFields = ['orderDate', 'poNumber', 'vendor', 'status', 'total', 'ref_num', 'createdAt'];
-    const finalSortBy = validSortFields.includes(sortBy) ? sortBy : 'orderDate';
-    const finalSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'desc';
-    
-    const sort = { [finalSortBy]: finalSortOrder === "desc" ? -1 : 1 };
-    
-    // Add secondary sort for consistent ordering
-    if (finalSortBy !== 'createdAt') {
-      sort.createdAt = -1; // Always sort by creation date as secondary
-    }
+      // Enhanced sorting with fallback options
+      const validSortFields = ['orderDate', 'poNumber', 'vendor', 'status', 'total', 'ref_num', 'createdAt'];
+      const finalSortBy = validSortFields.includes(sortBy) ? sortBy : 'orderDate';
+      const finalSortOrder = ['asc', 'desc'].includes(sortOrder) ? sortOrder : 'desc';
 
-    // Debug logging
-    console.log('Purchase Orders Query:', JSON.stringify(query, null, 2));
-    console.log('Sort:', sort);
+      const sort = { [finalSortBy]: finalSortOrder === "desc" ? -1 : 1 };
 
-    // Enhanced aggregation pipeline for better performance and features
-    const aggregationPipeline = [
-      { $match: query },
-      {
-        $lookup: {
-          from: "users",
-          localField: "createdBy",
-          foreignField: "_id",
-          as: "createdBy",
-          pipeline: [{ $project: { name: 1, username: 1 } }]
-        }
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "approvedBy",
-          foreignField: "_id",
-          as: "approvedBy",
-          pipeline: [{ $project: { name: 1, username: 1 } }]
-        }
-      },
-      {
-        $addFields: {
-          createdBy: { $arrayElemAt: ["$createdBy", 0] },
-          approvedBy: { $arrayElemAt: ["$approvedBy", 0] },
-          // Add computed fields for better sorting/filtering
-          totalItems: { $size: { $ifNull: ["$items", []] } },
-          hasAttachment: { $ne: ["$attachment", null] }
-        }
-      },
-      { $sort: sort }
-    ];
-
-    // Get total count and paginated results
-    const [countResult, purchaseOrders] = await Promise.all([
-      PurchaseOrder.aggregate([
-        ...aggregationPipeline,
-        { $count: "total" }
-      ]),
-      PurchaseOrder.aggregate([
-        ...aggregationPipeline,
-        ...(all ? [] : [{ $skip: skip }, { $limit: limit }])
-      ])
-    ]);
-
-    const total = countResult[0]?.total || 0;
-
-    // Process attachments
-    const updatedPurchaseOrders = purchaseOrders.map((po) => ({
-      ...po,
-      attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
-      // Ensure consistent ID field
-      id: po._id?.toString() || po.id
-    }));
-
-    // Enhanced pagination response
-    const paginationData = {
-      page: parseInt(page),
-      limit: all ? total : parseInt(limit),
-      total,
-      pages: all ? 1 : Math.ceil(total / limit),
-      hasNext: !all && page < Math.ceil(total / limit),
-      hasPrev: !all && page > 1,
-      startIndex: all ? 1 : ((page - 1) * limit) + 1,
-      endIndex: all ? total : Math.min(page * limit, total)
-    };
-
-    return {
-      purchaseOrders: updatedPurchaseOrders,
-      pagination: paginationData,
-      filters: {
-        search: search || null,
-        status: status || null,
-        vendor: vendor || null,
-        startDate: startDate || null,
-        endDate: endDate || null,
-        sortBy: finalSortBy,
-        sortOrder: finalSortOrder
+      // Add secondary sort for consistent ordering
+      if (finalSortBy !== 'createdAt') {
+        sort.createdAt = -1; // Always sort by creation date as secondary
       }
-    };
 
-  } catch (error) {
-    console.error('Error fetching purchase orders:', error);
-    throw new Error(`Failed to fetch purchase orders: ${error.message}`);
+      // Debug logging
+      console.log('Purchase Orders Query:', JSON.stringify(query, null, 2));
+      console.log('Sort:', sort);
+
+      // Enhanced aggregation pipeline for better performance and features
+      const aggregationPipeline = [
+        { $match: query },
+        {
+          $lookup: {
+            from: "users",
+            localField: "createdBy",
+            foreignField: "_id",
+            as: "createdBy",
+            pipeline: [{ $project: { name: 1, username: 1 } }]
+          }
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "approvedBy",
+            foreignField: "_id",
+            as: "approvedBy",
+            pipeline: [{ $project: { name: 1, username: 1 } }]
+          }
+        },
+        {
+          $addFields: {
+            createdBy: { $arrayElemAt: ["$createdBy", 0] },
+            approvedBy: { $arrayElemAt: ["$approvedBy", 0] },
+            // Add computed fields for better sorting/filtering
+            totalItems: { $size: { $ifNull: ["$items", []] } },
+            hasAttachment: { $ne: ["$attachment", null] }
+          }
+        },
+        { $sort: sort }
+      ];
+
+      // Get total count and paginated results
+      const [countResult, purchaseOrders] = await Promise.all([
+        PurchaseOrder.aggregate([
+          ...aggregationPipeline,
+          { $count: "total" }
+        ]),
+        PurchaseOrder.aggregate([
+          ...aggregationPipeline,
+          ...(all ? [] : [{ $skip: skip }, { $limit: limit }])
+        ])
+      ]);
+
+      const total = countResult[0]?.total || 0;
+
+      // Process attachments
+      const updatedPurchaseOrders = purchaseOrders.map((po) => ({
+        ...po,
+        attachment: po.attachment ? getAttachmentUrl(po.attachment) : null,
+        // Ensure consistent ID field
+        id: po._id?.toString() || po.id
+      }));
+
+      // Enhanced pagination response
+      const paginationData = {
+        page: parseInt(page),
+        limit: all ? total : parseInt(limit),
+        total,
+        pages: all ? 1 : Math.ceil(total / limit),
+        hasNext: !all && page < Math.ceil(total / limit),
+        hasPrev: !all && page > 1,
+        startIndex: all ? 1 : ((page - 1) * limit) + 1,
+        endIndex: all ? total : Math.min(page * limit, total)
+      };
+
+      return {
+        purchaseOrders: updatedPurchaseOrders,
+        pagination: paginationData,
+        filters: {
+          search: search || null,
+          status: status || null,
+          vendor: vendor || null,
+          startDate: startDate || null,
+          endDate: endDate || null,
+          sortBy: finalSortBy,
+          sortOrder: finalSortOrder
+        }
+      };
+
+    } catch (error) {
+      console.error('Error fetching purchase orders:', error);
+      throw new Error(`Failed to fetch purchase orders: ${error.message}`);
+    }
   }
-}
 
   /**
    * Create new purchase order
@@ -413,16 +427,16 @@ async getPurchaseOrders(options) {
     if (!purchaseOrder) {
       purchaseOrder = await PurchaseOrder.findOne({ ref_num: identifier });
     }
-  
+
     if (!purchaseOrder) {
       throw new Error("Purchase Order not found");
     }
-  
+
     // If purchase order has an attachment, delete the file from recycle bin
     if (purchaseOrder.attachment) {
-      const fileUrl = purchaseOrder.attachment; 
+      const fileUrl = purchaseOrder.attachment;
       const fileName = path.basename(fileUrl);
-  
+
       // Points to recycle bin path
       const recycleFilePath = path.join(
         process.cwd(),
@@ -431,7 +445,7 @@ async getPurchaseOrders(options) {
         "purchase-orders",
         fileName
       );
-  
+
       if (fs.existsSync(recycleFilePath)) {
         try {
           fs.unlinkSync(recycleFilePath);
@@ -441,7 +455,7 @@ async getPurchaseOrders(options) {
         }
       }
     }
-  
+
     // Now permanently delete the purchase order
     let deletedPO = null;
     if (/^[0-9a-fA-F]{24}$/.test(identifier)) {
@@ -450,7 +464,7 @@ async getPurchaseOrders(options) {
     if (!deletedPO) {
       deletedPO = await PurchaseOrder.findOneAndDelete({ ref_num: identifier });
     }
-  
+
     return deletedPO;
   }
 
