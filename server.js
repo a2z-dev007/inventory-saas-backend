@@ -24,8 +24,7 @@ const customerRoutes = require("./routes/customers");
 const reportRoutes = require("./routes/reports");
 const categoryRoutes = require("./routes/categoryRoutes");
 const purposeRoutes = require("./routes/purposeRoutes");
-
-
+const unitTypeRoutes = require("./routes/unitTypeRoutes");
 const app = express();
 
 // Rate limiting configuration
@@ -108,6 +107,7 @@ app.use("/api/purchase-returns", purchaseReturnRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/purposes", purposeRoutes);
+app.use("/api/unit-types", unitTypeRoutes);
 
 
 // Swagger documentation

@@ -47,7 +47,7 @@ const productSchema = new mongoose.Schema(
     //   trim: true,
     //   maxlength: [1000, "Description cannot exceed 1000 characters"],
     // },
-    
+
     minStockLevel: {
       type: Number,
       default: 10,
@@ -56,28 +56,7 @@ const productSchema = new mongoose.Schema(
     unitType: {
       type: String,
       required: [true, "Unit type is required"],
-      enum: {
-        values: [
-          "Nos",
-          "kg",
-          "MT",
-          "m²",
-          "m³",
-          "Bag",
-          "Sheet",
-          "Roll",
-          "Set",
-          "Unit",
-          "Box",
-          "Packet",
-          "Can",
-          "Litre",
-          "Piece",
-          "Pair",
-          "Machine Hour",
-        ],
-        message: "Invalid unit type",
-      },
+
     },
     isActive: {
       type: Boolean,
