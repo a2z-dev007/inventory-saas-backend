@@ -1,5 +1,6 @@
 const Purchase = require("../models/Purchase")
 const Product = require("../models/Product")
+const PurchaseOrder = require("../models/PurchaseOrder")
 const { moveFileToRecycleBin } = require("../utils/fileMover")
 
 class PurchaseService {
@@ -69,8 +70,33 @@ class PurchaseService {
       Purchase.countDocuments(query),
     ]);
 
+    // Populate client data from Purchase Orders based on ref_num
+    const purchasesWithClientData = await Promise.all(
+      purchases.map(async (purchase) => {
+        if (purchase.ref_num) {
+          try {
+            // Find the corresponding Purchase Order by ref_num
+            const purchaseOrder = await PurchaseOrder.findOne({ 
+              ref_num: purchase.ref_num 
+            }).select('customer customerName customerAddress').lean();
+            
+            if (purchaseOrder) {
+              // Add client data to purchase
+              purchase.customer = purchaseOrder.customer;
+              purchase.customerName = purchaseOrder.customerName;
+              purchase.customerAddress = purchaseOrder.customerAddress;
+            }
+          } catch (error) {
+            console.error(`Error fetching PO data for ref_num ${purchase.ref_num}:`, error);
+            // Continue without client data if PO not found
+          }
+        }
+        return purchase;
+      })
+    );
+
     return {
-      purchases,
+      purchases: purchasesWithClientData,
       pagination: {
         page,
         limit: all ? total : limit,
@@ -87,10 +113,28 @@ class PurchaseService {
    * @returns {Object} Purchase data
    */
   async getPurchaseById(purchaseId) {
-    return await Purchase.findById(purchaseId)
+    const purchase = await Purchase.findById(purchaseId)
       .populate("createdBy", "name username")
-      // .populate("relatedPO", "poNumber")
-      .lean()
+      .lean();
+
+    // Populate client data from Purchase Order if ref_num exists
+    if (purchase && purchase.ref_num) {
+      try {
+        const purchaseOrder = await PurchaseOrder.findOne({ 
+          ref_num: purchase.ref_num 
+        }).select('customer customerName customerAddress').lean();
+        
+        if (purchaseOrder) {
+          purchase.customer = purchaseOrder.customer;
+          purchase.customerName = purchaseOrder.customerName;
+          purchase.customerAddress = purchaseOrder.customerAddress;
+        }
+      } catch (error) {
+        console.error(`Error fetching PO data for ref_num ${purchase.ref_num}:`, error);
+      }
+    }
+
+    return purchase;
   }
 
   /**

@@ -105,6 +105,7 @@ app.use("/api/sales", salesRoutes);
 app.use("/api/purchases", purchaseRoutes);
 app.use("/api/purchase-returns", purchaseReturnRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/reports-api", require("./routes/reports-api"));
 app.use("/api/categories", categoryRoutes);
 app.use("/api/purposes", purposeRoutes);
 app.use("/api/unit-types", unitTypeRoutes);
