@@ -58,6 +58,9 @@ app.use(
 // Security middleware
 app.use(helmet());
 
+// Disable ETags for API routes to prevent 304 responses
+app.set('etag', false);
+
 // Compression middleware
 app.use(compression());
 
@@ -93,6 +96,14 @@ app.get("/health", (req, res) => {
 
 // Apply rate limiting to API routes
 // app.use("/api/", limiter) // Remove rate limiting from all API routes
+
+// Disable caching for API routes
+app.use('/api/', (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
 
 // API routes
 app.use("/api/auth", authRoutes);

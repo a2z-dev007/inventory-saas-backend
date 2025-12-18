@@ -431,6 +431,377 @@ class ReportsService {
       },
     }
   }
+
+  /**
+   * Get multi-supplier purchases report with optional client filtering
+   * @param {Object} options - Query options including supplier and client IDs
+   * @returns {Object} Multi-supplier purchases report
+   */
+  async getMultiSupplierReport(options = {}) {
+    const {
+      supplierIds,
+      clientIds,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 10,
+      all = false,
+    } = options
+
+    const skip = all ? 0 : (page - 1) * limit
+
+    // Get supplier names from IDs
+    const suppliers = await Vendor.find({ _id: { $in: supplierIds } }).select('name').lean()
+    const supplierNames = suppliers.map(s => s.name)
+
+    const query = {
+      vendor: { $in: supplierNames },
+      isDeleted: false
+    }
+
+    // Date range filter
+    if (startDate || endDate) {
+      query.purchaseDate = {}
+      if (startDate) query.purchaseDate.$gte = new Date(startDate)
+      if (endDate) query.purchaseDate.$lte = new Date(endDate)
+    }
+
+    let [purchases, total] = await Promise.all([
+      Purchase.find(query)
+        .populate("items.productId", "name")
+        .sort({ purchaseDate: -1 })
+        .lean(),
+      Purchase.countDocuments(query),
+    ])
+
+    // If client filtering is requested, filter by client IDs
+    if (clientIds && clientIds.length > 0) {
+      const clientNames = await Customer.find({ _id: { $in: clientIds } }).select('name').lean()
+      const clientNamesList = clientNames.map(c => c.name.toLowerCase())
+
+      const filteredPurchases = []
+      for (const purchase of purchases) {
+        if (purchase.ref_num) {
+          try {
+            const purchaseOrder = await PurchaseOrder.findOne({ 
+              ref_num: purchase.ref_num 
+            }).select('customer customerName').lean();
+            
+            if (purchaseOrder) {
+              const customerName = (purchaseOrder.customerName || purchaseOrder.customer || '').toLowerCase()
+              if (clientNamesList.some(clientName => customerName.includes(clientName))) {
+                filteredPurchases.push(purchase)
+              }
+            }
+          } catch (error) {
+            console.error(`Error fetching PO data for ref_num ${purchase.ref_num}:`, error);
+          }
+        }
+      }
+      purchases = filteredPurchases
+      total = purchases.length
+    }
+
+    // Apply pagination
+    const paginatedPurchases = all ? purchases : purchases.slice(skip, skip + limit)
+
+    // Transform data with client information from Purchase Orders
+    const transformedPurchases = await Promise.all(
+      paginatedPurchases.map(async (purchase) => {
+        let clientData = { _id: purchase._id, name: "N/A" }
+        let customerAddress = "N/A"
+        
+        // Get client data from Purchase Order if ref_num exists
+        if (purchase.ref_num) {
+          try {
+            const purchaseOrder = await PurchaseOrder.findOne({ 
+              ref_num: purchase.ref_num 
+            }).select('customer customerName customerAddress').lean();
+            
+            if (purchaseOrder) {
+              clientData = {
+                _id: purchase._id,
+                name: purchaseOrder.customerName || purchaseOrder.customer || "N/A"
+              }
+              customerAddress = purchaseOrder.customerAddress || "N/A"
+            }
+          } catch (error) {
+            console.error(`Error fetching PO data for ref_num ${purchase.ref_num}:`, error);
+          }
+        }
+
+        return {
+          _id: purchase._id,
+          ref_num: purchase.ref_num || purchase.receiptNumber,
+          vendor: {
+            _id: purchase._id,
+            name: purchase.vendor
+          },
+          customer: clientData,
+          customerName: clientData.name,
+          customerAddress: customerAddress,
+          items: purchase.items.map(item => ({
+            productName: item.productName || (item.productId?.name) || "Unknown Product",
+            product: {
+              name: item.productName || (item.productId?.name) || "Unknown Product"
+            },
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            unitType: item.unitType || '',
+            total: item.total || (item.quantity * item.unitPrice),
+            isCancelled: item.isCancelled || false,
+            isReturn: item.isReturn || false,
+            remarks: item.remarks || ''
+          })),
+          totalAmount: purchase.total,
+          createdAt: purchase.createdAt,
+          purchaseDate: purchase.purchaseDate,
+          receiptNumber: purchase.receiptNumber,
+          receivedBy: purchase.receivedBy || '',
+          remarks: purchase.remarks || ''
+        };
+      })
+    )
+
+    return {
+      suppliers: supplierNames,
+      purchases: transformedPurchases,
+      pagination: {
+        page,
+        limit: all ? total : limit,
+        total,
+        pages: all ? 1 : Math.ceil(total / limit),
+      },
+    }
+  }
+
+  /**
+   * Get multi-client purchases report with optional supplier filtering
+   * @param {Object} options - Query options including client and supplier IDs
+   * @returns {Object} Multi-client purchases report
+   */
+  async getMultiClientReport(options = {}) {
+    const {
+      clientIds,
+      supplierIds,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 10,
+      all = false,
+    } = options
+
+    const skip = all ? 0 : (page - 1) * limit
+
+    // Get client names from IDs
+    const clients = await Customer.find({ _id: { $in: clientIds } }).select('name').lean()
+    const clientNames = clients.map(c => c.name.toLowerCase())
+
+    let query = { isDeleted: false }
+
+    // Date range filter
+    if (startDate || endDate) {
+      query.purchaseDate = {}
+      if (startDate) query.purchaseDate.$gte = new Date(startDate)
+      if (endDate) query.purchaseDate.$lte = new Date(endDate)
+    }
+
+    // If supplier filtering is requested, add supplier filter
+    if (supplierIds && supplierIds.length > 0) {
+      const suppliers = await Vendor.find({ _id: { $in: supplierIds } }).select('name').lean()
+      const supplierNames = suppliers.map(s => s.name)
+      query.vendor = { $in: supplierNames }
+    }
+
+    let [allPurchases] = await Promise.all([
+      Purchase.find(query)
+        .populate("items.productId", "name")
+        .sort({ purchaseDate: -1 })
+        .lean(),
+    ])
+
+    // Filter purchases by client names using PurchaseOrder data
+    const clientPurchases = []
+    for (const purchase of allPurchases) {
+      if (purchase.ref_num) {
+        try {
+          const purchaseOrder = await PurchaseOrder.findOne({ 
+            ref_num: purchase.ref_num 
+          }).select('customer customerName customerAddress').lean();
+          
+          if (purchaseOrder) {
+            const customerName = (purchaseOrder.customerName || purchaseOrder.customer || '').toLowerCase()
+            // Check if this purchase matches any of the clients we're looking for
+            if (clientNames.some(clientName => customerName.includes(clientName))) {
+              // Add client data to purchase
+              purchase.customer = purchaseOrder.customer
+              purchase.customerName = purchaseOrder.customerName
+              purchase.customerAddress = purchaseOrder.customerAddress
+              clientPurchases.push(purchase)
+            }
+          }
+        } catch (error) {
+          console.error(`Error fetching PO data for ref_num ${purchase.ref_num}:`, error);
+        }
+      }
+    }
+
+    // Apply pagination to filtered results
+    const total = clientPurchases.length
+    const paginatedPurchases = all ? clientPurchases : clientPurchases.slice(skip, skip + limit)
+
+    // Transform data
+    const transformedPurchases = paginatedPurchases.map(purchase => ({
+      _id: purchase._id,
+      ref_num: purchase.ref_num || purchase.receiptNumber,
+      vendor: {
+        _id: purchase._id,
+        name: purchase.vendor
+      },
+      customer: {
+        _id: purchase._id,
+        name: purchase.customerName || purchase.customer || "N/A"
+      },
+      customerName: purchase.customerName || purchase.customer || "N/A",
+      customerAddress: purchase.customerAddress || "N/A",
+      items: purchase.items.map(item => ({
+        productName: item.productName || (item.productId?.name) || "Unknown Product",
+        product: {
+          name: item.productName || (item.productId?.name) || "Unknown Product"
+        },
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        unitType: item.unitType || '',
+        total: item.total || (item.quantity * item.unitPrice),
+        isCancelled: item.isCancelled || false,
+        isReturn: item.isReturn || false,
+        remarks: item.remarks || ''
+      })),
+      totalAmount: purchase.total,
+      createdAt: purchase.createdAt,
+      purchaseDate: purchase.purchaseDate,
+      receiptNumber: purchase.receiptNumber,
+      receivedBy: purchase.receivedBy || '',
+      remarks: purchase.remarks || ''
+    }))
+
+    return {
+      clients: clients.map(c => c.name),
+      purchases: transformedPurchases,
+      pagination: {
+        page,
+        limit: all ? total : limit,
+        total,
+        pages: all ? 1 : Math.ceil(total / limit),
+      },
+    }
+  }
+
+  /**
+   * Get clients that have purchases from specified suppliers
+   * @param {Array} supplierIds - Array of supplier IDs
+   * @returns {Object} List of clients for suppliers
+   */
+  async getClientsForSuppliers(supplierIds) {
+    // Get supplier names from IDs
+    const suppliers = await Vendor.find({ _id: { $in: supplierIds } }).select('name').lean()
+    const supplierNames = suppliers.map(s => s.name)
+
+    // Find purchases from these suppliers
+    const purchases = await Purchase.find({
+      vendor: { $in: supplierNames },
+      isDeleted: false,
+      ref_num: { $exists: true, $ne: null }
+    }).select('ref_num').lean()
+
+    const refNums = purchases.map(p => p.ref_num)
+
+    // Get unique clients from purchase orders
+    const purchaseOrders = await PurchaseOrder.find({
+      ref_num: { $in: refNums }
+    }).select('customer customerName').lean()
+
+    // Extract unique client names and try to match with Customer collection
+    const uniqueClientNames = [...new Set(
+      purchaseOrders.map(po => po.customerName || po.customer).filter(Boolean)
+    )]
+
+    const clients = []
+    for (const clientName of uniqueClientNames) {
+      // Try to find matching customer in Customer collection
+      const customer = await Customer.findOne({
+        name: { $regex: clientName, $options: "i" }
+      }).select('_id name').lean()
+
+      if (customer) {
+        clients.push(customer)
+      } else {
+        // If not found in Customer collection, create a temporary entry
+        clients.push({
+          _id: clientName.replace(/\s+/g, '_').toLowerCase(),
+          name: clientName
+        })
+      }
+    }
+
+    return {
+      clients: clients.sort((a, b) => a.name.localeCompare(b.name))
+    }
+  }
+
+  /**
+   * Get suppliers that have sold to specified clients
+   * @param {Array} clientIds - Array of client IDs
+   * @returns {Object} List of suppliers for clients
+   */
+  async getSuppliersForClients(clientIds) {
+    // Get client names from IDs
+    const clients = await Customer.find({ _id: { $in: clientIds } }).select('name').lean()
+    const clientNames = clients.map(c => c.name.toLowerCase())
+
+    // Find purchase orders for these clients
+    const purchaseOrders = await PurchaseOrder.find({
+      $or: [
+        { customerName: { $in: clientNames.map(name => new RegExp(name, 'i')) } },
+        { customer: { $in: clientNames.map(name => new RegExp(name, 'i')) } }
+      ]
+    }).select('ref_num').lean()
+
+    const refNums = purchaseOrders.map(po => po.ref_num)
+
+    // Find purchases with these ref_nums to get suppliers
+    const purchases = await Purchase.find({
+      ref_num: { $in: refNums },
+      isDeleted: false
+    }).select('vendor').lean()
+
+    // Extract unique supplier names
+    const uniqueSupplierNames = [...new Set(
+      purchases.map(p => p.vendor).filter(Boolean)
+    )]
+
+    const suppliers = []
+    for (const supplierName of uniqueSupplierNames) {
+      // Try to find matching vendor in Vendor collection
+      const vendor = await Vendor.findOne({
+        name: { $regex: supplierName, $options: "i" }
+      }).select('_id name').lean()
+
+      if (vendor) {
+        suppliers.push(vendor)
+      } else {
+        // If not found in Vendor collection, create a temporary entry
+        suppliers.push({
+          _id: supplierName.replace(/\s+/g, '_').toLowerCase(),
+          name: supplierName
+        })
+      }
+    }
+
+    return {
+      suppliers: suppliers.sort((a, b) => a.name.localeCompare(b.name))
+    }
+  }
 }
 
 module.exports = new ReportsService()

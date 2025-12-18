@@ -206,4 +206,132 @@ router.get("/client/:customerName", validatePagination, reportsController.getCli
  */
 router.get("/supplier/:vendorName", validatePagination, reportsController.getSupplierReport)
 
+/**
+ * @swagger
+ * /api/reports/suppliers-multi:
+ *   get:
+ *     summary: Get multi-supplier purchases report with optional client filtering
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: supplierIds
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Comma-separated supplier IDs
+ *       - in: query
+ *         name: clientIds
+ *         schema:
+ *           type: string
+ *         description: Comma-separated client IDs (optional)
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date filter
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date filter
+ *       - in: query
+ *         name: all
+ *         schema:
+ *           type: boolean
+ *         description: Get all records without pagination
+ *     responses:
+ *       200:
+ *         description: Multi-supplier purchases report
+ */
+router.get("/suppliers-multi", validatePagination, reportsController.getMultiSupplierReport)
+
+/**
+ * @swagger
+ * /api/reports/clients-multi:
+ *   get:
+ *     summary: Get multi-client purchases report with optional supplier filtering
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: clientIds
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Comma-separated client IDs
+ *       - in: query
+ *         name: supplierIds
+ *         schema:
+ *           type: string
+ *         description: Comma-separated supplier IDs (optional)
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date filter
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date filter
+ *       - in: query
+ *         name: all
+ *         schema:
+ *           type: boolean
+ *         description: Get all records without pagination
+ *     responses:
+ *       200:
+ *         description: Multi-client purchases report
+ */
+router.get("/clients-multi", validatePagination, reportsController.getMultiClientReport)
+
+/**
+ * @swagger
+ * /api/reports/clients-for-suppliers:
+ *   get:
+ *     summary: Get clients that have purchases from specified suppliers
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: supplierIds
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Comma-separated supplier IDs
+ *     responses:
+ *       200:
+ *         description: List of clients for suppliers
+ */
+router.get("/clients-for-suppliers", reportsController.getClientsForSuppliers)
+
+/**
+ * @swagger
+ * /api/reports/suppliers-for-clients:
+ *   get:
+ *     summary: Get suppliers that have sold to specified clients
+ *     tags: [Reports]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: clientIds
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Comma-separated client IDs
+ *     responses:
+ *       200:
+ *         description: List of suppliers for clients
+ */
+router.get("/suppliers-for-clients", reportsController.getSuppliersForClients)
+
 module.exports = router
